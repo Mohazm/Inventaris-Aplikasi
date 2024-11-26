@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Transaction_in;
+use App\Models\Transactions_in;
 use Illuminate\Http\Request;
 
-class TransactionInController extends Controller
+class TransactionsInController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -34,7 +34,7 @@ class TransactionInController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Transaction_in $transaction_in)
+    public function show(Transactions_in $transaction_in)
     {
         //
     }
@@ -42,7 +42,7 @@ class TransactionInController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Transaction_in $transaction_in)
+    public function edit(Transactions_in $transaction_in)
     {
         //
     }
@@ -50,7 +50,7 @@ class TransactionInController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Transaction_in $transaction_in)
+    public function update(Request $request, Transactions_in $transaction_in)
     {
         //
     }
@@ -58,7 +58,7 @@ class TransactionInController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Transaction_in $transaction_in)
+    public function destroy(Transactions_in $transaction_in)
     {
         //
     }

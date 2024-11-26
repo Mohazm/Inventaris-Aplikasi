@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Transaction_in_detail;
+use App\Models\Transactions_in_detail;
 use Illuminate\Http\Request;
 
-class TransactionInDetailController extends Controller
+class TransactionsInDetailController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -34,7 +34,7 @@ class TransactionInDetailController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Transaction_in_detail $transaction_in_detail)
+    public function show(Transactions_in_detail $transaction_in_detail)
     {
         //
     }
@@ -42,7 +42,7 @@ class TransactionInDetailController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Transaction_in_detail $transaction_in_detail)
+    public function edit(Transactions_in_detail $transaction_in_detail)
     {
         //
     }
@@ -50,7 +50,7 @@ class TransactionInDetailController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Transaction_in_detail $transaction_in_detail)
+    public function update(Request $request, Transactions_in_detail $transaction_in_detail)
     {
         //
     }
@@ -58,7 +58,7 @@ class TransactionInDetailController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Transaction_in_detail $transaction_in_detail)
+    public function destroy(Transactions_in_detail $transaction_in_detail)
     {
         //
     }
