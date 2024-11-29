@@ -74,13 +74,13 @@
             <span class="menu-header-text">Pengelolaan Data Master</span>
         </li>
         <li class="menu-item">
-            <a href="#" class="menu-link">
+            <a href="{{route('Product.index')}}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-box"></i>
                 <div>Data Barang</div>
             </a>
         </li>
         <li class="menu-item">
-            <a href="#" class="menu-link">
+            <a href="{{route('category.index')}}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-category"></i>
                 <div>Data Kategori</div>
             </a>

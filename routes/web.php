@@ -3,6 +3,8 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ItemController;
 
 /*
 |---------------------------------------------------------------------------
@@ -28,6 +30,13 @@ Route::middleware(['auth'])->group(function () {
         return view('staff.index');
     })->name('staff.index');
 });
+
+Route::middleware(['auth', 'is_admin:admin'])->group(function () {
+    Route::resource('/category', CategoryController::class);
+    Route::resource('/Product', ItemController::class);
+    // Route::get('/cate', [CategoryController::class, 'index'])->name('cate.index');
+});
+
 
 // Rute untuk profil pengguna
 Route::middleware('auth')->group(function () {
