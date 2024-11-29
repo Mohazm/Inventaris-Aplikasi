@@ -1,4 +1,4 @@
-@extends('kerangka.master')
+@extends('kerangka.staff')
 @section('content')
     <div class="container-xxl flex-grow-1 container-p-y">
         <div class="row">
@@ -8,7 +8,7 @@
                     <div class="d-flex align-items-end row">
                         <div class="col-sm-7">
                             <div class="card-body">
-                                <h5 class="card-title text-primary">Selamat Datang Alhan Admin 🎉</h5>
+                                <h5 class="card-title text-primary">Selamat Datang Staff 🎉</h5>
                                 <p class="mb-4">
                                     Selamat bekerja, nikmati harimu dengan lebih baik!
                                 </p>

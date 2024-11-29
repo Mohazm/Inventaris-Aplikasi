@@ -13,7 +13,6 @@
             color: #000;
             /* Sesuaikan warna dengan tema navbar */
         }
-
         .navbar-time-container {
             display: flex;
             align-items: center;
@@ -51,9 +50,13 @@
                                 </div>
 
                                 <div class="flex-grow-1">
+                                    <!-- Menampilkan nama pengguna yang sedang login -->
                                     <span class="fw-semibold d-block">{{ Auth::user()->name }}</span>
+                                
+                                    <!-- Menampilkan role pengguna (misalnya, Admin atau Staff) -->
                                     <span class="fw-semibold d-block">{{ Auth::user()->role }}</span>
                                 </div>
+                                
                             </div>
                         </a>
                     </li>
@@ -61,9 +64,19 @@
                         <div class="dropdown-divider"></div>
                     </li>
                     <li>
-                        <a class="dropdown-item" href="{{ route('profile.edit') }}">
+                        <a class="dropdown-item" href="#">
                             <i class="bx bx-user me-2"></i>
                             <span class="align-middle">My Profile</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="#">
+                            <span class="d-flex align-items-center align-middle">
+                                <i class="flex-shrink-0 bx bx-credit-card me-2"></i>
+                                <span class="flex-grow-1 align-middle">Galleri</span>
+                                <span
+                                    class="flex-shrink-0 badge badge-center rounded-pill bg-danger w-px-20 h-px-20">4</span>
+                            </span>
                         </a>
                     </li>
                     <li>
@@ -85,7 +98,7 @@
 </nav>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         function updateClockAndDate() {
             const time = new Date();
 
@@ -100,9 +113,7 @@
 
             // Tanggal (hari, bulan, tahun)
             const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
-            const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus",
-                "September", "Oktober", "November", "Desember"
-            ];
+            const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
             const day = days[time.getDay()];
             const date = time.getDate();
             const month = months[time.getMonth()];
