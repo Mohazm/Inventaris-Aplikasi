@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Transactions_out_detail;
+use App\Models\Returns_item;
 use Illuminate\Http\Request;
 
-class TransactionsOutDetailController extends Controller
+class ReturnsItemController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -34,7 +34,7 @@ class TransactionsOutDetailController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Transactions_out_detail $transactions_out_detail)
+    public function show(Returns_item $returns_item)
     {
         //
     }
@@ -42,7 +42,7 @@ class TransactionsOutDetailController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Transactions_out_detail $transactions_out_detail)
+    public function edit(Returns_item $returns_item)
     {
         //
     }
@@ -50,7 +50,7 @@ class TransactionsOutDetailController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Transactions_out_detail $transactions_out_detail)
+    public function update(Request $request, Returns_item $returns_item)
     {
         //
     }
@@ -58,7 +58,7 @@ class TransactionsOutDetailController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Transactions_out_detail $transactions_out_detail)
+    public function destroy(Returns_item $returns_item)
     {
         //
     }

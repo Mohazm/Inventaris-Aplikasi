@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Transactions_in_detail;
+use App\Models\Loans_item;
 use Illuminate\Http\Request;
 
-class TransactionsInDetailController extends Controller
+class LoansItemController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -34,7 +34,7 @@ class TransactionsInDetailController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Transactions_in_detail $transaction_in_detail)
+    public function show(Loans_item $loans_item)
     {
         //
     }
@@ -42,7 +42,7 @@ class TransactionsInDetailController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Transactions_in_detail $transaction_in_detail)
+    public function edit(Loans_item $loans_item)
     {
         //
     }
@@ -50,7 +50,7 @@ class TransactionsInDetailController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Transactions_in_detail $transaction_in_detail)
+    public function update(Request $request, Loans_item $loans_item)
     {
         //
     }
@@ -58,7 +58,7 @@ class TransactionsInDetailController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Transactions_in_detail $transaction_in_detail)
+    public function destroy(Loans_item $loans_item)
     {
         //
     }

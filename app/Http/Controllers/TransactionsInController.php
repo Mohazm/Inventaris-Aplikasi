@@ -34,7 +34,7 @@ class TransactionsInController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Transactions_in $transaction_in)
+    public function show(Transactions_in $transactions_in)
     {
         //
     }
@@ -42,7 +42,7 @@ class TransactionsInController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Transactions_in $transaction_in)
+    public function edit(Transactions_in $transactions_in)
     {
         //
     }
@@ -50,7 +50,7 @@ class TransactionsInController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Transactions_in $transaction_in)
+    public function update(Request $request, Transactions_in $transactions_in)
     {
         //
     }
@@ -58,7 +58,7 @@ class TransactionsInController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Transactions_in $transaction_in)
+    public function destroy(Transactions_in $transactions_in)
     {
         //
     }
