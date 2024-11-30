@@ -34,6 +34,7 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware(['auth', 'is_admin:admin'])->group(function () {
     Route::resource('/category', CategoryController::class);
     Route::resource('/Product', ItemController::class);
+    Route::resource('/suppliers', SupplierController::class);
     // Route::get('/cate', [CategoryController::class, 'index'])->name('cate.index');
 });
 

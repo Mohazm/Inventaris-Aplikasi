@@ -10,9 +10,15 @@ class CategoryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view('Crud_admin.categories.index');
+        // Pencarian kategori berdasarkan nama
+        $search = $request->input('search');
+        $categories = Category::where('name', 'like', "%$search%")
+                              ->paginate(10);  // Pagination, menampilkan 10 per halaman
+
+        // Menampilkan kategori dengan pencarian dan pagination
+        return view('Crud_admin.categories.index', compact('categories', 'search'));
     }
 
     /**
@@ -20,7 +26,7 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        //
+        return view('Crud_admin.categories.create');
     }
 
     /**
@@ -28,15 +34,18 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
-    }
+        // Validasi input nama kategori
+        $request->validate([
+            'name' => 'required|string|max:255|unique:categories,name',
+        ]);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Category $category)
-    {
-        //
+        // Menyimpan kategori baru ke database
+        Category::create([
+            'name' => $request->input('name'),
+        ]);
+
+        // Redirect dengan pesan sukses
+        return redirect()->route('category.index')->with('success', 'Kategori berhasil ditambahkan.');
     }
 
     /**
@@ -44,7 +53,7 @@ class CategoryController extends Controller
      */
     public function edit(Category $category)
     {
-        //
+        return view('Crud_admin.categories.edit', compact('category'));
     }
 
     /**
@@ -52,7 +61,18 @@ class CategoryController extends Controller
      */
     public function update(Request $request, Category $category)
     {
-        //
+        // Validasi input nama kategori
+        $request->validate([
+            'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
+        ]);
+
+        // Update kategori dengan nama baru
+        $category->update([
+            'name' => $request->input('name'),
+        ]);
+
+        // Redirect dengan pesan sukses
+        return redirect()->route('category.index')->with('success', 'Kategori berhasil diperbarui.');
     }
 
     /**
@@ -60,6 +80,10 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        //
+        // Hapus kategori
+        $category->delete();
+
+        // Redirect dengan pesan sukses
+        return redirect()->route('category.index')->with('success', 'Kategori berhasil dihapus.');
     }
 }

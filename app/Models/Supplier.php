@@ -8,4 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class Supplier extends Model
 {
     use HasFactory;
+
+    protected $guarded = [];
+
+    public function transactionsIn(): HasMany
+    {
+        return $this->hasMany(TransactionIn::class, 'supplier_id');
+    }
 }

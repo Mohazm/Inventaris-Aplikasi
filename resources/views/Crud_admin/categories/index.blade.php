@@ -7,7 +7,7 @@
     <h4 class="fw-bold py-3 mb-4 text-center">Daftar Kategori</h4>
 
     <hr>
-    <a href="#" class="btn btn-primary mb-3">Tambah Kategori</a>
+    <a href="{{route('category.create')}}" class="btn btn-primary mb-3">Tambah Kategori</a>
 
     <div class="card shadow-sm border-light">
         <div class="card-body">

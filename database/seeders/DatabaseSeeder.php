@@ -28,5 +28,11 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('password'),  // Gantilah dengan password yang aman
             'role' => 'staff',
         ]);
+        User::create([
+            'name' => 'Staff User 2',
+            'email' => 'staff2@example.com',
+            'password' => Hash::make('password'),  // Gantilah dengan password yang aman
+            'role' => 'staff',
+        ]);
     }
 }
