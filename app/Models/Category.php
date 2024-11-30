@@ -13,7 +13,7 @@ class Category extends Model
         'name'
     ];
 
-    public function items(): HasMany
+    public function items()
     {
         return $this->hasMany(Item::class, 'categories_id');
     }

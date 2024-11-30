@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\ItemController;
 
 /*
@@ -33,7 +34,9 @@ Route::middleware(['auth'])->group(function () {
 
 Route::middleware(['auth', 'is_admin:admin'])->group(function () {
     Route::resource('/category', CategoryController::class);
-    Route::resource('/Product', ItemController::class);
+    Route::resource('Items', ItemController::class);
+    Route::get('Items/{item}/edit', [ItemController::class, 'edit'])->name('Items.edit');
+    Route::put('Items/{item}', [ItemController::class, 'update'])->name('Items.update');
     Route::resource('/suppliers', SupplierController::class);
     // Route::get('/cate', [CategoryController::class, 'index'])->name('cate.index');
 });

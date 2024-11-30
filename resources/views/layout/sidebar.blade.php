@@ -74,7 +74,7 @@
             <span class="menu-header-text">Pengelolaan Data Master</span>
         </li>
         <li class="menu-item">
-            <a href="{{route('Product.index')}}" class="menu-link">
+            <a href="{{route('Items.index')}}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-box"></i>
                 <div>Data Barang</div>
             </a>
@@ -86,7 +86,7 @@
             </a>
         </li>
         <li class="menu-item">
-            <a href="#" class="menu-link">
+            <a href="{{route('suppliers.index')}}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-store-alt"></i>
                 <div>Data Supplier</div>
             </a>

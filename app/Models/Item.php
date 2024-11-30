@@ -4,6 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+// use app\models\Transactions_in;
+use app\models\Transactions_out;
+use app\models\Transactions_in;
+use app\models\Loans_item;
 
 class Item extends Model
 {
@@ -11,24 +15,26 @@ class Item extends Model
 
     protected $guarded = [];
 
+    // protected = $fillables = ['nama_barang'],
 
-    public function category(): BelongsTo
+
+    public function category()
     {
         return $this->belongsTo(Category::class, 'categories_id');
     }
 
-    public function transactionsIn(): HasMany
+    public function transactionsIn()
     {
-        return $this->hasMany(TransactionIn::class, 'item_id');
+        return $this->hasMany(Transactions_in::class, 'item_id');
     }
 
-    public function transactionsOut(): HasMany
+    public function transactionsOut()
     {
-        return $this->hasMany(TransactionOut::class, 'item_id');
+        return $this->hasMany(Transactions_out::class, 'item_id');
     }
 
-    public function itemLoans(): HasMany
+    public function itemLoans()
     {
-        return $this->hasMany(ItemLoan::class, 'item_id');
+        return $this->hasMany(Loans_item::class, 'item_id');
     }
 }
