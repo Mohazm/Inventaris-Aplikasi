@@ -11,12 +11,12 @@ class Transactions_in extends Model
 
     protected $guarded = [];
 
-    public function item(): BelongsTo
+    public function item()
     {
         return $this->belongsTo(Item::class, 'item_id');
     }
 
-    public function supplier(): BelongsTo
+    public function supplier()
     {
         return $this->belongsTo(Supplier::class, 'supplier_id');
     }

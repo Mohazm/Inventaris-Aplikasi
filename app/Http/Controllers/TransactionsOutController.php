@@ -3,63 +3,114 @@
 namespace App\Http\Controllers;
 
 use App\Models\Transactions_out;
+use App\Models\Item;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class TransactionsOutController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $transactions_outs = Transactions_out::with('item')->get();
+        return view('Crud_admin.transactions_out.index', compact('transactions_outs'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        $items = Item::all();
+        return view('Crud_admin.transactions_out.create', compact('items'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'tanggal_keluar' => 'required|date',
+            'item_id' => 'required|exists:items,id',
+            'tujuan_keluar' => 'required|string|max:255',
+            'jumlah' => 'required|numeric|min:0.01',
+        ]);
+
+        $items = Item::find($request->item_id);
+
+        if ($request->jumlah > $items->stock) {
+            return back()->withErrors(['error' => 'Jumlah barang keluar melebihi stok yang tersedia.']);
+        }
+
+        try {
+            Transactions_out::create($request->all());
+            $items->decrement('stock', $request->jumlah);
+
+            return redirect()->route('Transactions_out.index')->with('success', 'Transaksi barang keluar berhasil ditambahkan.');
+        } catch (\Exception $e) {
+            Log::error('Error saat menyimpan transaksi barang keluar: ' . $e->getMessage());
+            return back()->withErrors(['error' => 'Terjadi kesalahan saat menyimpan transaksi.']);
+        }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Transactions_out $transactions_out)
+    public function edit($id)
     {
-        //
+        $transaction_out = Transactions_out::find($id);
+        $items = Item::all();
+
+        if (!$transaction_out) {
+            return redirect()->route('Transactions_out.index')->withErrors(['error' => 'Transaksi tidak ditemukan.']);
+        }
+
+        return view('Crud_admin.transactions_out.edit', compact('transaction_out', 'items'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Transactions_out $transactions_out)
+    public function update(Request $request, $id)
     {
-        //
+        $transaction_out = Transactions_out::find($id);
+
+        if (!$transaction_out) {
+            return redirect()->route('Transactions_out.index')->withErrors(['error' => 'Transaksi tidak ditemukan.']);
+        }
+
+        $request->validate([
+            'tanggal_keluar' => 'required|date',
+            'item_id' => 'required|exists:items,id',
+            'tujuan_keluar' => 'required|string|max:255',
+            'jumlah' => 'required|numeric|min:0.01',
+        ]);
+
+        $items = Item::find($transaction_out->item_id);
+
+        $stockChange = $request->jumlah - $transaction_out->jumlah;
+
+        if ($stockChange > $items->stock) {
+            return back()->withErrors(['error' => 'Jumlah barang keluar melebihi stok yang tersedia.']);
+        }
+
+        try {
+            $transaction_out->update($request->all());
+            $items->decrement('stock', $stockChange);
+
+            return redirect()->route('Transactions_out.index')->with('success', 'Transaksi barang keluar berhasil diperbarui.');
+        } catch (\Exception $e) {
+            Log::error('Error saat memperbarui transaksi barang keluar: ' . $e->getMessage());
+            return back()->withErrors(['error' => 'Terjadi kesalahan saat memperbarui transaksi.']);
+        }
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Transactions_out $transactions_out)
+    public function destroy($id)
     {
-        //
-    }
+        $transaction_out = Transactions_out::find($id);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Transactions_out $transactions_out)
-    {
-        //
+        if (!$transaction_out) {
+            return redirect()->route('Transactions_out.index')->withErrors(['error' => 'Transaksi tidak ditemukan.']);
+        }
+
+        try {
+            $items = Item::find($transaction_out->item_id);
+            $items->increment('stock', $transaction_out->jumlah);
+
+            $transaction_out->delete();
+
+            return redirect()->route('Transactions_out.index')->with('success', 'Transaksi barang keluar berhasil dihapus.');
+        } catch (\Exception $e) {
+            Log::error('Error saat menghapus transaksi barang keluar: ' . $e->getMessage());
+            return back()->withErrors(['error' => 'Terjadi kesalahan saat menghapus transaksi.']);
+        }
     }
 }

@@ -5,7 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Support\Facades\Auth;
 
-class IsAdmin
+class IsStaff
 {
     /**
      * Handle an incoming request.
@@ -16,11 +16,10 @@ class IsAdmin
      */
     public function handle($request, Closure $next)
     {
-        if (Auth::check() && Auth::user()->role === 'admin') {
-            return $next($request);  // Lanjutkan ke langkah berikutnya
+        if (Auth::check() && Auth::user()->role === 'staff') {
+            return $next($request);
         }
 
         return redirect('/')->with('error', 'Anda tidak memiliki akses ke halaman ini.');
     }
 }
-    

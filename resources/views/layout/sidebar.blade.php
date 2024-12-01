@@ -116,9 +116,15 @@
             <span class="menu-header-text">Pengelola Transaksi</span>
         </li>
         <li class="menu-item">
-            <a href="#" class="menu-link">
+            <a href="{{route('Transactions_in.index')}}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-transfer-alt"></i>
-                <div>Transaksi Barang</div>
+                <div>Transaksi Barang Masuk</div>
+            </a>
+        </li>
+        <li class="menu-item">
+            <a href="{{route('Transactions_out.index')}}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-transfer-alt"></i>
+                <div>Transaksi Barang Keluar</div>
             </a>
         </li>
 
