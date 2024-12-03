@@ -92,6 +92,12 @@
             </a>
         </li>
         <li class="menu-item">
+            <a href="{{route('tendiks.index')}}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-store-alt"></i>
+                <div> Tenaga Kependidikan</div>
+            </a>
+        </li>
+        <li class="menu-item">
             <a href="#" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-user"></i>
                 <div>Log Aktivitas</div>
@@ -110,6 +116,12 @@
             <a href="{{route('Transactions_out.index')}}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-transfer-alt"></i>
                 <div>Transaksi Barang Keluar</div>
+            </a>
+        </li>
+        <li class="menu-item">
+            <a href="{{route('loans_item.index')}}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-transfer-alt"></i>
+                <div>Monitor Peminjaman</div>
             </a>
         </li>
     </ul>
