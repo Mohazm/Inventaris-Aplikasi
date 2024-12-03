@@ -7,15 +7,29 @@ use App\Models\Supplier;
 use App\Models\Transactions_in;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use App\models\Category;
 
 class TransactionsInController extends Controller
 {
     public function index(Request $request)
     {
-        $transaction_ins = Transactions_in::with('item', 'supplier')->paginate(10);
-
-        return view('Crud_admin.Transactions_in.index', compact('transaction_ins'));
+        $categoryId = $request->input('category');
+    
+        // Ambil data transaksi berdasarkan kategori jika filter diterapkan
+        $transaction_ins = Transactions_in::with('item', 'supplier')
+            ->when($categoryId, function ($query) use ($categoryId) {
+                return $query->whereHas('item', function ($q) use ($categoryId) {
+                    $q->where('categories_id', $categoryId);
+                });
+            })
+            ->paginate(10);
+    
+        // Ambil daftar kategori
+        $categories = Category::all();
+    
+        return view('Crud_admin.Transactions_in.index', compact('transaction_ins', 'categories'));
     }
+    
 
     public function create()
     {

@@ -8,7 +8,8 @@
                     <div class="d-flex align-items-end row">
                         <div class="col-sm-7">
                             <div class="card-body">
-                                <h5 class="card-title text-primary">Selamat Datang Alhan Admin 🎉</h5>
+                                <h5 class="card-title text-primary">Selamat Datang {{ Auth::user()->role }}
+                                    {{ Auth::user()->name }} 🎉</h5>
                                 <p class="mb-4">
                                     Selamat bekerja, nikmati harimu dengan lebih baik!
                                 </p>
@@ -101,11 +102,13 @@
 
     <!-- Scripts -->
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             // Kalender
             const today = new Date();
             const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
-            const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+            const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September",
+                "Oktober", "November", "Desember"
+            ];
 
             document.querySelector('.day').textContent = days[today.getDay()];
             document.querySelector('.month').textContent = months[today.getMonth()];

@@ -75,7 +75,7 @@
             <span class="menu-header-text">Pengelolaan Data</span>
         </li>
         <li class="menu-item">
-            <a href="#" class="menu-link">
+            <a href="{{route('staff.items.list')}}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-dock-top"></i>
                 <div>Pengelolaan Data Master</div>
             </a>

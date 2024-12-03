@@ -76,34 +76,20 @@
         <li class="menu-item">
             <a href="{{route('Items.index')}}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-box"></i>
-                <div>Data Barang</div>
+                <div> Barang</div>
             </a>
         </li>
         <li class="menu-item">
             <a href="{{route('category.index')}}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-category"></i>
-                <div>Data Kategori</div>
+                <div>Kategori</div>
             </a>
         </li>
         <li class="menu-item">
             <a href="{{route('suppliers.index')}}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-store-alt"></i>
-                <div>Data Supplier</div>
+                <div> Supplier</div>
             </a>
-        </li>
-
-        <li class="menu-header small text-uppercase">
-            <span class="menu-header-text">Stok</span>
-        </li>
-        <li class="menu-item">
-            <a href="#" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-bar-chart-alt-2"></i>
-                <div>Monitor Stok</div>
-            </a>
-        </li>
-
-        <li class="menu-header small text-uppercase">
-            <span class="menu-header-text">Pemantauan Aktivitas Pengguna</span>
         </li>
         <li class="menu-item">
             <a href="#" class="menu-link">
@@ -111,7 +97,6 @@
                 <div>Log Aktivitas</div>
             </a>
         </li>
-
         <li class="menu-header small text-uppercase">
             <span class="menu-header-text">Pengelola Transaksi</span>
         </li>
@@ -125,16 +110,6 @@
             <a href="{{route('Transactions_out.index')}}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-transfer-alt"></i>
                 <div>Transaksi Barang Keluar</div>
-            </a>
-        </li>
-
-        <li class="menu-header small text-uppercase">
-            <span class="menu-header-text">Laporan dan Audit</span>
-        </li>
-        <li class="menu-item">
-            <a href="#" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-print"></i>
-                <div>Laporan Stok dan Transaksi</div>
             </a>
         </li>
     </ul>
