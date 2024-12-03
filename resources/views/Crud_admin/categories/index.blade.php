@@ -64,7 +64,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($catego as $p)
+                        @foreach ($categories as $p)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td class="text-muted">{{ $p->name }}</td>

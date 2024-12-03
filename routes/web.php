@@ -8,6 +8,8 @@ use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\TendikController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\StafItemController;
+use App\Http\Controllers\StafTendikController;
+use App\Http\Controllers\StafTransactionsInController;
 use App\Http\Controllers\TransactionsInController;
 use App\Http\Controllers\TransactionsOutController;
 use App\Http\Controllers\LoansItemController;
@@ -67,6 +69,16 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
 Route::middleware(['auth', 'is_staff'])->group(function () {
     Route::get('/staff/dashboard', [StafItemController::class, 'index'])->name('staff.index');
     Route::get('/staff/items', [StafItemController::class, 'list'])->name('staff.items.list');
+    Route::get('/staff/tendiks', [StafTendikController::class, 'index'])->name('staff.tendiks.index');
+
+    
+    // Rute Untuk Transactions In
+    Route::get('/staff/transactions_in', [StafTransactionsInController::class, 'index'])->name('StafTransactions_in.index');
+    Route::get('/staff/transactions_in/create', [StafTransactionsInController::class, 'create'])->name('StafTransactions_in.create');
+    Route::post('/staff/transactions_in', [StafTransactionsInController::class, 'store'])->name('StafTransactions_in.store');
+    Route::get('/staff/transactions_in/{id}/edit', [StafTransactionsInController::class, 'edit'])->name('StafTransactions_in.edit');
+    Route::put('/staff/transactions_in/{id}', [StafTransactionsInController::class, 'update'])->name('StafTransactions_in.update');
+    Route::delete('/staff/transactions_in/{id}', [StafTransactionsInController::class, 'destroy'])->name('StafTransactions_in.destroy');
 });
 
 // Rute untuk profil pengguna

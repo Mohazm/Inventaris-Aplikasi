@@ -14,11 +14,11 @@ class CategoryController extends Controller
     {
         // Pencarian kategori berdasarkan nama
         $search = $request->input('search');
-        $catego = Category::where('name', 'like', "%$search%")
+        $categories = Category::where('name', 'like', "%$search%")
                               ->paginate(10);  // Pagination, menampilkan 10 per halaman
 
         // Menampilkan kategori dengan pencarian dan pagination
-        return view('Crud_admin.categories.index', compact('catego', 'search'));
+        return view('Crud_admin.categories.index', compact('categories', 'search'));
     }
 
     /**

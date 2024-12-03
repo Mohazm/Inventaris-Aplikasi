@@ -19,11 +19,19 @@
         @csrf
         @method('PUT')
 
+        <!-- Tanggal Masuk -->
         <div class="mb-3">
             <label for="tanggal_masuk" class="form-label">Tanggal Masuk</label>
-            <input type="date" name="tanggal_masuk" id="tanggal_masuk" class="form-control" value="{{ $transactions_ins->tanggal_masuk }}" required>
+            <input 
+                type="date" 
+                id="tanggal_masuk" 
+                name="tanggal_masuk" 
+                class="form-control" 
+                value="{{ old('tanggal_masuk', $transactions_ins->tanggal_masuk ?? date('Y-m-d')) }}" 
+                readonly>
         </div>
 
+        <!-- Barang -->
         <div class="mb-3">
             <label for="item_id" class="form-label">Barang</label>
             <select name="item_id" id="item_id" class="form-select" required>
@@ -35,6 +43,7 @@
             </select>
         </div>
 
+        <!-- Supplier -->
         <div class="mb-3">
             <label for="supplier_id" class="form-label">Supplier</label>
             <select name="supplier_id" id="supplier_id" class="form-select" required>
@@ -46,11 +55,13 @@
             </select>
         </div>
 
+        <!-- Jumlah -->
         <div class="mb-3">
             <label for="jumlah" class="form-label">Jumlah</label>
-            <input type="number" name="jumlah" id="jumlah" class="form-control" value="{{ $transactions_ins->jumlah }}" min="0.01" step="0.01" required>
+            <input type="number" name="jumlah" id="jumlah" class="form-control" value="{{ old('jumlah', $transactions_ins->jumlah) }}" min="0.01" step="0.01" required>
         </div>
 
+        <!-- Tombol Simpan dan Batal -->
         <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
         <a href="{{ route('Transactions_in.index') }}" class="btn btn-secondary">Batal</a>
     </form>

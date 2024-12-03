@@ -7,14 +7,14 @@ use App\Models\Supplier;
 use App\Models\Transactions_in;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use App\Models\Category;
+use App\models\Category;
 
-class TransactionsInController extends Controller
+class StafTransactionsInController extends Controller
 {
     public function index(Request $request)
     {
         $categoryId = $request->input('category');
-
+    
         // Ambil data transaksi berdasarkan kategori jika filter diterapkan
         $transaction_ins = Transactions_in::with('item', 'supplier')
             ->when($categoryId, function ($query) use ($categoryId) {
@@ -23,19 +23,20 @@ class TransactionsInController extends Controller
                 });
             })
             ->paginate(10);
-
+    
         // Ambil daftar kategori
         $categories = Category::all();
-
-        return view('Crud_admin.Transactions_in.index', compact('transaction_ins', 'categories'));
+    
+        return view('staff.Transactions_in.index', compact('transaction_ins', 'categories'));
     }
+    
 
     public function create()
     {
         $items = Item::all();
         $suppliers = Supplier::all();
 
-        return view('Crud_admin.Transactions_in.create', compact('items', 'suppliers'));
+        return view('staff.Transactions_in.create', compact('items', 'suppliers'));
     }
 
     public function store(Request $request)
@@ -45,6 +46,16 @@ class TransactionsInController extends Controller
             'item_id' => 'required|exists:items,id',
             'supplier_id' => 'required|exists:suppliers,id',
             'jumlah' => 'required|numeric|min:0.01',
+        ], [
+            'tanggal_masuk.required' => 'Tanggal masuk wajib diisi.',
+            'tanggal_masuk.date' => 'Format tanggal tidak valid.',
+            'item_id.required' => 'Barang harus dipilih.',
+            'item_id.exists' => 'Barang yang dipilih tidak valid.',
+            'supplier_id.required' => 'Supplier harus dipilih.',
+            'supplier_id.exists' => 'Supplier yang dipilih tidak valid.',
+            'jumlah.required' => 'Jumlah barang masuk wajib diisi.',
+            'jumlah.numeric' => 'Jumlah barang harus berupa angka.',
+            'jumlah.min' => 'Jumlah barang minimal adalah 0.01.',
         ]);
 
         try {
@@ -67,13 +78,13 @@ class TransactionsInController extends Controller
         $transactions_ins = Transactions_in::find($id);
 
         if (!$transactions_ins) {
-            return redirect()->route('Transactions_in.index')->withErrors(['error' => 'Transaksi tidak ditemukan.']);
+            return redirect()->route('staff.Transactions_in.index')->withErrors(['error' => 'Transaksi tidak ditemukan.']);
         }
 
         $items = Item::all();
         $suppliers = Supplier::all();
 
-        return view('Crud_admin.Transactions_in.edit', compact('transactions_ins', 'items', 'suppliers'));
+        return view('staff.Transactions_in.edit', compact('transactions_ins', 'items', 'suppliers'));
     }
 
     public function update(Request $request, $id)
@@ -116,7 +127,7 @@ class TransactionsInController extends Controller
         $transactions_ins = Transactions_in::find($id);
 
         if (!$transactions_ins) {
-            return redirect()->route('Transactions_in.index')->withErrors(['error' => 'Transaksi tidak ditemukan.']);
+            return redirect()->route('staff.Transactions_in.index')->withErrors(['error' => 'Transaksi tidak ditemukan.']);
         }
 
         try {
@@ -126,7 +137,7 @@ class TransactionsInController extends Controller
 
             $transactions_ins->delete();
 
-            return redirect()->route('Transactions_in.index')->with('success', 'Transaksi barang masuk berhasil dihapus dan stok diperbarui.');
+            return redirect()->route('staff.index')->with('success', 'Transaksi barang masuk berhasil dihapus dan stok diperbarui.');
         } catch (\Exception $e) {
             Log::error('Kesalahan saat menghapus transaksi barang masuk: ' . $e->getMessage());
             return back()->withErrors(['error' => 'Terjadi kesalahan saat menghapus transaksi. Silakan coba lagi.']);
