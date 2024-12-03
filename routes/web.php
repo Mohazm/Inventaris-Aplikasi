@@ -5,10 +5,12 @@ use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\TendikController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\StafItemController;
 use App\Http\Controllers\TransactionsInController;
 use App\Http\Controllers\TransactionsOutController;
+use App\Http\Controllers\LoansItemController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,6 +35,7 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
     Route::resource('/category', CategoryController::class);
     Route::resource('/Items', ItemController::class);
     Route::resource('/suppliers', SupplierController::class);
+    Route::resource('/tendiks', TendikController::class);
 
     // Rute Untuk Transactions In
     Route::get('transactions_in', [TransactionsInController::class, 'index'])->name('Transactions_in.index');
@@ -48,6 +51,15 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
     Route::get('transactions_out/{id}/edit', [TransactionsOutController::class, 'edit'])->name('Transactions_out.edit');
     Route::put('transactions_out/{id}', [TransactionsOutController::class, 'update'])->name('Transactions_out.update');
     Route::delete('transactions_out/{id}', [TransactionsOutController::class, 'destroy'])->name('Transactions_out.destroy');
+    
+    Route::get('loans_item', [LoansItemController::class, 'index'])->name('loans_item.index');
+    Route::get('loans_item/create', [LoansItemController::class, 'create'])->name('loans_item.create');
+    Route::post('loans_item', [LoansItemController::class, 'store'])->name('loans_item.store');
+    Route::get('loans_item/{id}/edit', [LoansItemController::class, 'edit'])->name('loans_item.edit');
+    Route::put('loans_item/{id}', [LoansItemController::class, 'update'])->name('loans_item.update');
+    Route::delete('loans_item/{id}', [LoansItemController::class, 'destroy'])->name('loans_item.destroy');
+    Route::patch('/loans_item/accept/{id}', [LoansItemController::class, 'accept'])->name('loans_item.accept');
+    Route::patch('/loans_item/cancel/{id}', [LoansItemController::class, 'cancel'])->name('loans_item.cancel');
 
 });
 

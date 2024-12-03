@@ -33,7 +33,7 @@
                 <!-- Stok -->
                 <div class="form-group mb-3">
                     <label for="stock">Stok</label>
-                    <input type="number" id="stock" name="stock" class="form-control" value="{{ old('stock') }}" min="1" max="99999" required>
+                    <input type="number" id="stock" name="stock" class="form-control" value="{{ old('stock') }}"  max="99999" required>
                 </div>
 
                 <!-- Kondisi Barang -->

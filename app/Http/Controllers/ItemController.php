@@ -50,7 +50,7 @@ class ItemController extends Controller
         $request->validate([
             'nama_barang' => 'required|string|max:255',
             'categories_id' => 'nullable|exists:categories,id',
-            'stock' => 'required|integer|min:0|max:99999', // Ubah min:1 menjadi min:0
+            'stock' => 'required|integer', // Ubah min:1 menjadi min:0
             'kondisi_barang' => 'required|in:baik,rusak ringan,rusak berat',
             'photo_barang' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ], [
@@ -110,7 +110,7 @@ class ItemController extends Controller
         $request->validate([
             'nama_barang' => 'required|string|max:255',
             'categories_id' => 'nullable|exists:categories,id',
-            'stock' => 'required|integer|min:0|max:99999', // Ubah min:1 menjadi min:0
+            'stock' => 'required|integer', // Ubah min:1 menjadi min:0
             'kondisi_barang' => 'required|in:baik,rusak ringan,rusak berat',
             'photo_barang' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ], [

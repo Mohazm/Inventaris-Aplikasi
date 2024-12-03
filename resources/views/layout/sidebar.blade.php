@@ -98,7 +98,7 @@
         <li class="menu-item">
             <a href="#" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-bar-chart-alt-2"></i>
-                <div>Monitor Stok</div>
+                <div>Monitor Stok/div>
             </a>
         </li>
 

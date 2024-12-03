@@ -16,9 +16,10 @@ return new class extends Migration
             $table->foreignId('item_id')->constrained()->onDelete('restrict');
             $table->date('tanggal_pinjam');
             $table->date('tanggal_kembali');
-            $table->foreignId('user_id')->constrained()->onDelete('restrict');
+            $table->foreignId('tendik_id')->constrained()->onDelete('restrict');
+            $table->integer('jumlah_pinjam');
             $table->string('tujuan_peminjaman'); 
-            $table->enum('status',['aktif','dipakai']); 
+            $table->enum('status',['loading','dipakai','selesai','ditolak']); 
             $table->timestamps();
         });
     }

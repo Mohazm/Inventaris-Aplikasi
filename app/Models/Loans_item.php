@@ -16,9 +16,9 @@ class Loans_item extends Model
         return $this->belongsTo(Item::class, 'item_id');
     }
 
-    public function user()
+    public function tendik()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(Tendik::class, 'tendik_id');
     }
 
     public function itemReturn()
