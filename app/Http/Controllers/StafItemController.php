@@ -39,7 +39,10 @@ class StafItemController extends Controller
         // Ambil semua kategori untuk dropdown filter
         $categories = Category::all();
 
-        return view('staff.Items.index', compact('items', 'categories', 'filterCategory', 'searchQuery', 'perPage'));
+        return view('staff.index', compact('items', 'categories', 'filterCategory', 'searchQuery', 'perPage'));
     }
- 
+    public function list() {
+        $items = Item::all();
+        return view('staff.Items.index',compact('items'));
+    }
 }
