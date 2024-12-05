@@ -132,13 +132,19 @@
         </li>
     </ul>
     <style>
+        /* Efek scroll halus pada menu */
+        .menu-inner {
+            max-height: calc(100vh - 80px); /* Menyesuaikan dengan tinggi layar */
+            overflow-y: auto; /* Mengaktifkan scroll jika konten melebihi tinggi */
+            scroll-behavior: smooth; /* Menambahkan efek scroll halus */
+        }
+    
+        /* Menu item aktif */
         .menu-item.active .menu-link {
-            background-color: #f8f9fa;
-            /* Warna latar belakang menu aktif */
-            color: #696cff;
-            /* Warna teks menu aktif */
-            font-weight: bold;
-            /* Teks tebal */
+            background-color: #f8f9fa; /* Warna latar belakang menu aktif */
+            color: #696cff; /* Warna teks menu aktif */
+            font-weight: bold; /* Teks tebal */
         }
     </style>
+    
 </aside>

@@ -107,11 +107,23 @@ class LoansItemController extends Controller
     public function accept($id)
     {
         $loans_items = Loans_item::findOrFail($id);
+        $item = Item::findOrFail($loans_items->item_id); // Ambil data barang terkait
     
+        // Periksa apakah status sudah diproses sebelumnya
         if ($loans_items->status !== 'loading') {
             return redirect()->back()->withErrors(['error' => 'Peminjaman sudah diproses.']);
         }
     
+        // Validasi stok
+        if ($item->stock < $loans_items->quantity) {
+            return redirect()->back()->withErrors(['error' => 'Jumlah pinjaman melebihi stok yang tersedia.']);
+        }
+    
+        // Kurangi stok barang
+        $item->stock -= $loans_items->quantity;
+        $item->save();
+    
+        // Ubah status menjadi "dipakai"
         $loans_items->status = 'dipakai';
         $loans_items->save();
     
@@ -119,32 +131,34 @@ class LoansItemController extends Controller
     }
     
 
+
     // Membatalkan loans_items
-// Membatalkan loans_items
-public function cancel($id)
-{
-    $loans_items = Loans_item::findOrFail($id);
+    // Membatalkan loans_items
+    // Membatalkan loans_items
+    public function cancel($id)
+    {
+        $loans_items = Loans_item::findOrFail($id);
 
-    if ($loans_items->status === 'ditolak') {
-        return redirect()->back()->withErrors(['error' => 'Peminjaman sudah dibatalkan sebelumnya.']);
+        if ($loans_items->status === 'ditolak') {
+            return redirect()->back()->withErrors(['error' => 'Peminjaman sudah dibatalkan sebelumnya.']);
+        }
+
+        // Kembalikan stok ke item
+        $item = Item::findOrFail($loans_items->item_id);
+        $item->stock += $loans_items->jumlah_pinjam;
+        $item->save();
+
+        // Update status menjadi 'ditolak'
+        $loans_items->status = 'ditolak';
+        $loans_items->save();
+
+        return redirect()->route('loans_item.index')->with('success', 'Peminjaman berhasil dibatalkan.');
     }
-
-    // Kembalikan stok ke item
-    $item = Item::findOrFail($loans_items->item_id);
-    $item->stock += $loans_items->jumlah_pinjam;
-    $item->save();
-
-    // Update status menjadi 'ditolak'
-    $loans_items->status = 'ditolak';
-    $loans_items->save();
-
-    return redirect()->route('loans_item.index')->with('success', 'Peminjaman berhasil dibatalkan.');
-}
 
     // Mengecek peminjaman yang melebihi batas waktu dan mengubah status
     public function checkOverdueLoans()
     {
-        $overdueLoans = Loans_item::where('status', 'di pinjam')
+        $overdueLoans = Loans_item::where('status', 'dipakai')
             ->where('tanggal_kembali', '<', Carbon::now())
             ->get();
 
