@@ -3,6 +3,8 @@
 @section('title', 'Daftar Peminjaman')
 
 @section('content')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <div class="container-xxl flex-grow-1 container-p-y">
         <h4 class="fw-bold py-3 mb-4 text-center">Daftar Peminjaman</h4>
 
@@ -49,11 +51,12 @@
                                 </td>
                                 <td>
                                     @if ($loan->status === 'loading')
-                                        <form action="{{ route('loans_item.accept', $loan->id) }}" method="POST" style="display: inline;">
-                                            @csrf
-                                            @method('PATCH')
-                                            <button type="submit" class="btn btn-sm btn-success">Terima</button>
-                                        </form>
+                                    <form id="accept-form-{{ $loan->id }}" action="{{ route('loans_item.accept', $loan->id) }}" method="POST" style="display: inline;">
+                                        @csrf
+                                        @method('PATCH')
+                                        <button type="button" class="btn btn-sm btn-success"
+                                            onclick="confirmAccept({{ $loan->id }})">Terima</button>
+                                    </form>
                                         <form action="{{ route('loans_item.cancel', $loan->id) }}" method="POST" style="display: inline;">
                                             @csrf
                                             @method('PATCH')
@@ -88,4 +91,23 @@
             </div>
         </div>
     </div>
+    <script>
+        function confirmAccept(loanId) {
+            Swal.fire({
+                title: 'Apakah Anda yakin?',
+                text: "Anda tidak dapat membatalkan setelah tindakan ini!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, Terima!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('accept-form-' + loanId).submit();
+                }
+            });
+        }
+    </script>
+    
 @endsection

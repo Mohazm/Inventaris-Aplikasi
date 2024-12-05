@@ -70,7 +70,7 @@
                             <th>Nama Produk</th>
                             <th>Kategori</th>
                             <th>Stok</th>
-                            <th>Kondisi</th>
+                            {{-- <th>Kondisi</th> --}}
                             <th>Gambar</th>
                             <th>Aksi</th>
                         </tr>
@@ -82,7 +82,7 @@
                                 <td>{{ $item->nama_barang }}</td>
                                 <td>{{ $item->category->name ?? 'Tidak Ada' }}</td>
                                 <td>{{ $item->stock }}</td>
-                                <td>{{ ucfirst($item->kondisi_barang) }}</td>
+                                {{-- <td>{{ ucfirst($item->kondisi_barang) }}</td> --}}
                                 <td>
                                     <img src="{{ asset('storage/' . $item->photo_barang) }}" alt="Gambar Produk"
                                         style="border-radius: 30px; width: 100px; height: 100px; object-fit: cover;">

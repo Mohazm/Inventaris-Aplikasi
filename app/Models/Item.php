@@ -18,6 +18,12 @@ class Item extends Model
     // protected = $fillables = ['nama_barang'],
 
 
+    // Item model
+    public function cekBarangs()
+    {
+        return $this->hasMany(CekBarang::class);
+    }
+
     public function category()
     {
         return $this->belongsTo(Category::class, 'categories_id');

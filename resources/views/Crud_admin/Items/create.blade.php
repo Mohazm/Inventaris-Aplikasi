@@ -37,14 +37,14 @@
                 </div>
 
                 <!-- Kondisi Barang -->
-                <div class="form-group mb-3">
+                {{-- <div class="form-group mb-3">
                     <label for="kondisi_barang">Kondisi Barang</label>
                     <select id="kondisi_barang" name="kondisi_barang" class="form-control">
                         <option value="baik" {{ old('kondisi_barang') == 'baik' ? 'selected' : '' }}>Baik</option>
                         <option value="rusak ringan" {{ old('kondisi_barang') == 'rusak ringan' ? 'selected' : '' }}>Rusak Ringan</option>
                         <option value="rusak berat" {{ old('kondisi_barang') == 'rusak berat' ? 'selected' : '' }}>Rusak Berat</option>
                     </select>
-                </div>
+                </div> --}}
 
                 <!-- Foto Produk -->
                 <div class="form-group mb-3">

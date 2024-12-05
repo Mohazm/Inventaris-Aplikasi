@@ -13,6 +13,7 @@ use App\Http\Controllers\StafTransactionsInController;
 use App\Http\Controllers\TransactionsInController;
 use App\Http\Controllers\TransactionsOutController;
 use App\Http\Controllers\LoansItemController;
+use App\Http\Controllers\cekbarangController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,6 +39,14 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
     Route::resource('/Items', ItemController::class);
     Route::resource('/suppliers', SupplierController::class);
     Route::resource('/tendiks', TendikController::class);
+    Route::get('cekbarang', [cekbarangcontroller::class, 'index'])->name('cekbarang.index');
+    Route::get('cekbarang/create', [cekbarangcontroller::class, 'create'])->name('cekbarang.create');
+    Route::post('cekbarang', [cekbarangcontroller::class, 'store'])->name('cekbarang.store');
+    Route::get('cekbarang/{id}/edit', [cekbarangcontroller::class, 'edit'])->name('cekbarang.edit');
+    Route::put('cekbarang/{id}', [cekbarangcontroller::class, 'update'])->name('cekbarang.update');
+    Route::delete('cekbarang/{id}', [cekbarangcontroller::class, 'destroy'])->name('cekbarang.destroy');
+    Route::get('cekbarang/{id}', [cekbarangcontroller::class, 'show'])->name('cekbarang.show');
+
 
     // Rute Untuk Transactions In
     Route::get('transactions_in', [TransactionsInController::class, 'index'])->name('Transactions_in.index');

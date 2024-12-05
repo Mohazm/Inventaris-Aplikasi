@@ -51,7 +51,7 @@ class ItemController extends Controller
             'nama_barang' => 'required|string|max:255',
             'categories_id' => 'nullable|exists:categories,id',
             'stock' => 'required|integer', // Ubah min:1 menjadi min:0
-            'kondisi_barang' => 'required|in:baik,rusak ringan,rusak berat',
+            // 'kondisi_barang' => 'required|in:baik,rusak ringan,rusak berat',
             'photo_barang' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ], [
             'nama_barang.required' => 'Nama barang wajib diisi.',
@@ -62,8 +62,8 @@ class ItemController extends Controller
             'stock.integer' => 'Stok barang harus berupa angka.',
             'stock.min' => 'Stok barang minimal adalah 0.', // Pesan untuk stok minimal 0
             'stock.max' => 'Stok barang maksimal adalah 99999.',
-            'kondisi_barang.required' => 'Kondisi barang wajib dipilih.',
-            'kondisi_barang.in' => 'Kondisi barang tidak valid.',
+            // 'kondisi_barang.required' => 'Kondisi barang wajib dipilih.',
+            // 'kondisi_barang.in' => 'Kondisi barang tidak valid.',
             'photo_barang.image' => 'File foto harus berupa gambar.',
             'photo_barang.mimes' => 'File foto harus berformat jpeg, png, atau jpg.',
             'photo_barang.max' => 'Ukuran file foto maksimal 2MB.',
@@ -111,7 +111,7 @@ class ItemController extends Controller
             'nama_barang' => 'required|string|max:255',
             'categories_id' => 'nullable|exists:categories,id',
             'stock' => 'required|integer', // Ubah min:1 menjadi min:0
-            'kondisi_barang' => 'required|in:baik,rusak ringan,rusak berat',
+            // 'kondisi_barang' => 'required|in:baik,rusak ringan,rusak berat',
             'photo_barang' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ], [
             'nama_barang.required' => 'Nama barang wajib diisi.',
@@ -122,8 +122,8 @@ class ItemController extends Controller
             'stock.integer' => 'Stok barang harus berupa angka.',
             'stock.min' => 'Stok barang minimal adalah 0.', // Pesan untuk stok minimal 0
             'stock.max' => 'Stok barang maksimal adalah 99999.',
-            'kondisi_barang.required' => 'Kondisi barang wajib dipilih.',
-            'kondisi_barang.in' => 'Kondisi barang tidak valid.',
+            // 'kondisi_barang.required' => 'Kondisi barang wajib dipilih.',
+            // 'kondisi_barang.in' => 'Kondisi barang tidak valid.',
             'photo_barang.image' => 'File foto harus berupa gambar.',
             'photo_barang.mimes' => 'File foto harus berformat jpeg, png, atau jpg.',
             'photo_barang.max' => 'Ukuran file foto maksimal 2MB.',
