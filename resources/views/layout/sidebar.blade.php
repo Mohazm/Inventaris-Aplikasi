@@ -79,12 +79,6 @@
                 <div>Barang</div>
             </a>
         </li>
-        <li class="menu-item">
-            <a href="" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-box"></i>
-                <div>Cek Barang</div>
-            </a>
-        </li>
         <li class="menu-item {{ Route::is('category.index') ? 'active' : '' }}">
             <a href="{{ route('category.index') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-category"></i>
