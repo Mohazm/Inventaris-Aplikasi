@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Item;
+use App\Models\Detail_item;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -50,7 +51,6 @@ class ItemController extends Controller
         $request->validate([
             'nama_barang' => 'required|string|max:255',
             'categories_id' => 'nullable|exists:categories,id',
-            'stock' => 'required|integer', // Ubah min:1 menjadi min:0
             // 'kondisi_barang' => 'required|in:baik,rusak ringan,rusak berat',
             'photo_barang' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ], [
@@ -86,6 +86,7 @@ class ItemController extends Controller
             return back()->withErrors(['error' => 'Terjadi kesalahan saat menyimpan data. Silakan coba lagi.']);
         }
     }
+
 
     public function edit($id)
     {
@@ -149,6 +150,21 @@ class ItemController extends Controller
         }
     }
 
+    public function show($id)
+{
+    try {
+        // Ambil item berdasarkan ID
+        $item = Item::findOrFail($id);
+
+        // Ambil detail item terkait
+        $detail_items = $item->detailItems; // Pastikan Anda sudah mendefinisikan relasi di model
+
+        return view('Crud_admin.Items.show', compact('item', 'detail_items'));
+    } catch (\Exception $e) {
+        Log::error('Kesalahan saat mengambil data produk: ' . $e->getMessage());
+        return back()->withErrors(['error' => 'Terjadi kesalahan saat mengambil data.']);
+    }
+}
     public function destroy($id)
     {
         $item = Item::find($id);

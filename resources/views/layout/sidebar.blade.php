@@ -79,8 +79,8 @@
                 <div>Barang</div>
             </a>
         </li>
-        <li class="menu-item {{ Route::is('cekbarang.index') ? 'active' : '' }}">
-            <a href="{{ route('cekbarang.index') }}" class="menu-link">
+        <li class="menu-item">
+            <a href="" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-box"></i>
                 <div>Cek Barang</div>
             </a>

@@ -79,7 +79,7 @@ object-fit: cover;
     
 
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <a href="{{ route('StafTransactions_in.create') }}" class="btn btn-primary rounded-pill shadow-sm">
+        <a href="{{ route('Transactions_in.create') }}" class="btn btn-primary rounded-pill shadow-sm">
             + Tambah Transaksi Baru
         </a>
     </div>

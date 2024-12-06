@@ -50,10 +50,11 @@
             }
         </style>
 
-        <h4 class="fw-bold py-3 mb-4 text-center">Daftar Produk</h4>
+        <h4 class="fw-bold py-3 mb-4 text-center">Daftar Supplier</h4>
         <hr>
 
-        <a href="{{ route('suppliers.create') }}" class="btn btn-primary mb-3">Tambah Produk</a>
+        <a href="{{ route('suppliers.create') }}" class="btn btn-primary mb-3">Tambah Supplier
+        </a>
 
         <div class="card shadow-sm border-light">
             <div class="card-body">

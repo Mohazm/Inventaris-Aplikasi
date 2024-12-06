@@ -13,7 +13,7 @@ use App\Http\Controllers\StafTransactionsInController;
 use App\Http\Controllers\TransactionsInController;
 use App\Http\Controllers\TransactionsOutController;
 use App\Http\Controllers\LoansItemController;
-use App\Http\Controllers\cekbarangController;
+use App\Http\Controllers\DetailItemController;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,14 +39,11 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
     Route::resource('/Items', ItemController::class);
     Route::resource('/suppliers', SupplierController::class);
     Route::resource('/tendiks', TendikController::class);
-    Route::get('cekbarang', [cekbarangcontroller::class, 'index'])->name('cekbarang.index');
-    Route::get('cekbarang/create', [cekbarangcontroller::class, 'create'])->name('cekbarang.create');
-    Route::post('cekbarang', [cekbarangcontroller::class, 'store'])->name('cekbarang.store');
-    Route::get('cekbarang/{id}/edit', [cekbarangcontroller::class, 'edit'])->name('cekbarang.edit');
-    Route::put('cekbarang/{id}', [cekbarangcontroller::class, 'update'])->name('cekbarang.update');
-    Route::delete('cekbarang/{id}', [cekbarangcontroller::class, 'destroy'])->name('cekbarang.destroy');
-    Route::get('cekbarang/{id}', [cekbarangcontroller::class, 'show'])->name('cekbarang.show');
 
+    Route::get('items/{itemId}/details', [DetailItemController::class, 'index'])->name('details.index');
+Route::get('details/{kode_barang}/edit', [DetailItemController::class, 'edit'])->name('details.edit');
+Route::put('details/{kode_barang}', [DetailItemController::class, 'update'])->name('details.update');
+Route::delete('details/{kode_barang}', [DetailItemController::class, 'destroy'])->name('details.destroy');
 
     // Rute Untuk Transactions In
     Route::get('transactions_in', [TransactionsInController::class, 'index'])->name('Transactions_in.index');

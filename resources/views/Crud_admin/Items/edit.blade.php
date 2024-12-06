@@ -72,24 +72,6 @@
                     @enderror
                 </div>
 
-                <!-- Kondisi -->
-                <div class="form-group mb-3">
-                    <label for="kondisi_barang" class="form-label">Kondisi</label>
-                    <select 
-                        id="kondisi_barang" 
-                        name="kondisi_barang" 
-                        class="form-select @error('kondisi_barang') is-invalid @enderror">
-                        <option value="baik" {{ old('kondisi_barang', $item->kondisi_barang) == 'baik' ? 'selected' : '' }}>Baik</option>
-                        <option value="rusak ringan" {{ old('kondisi_barang', $item->kondisi_barang) == 'rusak ringan' ? 'selected' : '' }}>Rusak Ringan</option>
-                        <option value="rusak berat" {{ old('kondisi_barang', $item->kondisi_barang) == 'rusak berat' ? 'selected' : '' }}>Rusak Berat</option>
-                    </select>
-                    @error('kondisi_barang')
-                        <div class="invalid-feedback">
-                            {{ $message }}
-                        </div>
-                    @enderror
-                </div>
-
                 <!-- Gambar -->
                 <div class="form-group mb-3">
                     <label for="photo_barang" class="form-label">Gambar Produk</label>

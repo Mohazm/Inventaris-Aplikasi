@@ -98,6 +98,8 @@
                                         <button type="submit" class="btn btn-outline-danger btn-sm"
                                             onclick="return confirm('Yakin ingin menghapus produk ini?')">Hapus</button>
                                     </form>
+                                    <a href="{{ route('details.index', ['itemId' => $item->id]) }}"
+                                        class="btn btn-outline-primary btn-sm">Detail</a>
                                 </td>
                             </tr>
                         @empty

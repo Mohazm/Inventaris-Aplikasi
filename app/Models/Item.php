@@ -43,4 +43,9 @@ class Item extends Model
     {
         return $this->hasMany(Loans_item::class, 'item_id');
     }
+
+    public function details()
+    {
+        return $this->hasMany(Detail_item::class);
+    }
 }

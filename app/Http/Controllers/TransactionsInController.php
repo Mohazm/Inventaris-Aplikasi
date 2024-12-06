@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Item;
 use App\Models\Supplier;
 use App\Models\Transactions_in;
+use App\Models\Detail_item;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use App\Models\Category;
 
 class TransactionsInController extends Controller
@@ -14,9 +16,8 @@ class TransactionsInController extends Controller
     public function index(Request $request)
     {
         $categoryId = $request->input('category');
-        $supplierId = $request->input('supplier'); // Ambil ID supplier dari input
-    
-        // Ambil data transaksi berdasarkan kategori dan/atau supplier
+        $supplierId = $request->input('supplier');
+
         $transaction_ins = Transactions_in::with('item', 'supplier')
             ->when($categoryId, function ($query) use ($categoryId) {
                 $query->whereHas('item', function ($q) use ($categoryId) {
@@ -24,17 +25,15 @@ class TransactionsInController extends Controller
                 });
             })
             ->when($supplierId, function ($query) use ($supplierId) {
-                $query->where('supplier_id', $supplierId); // Filter berdasarkan supplier_id
+                $query->where('supplier_id', $supplierId);
             })
             ->paginate(10);
-    
-        // Ambil daftar kategori dan supplier
+
         $categories = Category::all();
         $suppliers = Supplier::all();
-    
+
         return view('Crud_admin.Transactions_in.index', compact('transaction_ins', 'categories', 'suppliers'));
     }
-    
 
     public function create()
     {
@@ -50,7 +49,7 @@ class TransactionsInController extends Controller
             'tanggal_masuk' => 'required|date',
             'item_id' => 'required|exists:items,id',
             'supplier_id' => 'required|exists:suppliers,id',
-            'jumlah' => 'required|numeric|min:0.01',
+            'jumlah' => 'required|integer|min:1',
         ]);
 
         try {
@@ -61,7 +60,16 @@ class TransactionsInController extends Controller
             $item = Item::find($request->item_id);
             $item->increment('stock', $request->jumlah);
 
-            return redirect()->route('Transactions_in.index')->with('success', 'Transaksi barang masuk berhasil disimpan dan stok diperbarui.');
+            // Tambahkan detail barang
+            for ($i = 1; $i <= $request->jumlah; $i++) {
+                Detail_item::create([
+                    'item_id' => $request->item_id,
+                    'kode_barang' => strtoupper(substr($item->nama_barang, 0, 3)) . '-' . Str::random(5),
+                    'kondisi_barang' => 'Normal', // Default kondisi barang adalah Normal
+                ]);
+            }
+
+            return redirect()->route('Transactions_in.index')->with('success', 'Transaksi barang masuk berhasil disimpan. Stok dan detail barang diperbarui.');
         } catch (\Exception $e) {
             Log::error('Kesalahan saat menyimpan transaksi barang masuk: ' . $e->getMessage());
             return back()->withErrors(['error' => 'Terjadi kesalahan saat menyimpan transaksi. Silakan coba lagi.']);
@@ -94,7 +102,7 @@ class TransactionsInController extends Controller
             'tanggal_masuk' => 'required|date',
             'item_id' => 'required|exists:items,id',
             'supplier_id' => 'required|exists:suppliers,id',
-            'jumlah' => 'required|numeric|min:0.01',
+            'jumlah' => 'required|integer|min:1',
         ]);
 
         try {
@@ -129,6 +137,11 @@ class TransactionsInController extends Controller
             // Kurangi stok barang sesuai jumlah pada transaksi sebelum menghapus
             $item = Item::find($transactions_ins->item_id);
             $item->decrement('stock', $transactions_ins->jumlah);
+
+            // Hapus detail barang terkait
+            Detail_item::where('item_id', $transactions_ins->item_id)
+                ->limit($transactions_ins->jumlah)
+                ->delete();
 
             $transactions_ins->delete();
 
