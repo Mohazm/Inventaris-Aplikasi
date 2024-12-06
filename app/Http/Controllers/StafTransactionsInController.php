@@ -14,21 +14,27 @@ class StafTransactionsInController extends Controller
     public function index(Request $request)
     {
         $categoryId = $request->input('category');
+        $supplierId = $request->input('supplier'); // Ambil ID supplier dari input
     
-        // Ambil data transaksi berdasarkan kategori jika filter diterapkan
+        // Ambil data transaksi berdasarkan kategori dan/atau supplier
         $transaction_ins = Transactions_in::with('item', 'supplier')
             ->when($categoryId, function ($query) use ($categoryId) {
-                return $query->whereHas('item', function ($q) use ($categoryId) {
+                $query->whereHas('item', function ($q) use ($categoryId) {
                     $q->where('categories_id', $categoryId);
                 });
             })
+            ->when($supplierId, function ($query) use ($supplierId) {
+                $query->where('supplier_id', $supplierId); // Filter berdasarkan supplier_id
+            })
             ->paginate(10);
     
-        // Ambil daftar kategori
+        // Ambil daftar kategori dan supplier
         $categories = Category::all();
+        $suppliers = Supplier::all();
     
-        return view('staff.Transactions_in.index', compact('transaction_ins', 'categories'));
+        return view('staff.Transactions_in.index', compact('transaction_ins', 'categories', 'suppliers'));
     }
+    
     
 
     public function create()
@@ -66,7 +72,7 @@ class StafTransactionsInController extends Controller
             $item = Item::find($request->item_id);
             $item->increment('stock', $request->jumlah);
 
-            return redirect()->route('Transactions_in.index')->with('success', 'Transaksi barang masuk berhasil disimpan dan stok diperbarui.');
+            return redirect()->route('StafTransactions_in.index')->with('success', 'Transaksi barang masuk berhasil disimpan dan stok diperbarui.');
         } catch (\Exception $e) {
             Log::error('Kesalahan saat menyimpan transaksi barang masuk: ' . $e->getMessage());
             return back()->withErrors(['error' => 'Terjadi kesalahan saat menyimpan transaksi. Silakan coba lagi.']);
@@ -78,13 +84,13 @@ class StafTransactionsInController extends Controller
         $transactions_ins = Transactions_in::find($id);
 
         if (!$transactions_ins) {
-            return redirect()->route('staff.Transactions_in.index')->withErrors(['error' => 'Transaksi tidak ditemukan.']);
+            return redirect()->route('StafTransactions_in.index')->withErrors(['error' => 'Transaksi tidak ditemukan.']);
         }
 
         $items = Item::all();
         $suppliers = Supplier::all();
 
-        return view('staff.Transactions_in.edit', compact('transactions_ins', 'items', 'suppliers'));
+        return view('staff.Transactions_in.index', compact('transactions_ins', 'items', 'suppliers'));
     }
 
     public function update(Request $request, $id)

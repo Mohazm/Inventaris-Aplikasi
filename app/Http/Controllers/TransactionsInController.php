@@ -14,21 +14,27 @@ class TransactionsInController extends Controller
     public function index(Request $request)
     {
         $categoryId = $request->input('category');
-
-        // Ambil data transaksi berdasarkan kategori jika filter diterapkan
+        $supplierId = $request->input('supplier'); // Ambil ID supplier dari input
+    
+        // Ambil data transaksi berdasarkan kategori dan/atau supplier
         $transaction_ins = Transactions_in::with('item', 'supplier')
             ->when($categoryId, function ($query) use ($categoryId) {
-                return $query->whereHas('item', function ($q) use ($categoryId) {
+                $query->whereHas('item', function ($q) use ($categoryId) {
                     $q->where('categories_id', $categoryId);
                 });
             })
+            ->when($supplierId, function ($query) use ($supplierId) {
+                $query->where('supplier_id', $supplierId); // Filter berdasarkan supplier_id
+            })
             ->paginate(10);
-
-        // Ambil daftar kategori
+    
+        // Ambil daftar kategori dan supplier
         $categories = Category::all();
-
-        return view('Crud_admin.Transactions_in.index', compact('transaction_ins', 'categories'));
+        $suppliers = Supplier::all();
+    
+        return view('Crud_admin.Transactions_in.index', compact('transaction_ins', 'categories', 'suppliers'));
     }
+    
 
     public function create()
     {

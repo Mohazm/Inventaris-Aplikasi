@@ -15,7 +15,7 @@
         </div>
     @endif
 
-    <form action="{{ route('Transactions_in.store') }}" method="POST">
+    <form action="{{ route('StafTransactions_in.store') }}" method="POST">
         @csrf
         
         <div class="mb-3">

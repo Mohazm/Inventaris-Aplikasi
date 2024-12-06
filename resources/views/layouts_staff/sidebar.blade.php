@@ -83,13 +83,13 @@
         <li class="menu-item">
             <a href="{{route('staff.tendiks.index')}}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-cube-alt"></i>
-                <div>Data Tenaga Kependidikan</div>
+                <div>Daftar Pemimjam</div>
             </a>
         </li>
         <li class="menu-item">
-            <a href="{{route('Staf.Transactions_in.index')}}" class="menu-link">
+            <a href="{{route('StafTransactions_in.index')}}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-cube-alt"></i>
-                <div>Monitor Pemasukan Barang </div>
+                <div>Kelola Transactions Masuk</div>
             </a>
         </li>
         <li class="menu-item">

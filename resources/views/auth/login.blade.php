@@ -158,12 +158,12 @@
                         </div>
                         <div class="mb-3">
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="remember" name="remember" required  >
-                                <label class="form-check-label" for="remember"  >
+                                <input class="form-check-input" type="checkbox" id="remember" name="remember" checked>
+                                <label class="form-check-label" for="remember">
                                     Remember Me
                                 </label>
                             </div>
-                        </div>
+                        </div>                        
                         {{-- <div class="form-check">
                             <input type="checkbox" name="remember" class="form-check-input" id="remember">
                             <label class="form-check-label" for="remember">
@@ -244,7 +244,18 @@
     <script src="{{ asset('sneat') }}/assets/js/main.js"></script>
 
     <!-- Page JS -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    const passwordField = document.getElementById("password");
+    const togglePassword = document.querySelector(".input-group-text");
 
+    togglePassword.addEventListener("click", function () {
+        const type = passwordField.getAttribute("type") === "password" ? "text" : "password";
+        passwordField.setAttribute("type", type);
+        this.innerHTML = type === "password" ? `<i class="bx bx-hide"></i>` : `<i class="bx bx-show"></i>`;
+    });
+});
+</script>
     <!-- Place this tag in your head or just before your close body tag. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
 </body>

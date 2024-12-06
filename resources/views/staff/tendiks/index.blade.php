@@ -1,83 +1,98 @@
 @extends('kerangka.staff')
 
 @section('content')
-    <div class="container">
-        <h1>Daftar Tendik</h1>
+    <div class="container my-5">
+        <h1 class="text-center mb-4 text-primary fw-bold">📋 Daftar Tendik</h1>
 
+        {{-- Toast for Success Message --}}
         @if (session('success'))
-            <div class="bs-toast toast fade show bg-success" role="alert" aria-live="assertive" aria-atomic="true">
-                <div class="toast-header">
-                    <i class="bx bx-bell me-2"></i>
-                    <div class="me-auto fw-semibold">Category</div>
-                    <small></small>
-                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-                </div>
-                <div class="toast-body">
-                    {{ session('success') }}
+            <div class="position-fixed top-0 end-0 p-3" style="z-index: 1055;">
+                <div class="toast align-items-center text-white bg-success border-0 show shadow" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            🎉 {{ session('success') }}
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
                 </div>
             </div>
             <script>
                 document.addEventListener('DOMContentLoaded', function() {
-                    var toastElList = [].slice.call(document.querySelectorAll('.toast'));
-                    var toastList = toastElList.map(function(toastEl) {
-                        return new bootstrap.Toast(toastEl, {
-                            delay: 3000
-                        });
-                    });
-                    toastList.forEach(toast => toast.show());
+                    var toastEl = document.querySelector('.toast');
+                    var toast = new bootstrap.Toast(toastEl, { delay: 3000 });
+                    toast.show();
                 });
             </script>
         @endif
+
+        {{-- Styling --}}
         <style>
-            /* Toast/Alert styling */
-            .toast {
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                z-index: 1055;
-                background-color: #28a745;
+            .table thead th {
+                background-color: #6c63ff;
                 color: #fff;
-                border-radius: 0.25rem;
+                text-align: center;
+                vertical-align: middle;
             }
 
-            .toast .toast-body {
-                padding: 0.75rem;
+            .table tbody tr:hover {
+                background-color: #f9f9f9;
             }
 
-            .toast .close {
-                color: #fff;
-                opacity: 0.8;
+            .empty-state {
+                font-style: italic;
+                color: #aaa;
+                text-align: center;
+                padding: 20px;
+                border: 2px dashed #ddd;
+                border-radius: 10px;
             }
 
-            .img-rounded {
-                border-radius: 30px;
-                width: 100px;
-                height: 100px;
-                object-fit: cover;
+            /* Adjust column widths */
+            .col-no {
+                width: 10%;
+                text-align: center;
+            }
+
+            .col-nama {
+                width: 45%;
+            }
+
+            .col-jabatan {
+                width: 45%;
             }
         </style>
 
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>Nama</th>
-                    <th>Jabatan</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse ($tendiks as $tendik)
+        {{-- Table --}}
+        <div class="table-responsive shadow rounded">
+            <table class="table table-hover table-bordered">
+                <thead>
                     <tr>
-                        <td>{{ $loop->iteration }}</td>
-                        <td>{{ $tendik->name }}</td>
-                        <td>{{ $tendik->jabatan }}</td>
+                        <th class="col-no">No</th>
+                        <th class="col-nama">Nama</th>
+                        <th class="col-jabatan">Jabatan</th>
                     </tr>
-                @empty
-                    <tr>
-                        <td colspan="4" class="text-center">Tidak ada data</td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @forelse ($tendiks as $tendik)
+                        <tr>
+                            <td class="col-no text-center fw-bold">{{ $loop->iteration }}</td>
+                            <td class="col-nama">
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar bg-light-primary me-3 rounded-circle d-flex justify-content-center align-items-center" style="width: 50px; height: 50px;">
+                                        <span class="fw-bold text-uppercase">{{ substr($tendik->name, 0, 1) }}</span>
+                                    </div>
+                                    <span>{{ $tendik->name }}</span>
+                                </div>
+                            </td>
+                            <td class="col-jabatan">{{ $tendik->jabatan }}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="3" class="empty-state">Tidak ada data yang tersedia</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
     </div>
 @endsection

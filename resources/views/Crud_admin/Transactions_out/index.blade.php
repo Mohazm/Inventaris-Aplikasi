@@ -1,52 +1,129 @@
 @extends('kerangka.master') <!-- Sesuaikan dengan layout Anda -->
 
 @section('content')
-<div class="container">
-    <h1 class="mb-4">Daftar Transaksi Barang Keluar</h1>
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="fw-bold">📦 Daftar Transaksi Barang Keluar</h1>
+        <p class="text-muted">Kelola dan pantau pengeluaran barang dengan mudah.</p>
+    </div>
 
     <!-- Pesan sukses -->
     @if (session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
+    <div class="bs-toast toast fade show bg-success" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <i class="bx bx-bell me-2"></i>
+            <div class="me-auto fw-semibold">Barang Keluar</div>
+            <small></small>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            🎉 {{ session('success') }}
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var toastElList = [].slice.call(document.querySelectorAll('.toast'));
+            var toastList = toastElList.map(function(toastEl) {
+                return new bootstrap.Toast(toastEl, {
+                    delay: 3000
+                });
+            });
+            toastList.forEach(toast => toast.show());
+        });
+    </script>
+@endif
+<style>
+    /* Toast/Alert styling */
+    .toast {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1055;
+        background-color: #28a745;
+        color: #fff;
+        border-radius: 0.25rem;
+    }
 
+    .toast .toast-body {
+        padding: 0.75rem;
+    }
+
+    .toast .close {
+        color: #fff;
+        opacity: 0.8;
+    }
+    .img-rounded {
+border-radius: 30px;
+width: 100px;
+height: 100px;
+object-fit: cover;
+}
+
+</style>
+   
+        <a href="{{ route('Transactions_out.create') }}" class="btn btn-primary btn-lg mb-3 shadow">
+            <i class="bi bi-plus-circle"></i> Tambah Transaksi Baru
+        </a>
+   
     <!-- Tabel Transaksi -->
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Tanggal Keluar</th>
-                <th>Barang</th>
-                <th>Tujuan</th>
-                <th>Jumlah</th>
-                <th>Aksi</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse ($transactions_outs as $transaction)
+    <div class="table-responsive shadow-lg rounded">
+        <table class="table align-middle table-hover">
+            <thead class="table-light">
                 <tr>
-                    <td>{{ $transaction->id }}</td>
-                    <td>{{ $transaction->tanggal_keluar }}</td>
-                    <td>{{ $transaction->item->nama_barang }}</td>
-                    <td>{{ $transaction->tujuan_keluar }}</td>
-                    <td>{{ $transaction->jumlah }}</td>
-                    <td>
-                        <a href="{{ route('Transactions_out.edit', $transaction->id) }}" class="btn btn-warning btn-sm">Edit</a>
-                        <form action="{{ route('Transactions_out.destroy', $transaction->id) }}" method="POST" style="display: inline-block;">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus transaksi ini?')">Hapus</button>
-                        </form>
-                    </td>
+                    <th>#</th>
+                    <th>Tanggal Keluar</th>
+                    <th>Barang</th>
+                    <th>Tujuan</th>
+                    <th>Jumlah</th>
+                    <th>Aksi</th>
                 </tr>
-            @empty
-                <tr>
-                    <td colspan="6" class="text-center">Tidak ada transaksi barang keluar.</td>
-                </tr>
-            @endforelse
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @forelse ($transactions_outs as $transaction)
+                    <tr class="align-middle">
+                        <td>
+                            <span class="badge bg-primary rounded-pill">{{ $transaction->id }}</span>
+                        </td>
+                        <td>{{ \Carbon\Carbon::parse($transaction->tanggal_keluar)->format('d M Y') }}</td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="me-3">
+                                    <i class="bi bi-box-seam text-secondary fs-4"></i>
+                                </div>
+                                <span class="fw-bold">{{ $transaction->item->nama_barang }}</span>
+                            </div>
+                        </td>
+                        <td>{{ $transaction->tujuan_keluar }}</td>
+                        <td>
+                            <span class="badge bg-success">{{ $transaction->jumlah }}</span>
+                        </td>
+                        <td>
+                            <div class="d-flex gap-2 justify-content-center">
+                                <a href="{{ route('Transactions_out.edit', $transaction->id) }}" class="btn btn-outline-warning btn-sm">
+                                    <i class="bi bi-pencil-square"></i> Edit
+                                </a>
+                                <form action="{{ route('Transactions_out.destroy', $transaction->id) }}" method="POST" class="d-inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Yakin ingin menghapus transaksi ini?')">
+                                        <i class="bi bi-trash"></i> Hapus
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="6" class="text-center text-muted">
+                            <i class="bi bi-archive"></i> Tidak ada transaksi barang keluar.
+                        </td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
 
     <!-- Tombol Tambah Transaksi -->
-    <a href="{{ route('Transactions_out.create') }}" class="btn btn-primary mt-4">Tambah Transaksi Baru</a>
+   
 </div>
 @endsection
