@@ -1,19 +1,22 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\SupplierController;
-use App\Http\Controllers\TendikController;
-use App\Http\Controllers\ItemController;
-use App\Http\Controllers\StafItemController;
-use App\Http\Controllers\StafTendikController;
-use App\Http\Controllers\StafTransactionsInController;
-use App\Http\Controllers\TransactionsInController;
-use App\Http\Controllers\TransactionsOutController;
-use App\Http\Controllers\LoansItemController;
-use App\Http\Controllers\DetailItemController;
+use App\Http\Controllers\{
+    DashboardController,
+    SupplierController,
+    BorrowerController,
+    CategoryController,
+    ItemController,
+    TendikController,
+    StafItemController,
+    StafTendikController,
+    StafTransactionsInController,
+    TransactionsInController,
+    TransactionsOutController,
+    LoansItemController,
+    DetailItemController,
+    ProfileController
+};
 
 /*
 |--------------------------------------------------------------------------
@@ -34,7 +37,7 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
     Route::get('/admin/dashboard', function () {
         return view('admin.index');
     })->name('admin.index');
-
+    Route::resource('borrowers', BorrowerController::class);
     Route::resource('/category', CategoryController::class);
     Route::resource('/Items', ItemController::class);
     Route::resource('/suppliers', SupplierController::class);

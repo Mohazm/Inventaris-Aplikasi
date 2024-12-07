@@ -37,6 +37,8 @@ class CategoryController extends Controller
         // Validasi input nama kategori
         $request->validate([
             'name' => 'required|string|max:255|unique:categories,name',
+        ],[
+            'name.unique' => 'Category Sudah Ada'
         ]);
 
         // Menyimpan kategori baru ke database
@@ -64,6 +66,8 @@ class CategoryController extends Controller
         // Validasi input nama kategori
         $request->validate([
             'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
+        ],[
+            'name.unique' => 'Category Sudah Ada'
         ]);
 
         // Update kategori dengan nama baru

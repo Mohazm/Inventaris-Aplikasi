@@ -92,6 +92,12 @@
                     <div>Kategori</div>
                 </a>
             </li>
+            <li class="menu-item {{ Route::is('borrowers.index') ? 'active' : '' }}">
+                <a href="{{ route('borrowers.index') }}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-category"></i>
+                    <div>Pemimjam</div>
+                </a>
+            </li>
             <li class="menu-item {{ Route::is('suppliers.index') ? 'active' : '' }}">
                 <a href="{{ route('suppliers.index') }}" class="menu-link">
                     <i class="menu-icon tf-icons bx bx-store-alt"></i>

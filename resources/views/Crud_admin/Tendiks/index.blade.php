@@ -47,7 +47,8 @@
                                 <h5 class="card-title mb-0">{{ $tendik->name }}_</h5>
                             </div>
                             <p class="text-muted">
-                                <span class="badge bg-info text-dark">{{ $tendik->jabatan }}_</span>
+                                <span class="badge bg-info text-dark">{{ $tendik->jabatan }}_
+                                </span>
                             </p>
                             <div class="d-flex justify-content-between">
                                 <a href="{{ route('tendiks.edit', $tendik->id) }}" class="btn btn-warning btn-sm">
