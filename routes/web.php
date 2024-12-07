@@ -41,9 +41,9 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
     Route::resource('/tendiks', TendikController::class);
 
     Route::get('items/{itemId}/details', [DetailItemController::class, 'index'])->name('details.index');
-Route::get('details/{kode_barang}/edit', [DetailItemController::class, 'edit'])->name('details.edit');
-Route::put('details/{kode_barang}', [DetailItemController::class, 'update'])->name('details.update');
-Route::delete('details/{kode_barang}', [DetailItemController::class, 'destroy'])->name('details.destroy');
+    Route::get('details/{kode_barang}/edit', [DetailItemController::class, 'edit'])->name('details.edit');
+    Route::put('details/{kode_barang}', [DetailItemController::class, 'update'])->name('details.update');
+    Route::delete('details/{kode_barang}', [DetailItemController::class, 'destroy'])->name('details.destroy');
 
     // Rute Untuk Transactions In
     Route::get('transactions_in', [TransactionsInController::class, 'index'])->name('Transactions_in.index');
@@ -52,14 +52,14 @@ Route::delete('details/{kode_barang}', [DetailItemController::class, 'destroy'])
     Route::get('transactions_in/{id}/edit', [TransactionsInController::class, 'edit'])->name('Transactions_in.edit');
     Route::put('transactions_in/{id}', [TransactionsInController::class, 'update'])->name('Transactions_in.update');
     Route::delete('transactions_in/{id}', [TransactionsInController::class, 'destroy'])->name('Transactions_in.destroy');
-    
+
     Route::get('transactions_out', [TransactionsOutController::class, 'index'])->name('Transactions_out.index');
     Route::get('transactions_out/create', [TransactionsOutController::class, 'create'])->name('Transactions_out.create');
     Route::post('transactions_out', [TransactionsOutController::class, 'store'])->name('Transactions_out.store');
     Route::get('transactions_out/{id}/edit', [TransactionsOutController::class, 'edit'])->name('Transactions_out.edit');
     Route::put('transactions_out/{id}', [TransactionsOutController::class, 'update'])->name('Transactions_out.update');
     Route::delete('transactions_out/{id}', [TransactionsOutController::class, 'destroy'])->name('Transactions_out.destroy');
-    
+
     Route::get('loans_item', [LoansItemController::class, 'index'])->name('loans_item.index');
     Route::get('loans_item/create', [LoansItemController::class, 'create'])->name('loans_item.create');
     Route::post('loans_item', [LoansItemController::class, 'store'])->name('loans_item.store');
@@ -69,7 +69,6 @@ Route::delete('details/{kode_barang}', [DetailItemController::class, 'destroy'])
     Route::patch('/loans_item/accept/{id}', [LoansItemController::class, 'accept'])->name('loans_item.accept');
     Route::patch('/loans_item/cancel/{id}', [LoansItemController::class, 'cancel'])->name('loans_item.cancel');
     Route::post('/loans_item/checkOverdue', [LoansItemController::class, 'checkOverdueLoans'])->name('loans_item.checkOverdue');
-
 });
 
 // Rute khusus staff
@@ -78,7 +77,7 @@ Route::middleware(['auth', 'is_staff'])->group(function () {
     Route::get('/staff/items', [StafItemController::class, 'list'])->name('staff.items.list');
     Route::get('/staff/tendiks', [StafTendikController::class, 'index'])->name('staff.tendiks.index');
 
-    
+
     // Rute Untuk Transactions In
     Route::get('/staff/transactions_in', [StafTransactionsInController::class, 'index'])->name('StafTransactions_in.index');
     Route::get('/staff/transactions_in/create', [StafTransactionsInController::class, 'create'])->name('StafTransactions_in.create');

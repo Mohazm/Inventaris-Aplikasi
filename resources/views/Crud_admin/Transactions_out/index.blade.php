@@ -24,47 +24,58 @@
         document.addEventListener('DOMContentLoaded', function() {
             var toastElList = [].slice.call(document.querySelectorAll('.toast'));
             var toastList = toastElList.map(function(toastEl) {
-                return new bootstrap.Toast(toastEl, {
-                    delay: 3000
-                });
+                return new bootstrap.Toast(toastEl, { delay: 3000 });
             });
             toastList.forEach(toast => toast.show());
         });
     </script>
-@endif
-<style>
-    /* Toast/Alert styling */
-    .toast {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        z-index: 1055;
-        background-color: #28a745;
-        color: #fff;
-        border-radius: 0.25rem;
-    }
+    @endif
 
-    .toast .toast-body {
-        padding: 0.75rem;
-    }
+    <style>
+        /* Toast/Alert styling */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1055;
+            background-color: #28a745;
+            color: #fff;
+            border-radius: 0.25rem;
+        }
 
-    .toast .close {
-        color: #fff;
-        opacity: 0.8;
-    }
-    .img-rounded {
-border-radius: 30px;
-width: 100px;
-height: 100px;
-object-fit: cover;
-}
+        .toast .toast-body {
+            padding: 0.75rem;
+        }
 
-</style>
-   
-        <a href="{{ route('Transactions_out.create') }}" class="btn btn-primary btn-lg mb-3 shadow">
-            <i class="bi bi-plus-circle"></i> Tambah Transaksi Baru
-        </a>
-   
+        .toast .close {
+            color: #fff;
+            opacity: 0.8;
+        }
+
+        /* Button & Table Styling */
+        .table-responsive {
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        .table th, .table td {
+            vertical-align: middle;
+        }
+
+        .btn-outline-danger, .btn-outline-warning {
+            border-radius: 25px;
+            font-size: 0.85rem;
+        }
+
+        .btn-outline-danger:hover, .btn-outline-warning:hover {
+            border-color: #dc3545;
+        }
+    </style>
+
+    <a href="{{ route('Transactions_out.create') }}" class="btn btn-primary btn-lg mb-3 shadow">
+        <i class="bi bi-plus-circle"></i> Tambah Transaksi Baru
+    </a>
+
     <!-- Tabel Transaksi -->
     <div class="table-responsive shadow-lg rounded">
         <table class="table align-middle table-hover">
@@ -123,7 +134,9 @@ object-fit: cover;
         </table>
     </div>
 
-    <!-- Tombol Tambah Transaksi -->
+    <!-- Pagination -->
    
+        {{ $transactions_outs->links() }}
+    
 </div>
 @endsection

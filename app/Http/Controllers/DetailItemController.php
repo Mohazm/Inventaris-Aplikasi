@@ -15,7 +15,7 @@ class DetailItemController extends Controller
     {
         try {
             // Ambil semua detail barang berdasarkan item_id
-            $detail_items = Detail_item::where('item_id', $itemId)->paginate(10);
+            $detail_items = Detail_item::where('item_id', $itemId)->simplePaginate(10);
 
             if ($detail_items->isEmpty()) {
                 return redirect()->route('items.index')->withErrors(['error' => 'Tidak ada detail barang ditemukan untuk produk ini.']);

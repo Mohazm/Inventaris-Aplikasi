@@ -14,7 +14,7 @@
 
                     <div class="mb-3">
                         <label for="item_id" class="form-label">Pilih Barang</label>
-                        <select class="form-select" id="item_id" name="item_id" required>
+                        <select class="form-select @error('item_id') is-invalid @enderror" id="item_id" name="item_id">
                             @foreach ($items as $item)
                                 <option value="{{ $item->id }}" 
                                         {{ $item->id == $loans_items->item_id ? 'selected' : '' }}>
@@ -22,11 +22,14 @@
                                 </option>
                             @endforeach
                         </select>
+                        @error('item_id')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <div class="mb-3">
                         <label for="tendik_id" class="form-label">Pilih Peminjam</label>
-                        <select class="form-select" id="tendik_id" name="tendik_id" required>
+                        <select class="form-select @error('tendik_id') is-invalid @enderror" id="tendik_id" name="tendik_id">
                             @foreach ($tendiks as $tendik)
                                 <option value="{{ $tendik->id }}" 
                                         {{ $tendik->id == $loans_items->tendik_id ? 'selected' : '' }}>
@@ -34,29 +37,44 @@
                                 </option>
                             @endforeach
                         </select>
+                        @error('tendik_id')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <div class="mb-3">
                         <label for="jumlah_pinjam" class="form-label">Jumlah Pinjam</label>
-                        <input type="number" class="form-control" id="jumlah_pinjam" name="jumlah_pinjam" min="1"
-                               value="{{ $loans_items->jumlah_pinjam }}" required>
+                        <input type="number" class="form-control @error('jumlah_pinjam') is-invalid @enderror" id="jumlah_pinjam" name="jumlah_pinjam" min="1"
+                               value="{{ old('jumlah_pinjam', $loans_items->jumlah_pinjam) }}">
+                        @error('jumlah_pinjam')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <div class="mb-3">
                         <label for="tanggal_pinjam" class="form-label">Tanggal Pinjam</label>
-                        <input type="datetime-local" class="form-control" id="tanggal_pinjam" name="tanggal_pinjam"
-                               value="{{ $loans_items->tanggal_pinjam }}" required>
+                        <input type="datetime-local" class="form-control @error('tanggal_pinjam') is-invalid @enderror" id="tanggal_pinjam" name="tanggal_pinjam"
+                               value="{{ old('tanggal_pinjam', \Carbon\Carbon::parse($loans_items->tanggal_pinjam)->format('Y-m-d\TH:i')) }}">
+                        @error('tanggal_pinjam')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <div class="mb-3">
                         <label for="tanggal_kembali" class="form-label">Tanggal Kembali</label>
-                        <input type="datetime-local" class="form-control" id="tanggal_kembali" name="tanggal_kembali"
-                               value="{{ $loans_items->tanggal_kembali }}" required>
+                        <input type="datetime-local" class="form-control @error('tanggal_kembali') is-invalid @enderror" id="tanggal_kembali" name="tanggal_kembali"
+                               value="{{ old('tanggal_kembali', \Carbon\Carbon::parse($loans_items->tanggal_kembali)->format('Y-m-d\TH:i')) }}">
+                        @error('tanggal_kembali')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <div class="mb-3">
                         <label for="tujuan_peminjaman" class="form-label">Tujuan Peminjaman</label>
-                        <textarea class="form-control" id="tujuan_peminjaman" name="tujuan_peminjaman" rows="3" required>{{ $loans_items->tujuan_peminjaman }}</textarea>
+                        <textarea class="form-control @error('tujuan_peminjaman') is-invalid @enderror" id="tujuan_peminjaman" name="tujuan_peminjaman" rows="3">{{ old('tujuan_peminjaman', $loans_items->tujuan_peminjaman) }}</textarea>
+                        @error('tujuan_peminjaman')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <button type="submit" class="btn btn-primary">Simpan</button>

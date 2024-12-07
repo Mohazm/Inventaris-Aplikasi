@@ -2,9 +2,9 @@
 
 @section('content')
 <div class="container my-4">
-    <h1 class="text-center mb-4">Daftar Tendik</h1>
+    <h1 class="text-center mb-4">📝Daftar Pemimjam</h1><hr>
     <a href="{{ route('tendiks.create') }}" class="btn btn-primary mb-3">
-        <i class="bx bx-plus-circle"></i> Tambah Tendik
+        <i class="bx bx-plus-circle"></i> Tambah Pemimjam
     </a>
 
     @if (session('success'))
@@ -44,10 +44,10 @@
                                 <div class="img-rounded bg-primary text-center me-3">
                                     <i class="bx bxs-user text-white" style="font-size: 3rem;"></i>
                                 </div>
-                                <h5 class="card-title mb-0">{{ $tendik->name }}</h5>
+                                <h5 class="card-title mb-0">{{ $tendik->name }}_</h5>
                             </div>
                             <p class="text-muted">
-                                <span class="badge bg-info text-dark">{{ $tendik->jabatan }}</span>
+                                <span class="badge bg-info text-dark">{{ $tendik->jabatan }}_</span>
                             </p>
                             <div class="d-flex justify-content-between">
                                 <a href="{{ route('tendiks.edit', $tendik->id) }}" class="btn btn-warning btn-sm">

@@ -11,7 +11,7 @@ class TransactionsOutController extends Controller
 {
     public function index()
     {
-        $transactions_outs = Transactions_out::with('item')->get();
+        $transactions_outs = Transactions_out::with('item')->simplePaginate(5); // 10 items per page
         return view('Crud_admin.transactions_out.index', compact('transactions_outs'));
     }
 

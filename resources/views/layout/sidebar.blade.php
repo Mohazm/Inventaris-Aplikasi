@@ -54,91 +54,112 @@
         </a>
     </div>
 
-    <div class="menu-inner-shadow"></div>
+    {{-- <div class="menu-inner-shadow"></div> --}}
 
-    <ul class="menu-inner py-1">
-        <li class="menu-item {{ Route::is('admin.index') ? 'active' : '' }}">
-            <a href="{{ route('admin.index') }}" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-home-circle"></i>
-                <div>Dashboard</div>
-            </a>
-        </li>
-        <li class="menu-item {{ Route::is('staff.index') ? 'active' : '' }}">
-            <a href="{{ route('staff.index') }}" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-home-circle"></i>
-                <div>Staff</div>
-            </a>
-        </li>
+    <div class="sidebar">
+        <ul class="menu-inner py-1">
+            <li class="menu-item {{ Route::is('admin.index') ? 'active' : '' }}">
+                <a href="{{ route('admin.index') }}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                    <div>Dashboard</div>
+                </a>
+            </li>
+            <li class="menu-item {{ Route::is('staff.index') ? 'active' : '' }}">
+                <a href="{{ route('staff.index') }}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                    <div>Staff</div>
+                </a>
+            </li>
 
-        <li class="menu-header small text-uppercase">
-            <span class="menu-header-text">Pengelolaan Data Master</span>
-        </li>
-        <li class="menu-item {{ Route::is('Items.index') ? 'active' : '' }}">
-            <a href="{{ route('Items.index') }}" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-box"></i>
-                <div>Barang</div>
-            </a>
-        </li>
-        <li class="menu-item {{ Route::is('category.index') ? 'active' : '' }}">
-            <a href="{{ route('category.index') }}" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-category"></i>
-                <div>Kategori</div>
-            </a>
-        </li>
-        <li class="menu-item {{ Route::is('suppliers.index') ? 'active' : '' }}">
-            <a href="{{ route('suppliers.index') }}" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-store-alt"></i>
-                <div>Supplier</div>
-            </a>
-        </li>
-        <li class="menu-item {{ Route::is('tendiks.index') ? 'active' : '' }}">
-            <a href="{{ route('tendiks.index') }}" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-store-alt"></i>
-                <div>Daftar Pemimjam</div>
-            </a>
-        </li>
-        <li class="menu-item">
-            <a href="#" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-user"></i>
-                <div>Log Aktivitas</div>
-            </a>
-        </li>
-        <li class="menu-header small text-uppercase">
-            <span class="menu-header-text">Pengelola Transaksi</span>
-        </li>
-        <li class="menu-item {{ Route::is('Transactions_in.index') ? 'active' : '' }}">
-            <a href="{{ route('Transactions_in.index') }}" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-transfer-alt"></i>
-                <div>Transaksi Barang Masuk</div>
-            </a>
-        </li>
-        <li class="menu-item {{ Route::is('Transactions_out.index') ? 'active' : '' }}">
-            <a href="{{ route('Transactions_out.index') }}" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-transfer-alt"></i>
-                <div>Transaksi Barang Keluar</div>
-            </a>
-        </li>
-        <li class="menu-item {{ Route::is('loans_item.index') ? 'active' : '' }}">
-            <a href="{{ route('loans_item.index') }}" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-transfer-alt"></i>
-                <div>Monitor Peminjaman</div>
-            </a>
-        </li>
-    </ul>
-    <style>
-        /* Efek scroll halus pada menu */
-        .menu-inner {
-            max-height: calc(100vh - 80px); /* Menyesuaikan dengan tinggi layar */
-            overflow-y: auto; /* Mengaktifkan scroll jika konten melebihi tinggi */
-            scroll-behavior: smooth; /* Menambahkan efek scroll halus */
-        }
-    
-        /* Menu item aktif */
-        .menu-item.active .menu-link {
-            background-color: #f8f9fa; /* Warna latar belakang menu aktif */
-            color: #696cff; /* Warna teks menu aktif */
-            font-weight: bold; /* Teks tebal */
-        }
-    </style>
-    
+            <li class="menu-header small text-uppercase">
+                <span class="menu-header-text">Pengelolaan Data Master</span>
+            </li>
+            <li class="menu-item {{ Route::is('Items.index') ? 'active' : '' }}">
+                <a href="{{ route('Items.index') }}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-box"></i>
+                    <div>Barang</div>
+                </a>
+            </li>
+            {{-- <li class="menu-item {{ Route::is('c') ? 'active' : '' }}">
+                <a href="{{ route('cekbarang.index') }}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-box"></i>
+                    <div>Cek Barang</div>
+                </a>
+            </li> --}}
+            <li class="menu-item {{ Route::is('category.index') ? 'active' : '' }}">
+                <a href="{{ route('category.index') }}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-category"></i>
+                    <div>Kategori</div>
+                </a>
+            </li>
+            <li class="menu-item {{ Route::is('suppliers.index') ? 'active' : '' }}">
+                <a href="{{ route('suppliers.index') }}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-store-alt"></i>
+                    <div>Supplier</div>
+                </a>
+            </li>
+            <li class="menu-item {{ Route::is('tendiks.index') ? 'active' : '' }}">
+                <a href="{{ route('tendiks.index') }}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-store-alt"></i>
+                    <div>Daftar Pemimjam</div>
+                </a>
+            </li>
+            {{-- <li class="menu-item">
+                <a href="#" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-user"></i>
+                    <div>Log Aktivitas</div>
+                </a>
+            </li> --}}
+            <li class="menu-header small text-uppercase">
+                <span class="menu-header-text">Pengelola Transaksi</span>
+            </li>
+            <li class="menu-item {{ Route::is('Transactions_in.index') ? 'active' : '' }}">
+                <a href="{{ route('Transactions_in.index') }}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-transfer-alt"></i>
+                    <div> Barang Masuk</div>
+                </a>
+            </li>
+            <li class="menu-item {{ Route::is('Transactions_out.index') ? 'active' : '' }}">
+                <a href="{{ route('Transactions_out.index') }}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-transfer-alt"></i>
+                    <div> Barang Keluar</div>
+                </a>
+            </li>
+            <li class="menu-item {{ Route::is('loans_item.index') ? 'active' : '' }}">
+                <a href="{{ route('loans_item.index') }}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-transfer-alt"></i>
+                    <div>Monitor Peminjaman</div>
+                </a>
+            </li>
+        </ul>
+    </div>
 </aside>
+<style>
+    .menu-inner {
+        overflow-y: auto;
+        /* Aktifkan scroll vertikal */
+        max-height: calc(100vh - 20px);
+        /* Batasi tinggi agar sesuai layar */
+        scrollbar-width: thin;
+        /* Untuk Firefox */
+        scrollbar-color: #ccc #f9f9f9;
+        /* Warna scrollbar */
+    }
+
+    .menu-inner::-webkit-scrollbar {
+        width: 10px;
+        /* Lebar scrollbar */
+    }
+
+    .menu-inner::-webkit-scrollbar-thumb {
+        background-color: #ccc;
+        /* Warna slider */
+        border-radius: 10px;
+        /* Bikin lebih smooth */
+    }
+
+    .menu-inner::-webkit-scrollbar-thumb:hover {
+        background-color: #aaa;
+        /* Warna saat hover */
+    }
+</style>
