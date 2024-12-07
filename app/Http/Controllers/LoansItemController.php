@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Loans_item;
 use App\Models\Item;
+use App\Models\Category;
 use App\Models\Tendik;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
@@ -13,15 +14,23 @@ class LoansItemController extends Controller
     // Menampilkan semua loans_items
     public function index()
     {
-        $loans_items = Loans_item::with(['item', 'tendik'])->get();
+        $loans_items = Loans_item::with(['item.category', 'tendik'])->get();
         return view('Crud_admin.loans_item.index', compact('loans_items'));
     }
 
     // Form untuk membuat loans_items baru
     public function create()
     {
-        $items = Item::all(); // Ambil semua item
-        $tendiks = Tendik::all(); // Ambil semua tendik
+        // Filter kategori yang diizinkan
+        $allowedCategories = ['Kebersihan', 'Olah Raga', 'Elektronik'];
+        $categoryIds = Category::whereIn('name', $allowedCategories)->pluck('id');
+
+        // Ambil item yang sesuai kategori
+        $items = Item::whereIn('categories_id', $categoryIds)->get();
+
+        // Ambil semua tendik
+        $tendiks = Tendik::all();
+
         return view('Crud_admin.loans_item.create', compact('items', 'tendiks'));
     }
 
@@ -37,8 +46,14 @@ class LoansItemController extends Controller
             'tujuan_peminjaman' => 'required|string|max:255',
         ]);
 
+        // Validasi kategori barang
+        $item = Item::with('category')->findOrFail($request->item_id);
+        $allowedCategories = ['Kebersihan', 'Olah Raga', 'Elektronik'];
+        if (!in_array($item->category->name, $allowedCategories)) {
+            return redirect()->back()->withErrors(['error' => 'Barang hanya bisa dipinjam jika termasuk kategori Kebersihan, Olah Raga, atau Elektronik.']);
+        }
+
         // Kurangi stok item berdasarkan jumlah pinjaman
-        $item = Item::findOrFail($request->item_id);
         if ($item->stock < $request->jumlah_pinjam) {
             return redirect()->back()->withErrors(['error' => 'Jumlah pinjaman melebihi stok yang tersedia.']);
         }
@@ -56,8 +71,17 @@ class LoansItemController extends Controller
     public function edit($id)
     {
         $loans_items = Loans_item::findOrFail($id);
-        $items = Item::all(); // Ambil semua item
-        $tendiks = Tendik::all(); // Ambil semua tendik
+
+        // Filter kategori yang diizinkan
+        $allowedCategories = ['Kebersihan', 'Olah Raga', 'Elektronik'];
+        $categoryIds = Category::whereIn('name', $allowedCategories)->pluck('id');
+
+        // Ambil item yang sesuai kategori
+        $items = Item::whereIn('categories_id', $categoryIds)->get();
+
+        // Ambil semua tendik
+        $tendiks = Tendik::all();
+
         return view('Crud_admin.loans_item.edit', compact('loans_items', 'items', 'tendiks'));
     }
 
@@ -74,10 +98,16 @@ class LoansItemController extends Controller
         ]);
 
         $loans_items = Loans_item::findOrFail($id);
+        $item = Item::with('category')->findOrFail($request->item_id);
+
+        // Validasi kategori barang
+        $allowedCategories = ['Kebersihan', 'Olah Raga', 'Elektronik'];
+        if (!in_array($item->category->name, $allowedCategories)) {
+            return redirect()->back()->withErrors(['error' => 'Barang hanya bisa dipinjam jika termasuk kategori Kebersihan, Olah Raga, atau Elektronik.']);
+        }
 
         // Update stok jika jumlah pinjaman berubah
         if ($request->has('jumlah_pinjam')) {
-            $item = Item::findOrFail($request->item_id);
             $stok_dikembalikan = $loans_items->jumlah_pinjam - $request->jumlah_pinjam;
             $item->stock += $stok_dikembalikan;
             $item->save();
@@ -103,37 +133,30 @@ class LoansItemController extends Controller
         return redirect()->route('loans_item.index')->with('success', 'Peminjaman berhasil dihapus.');
     }
 
-    // Menerima loans_items (ubah status menjadi 'di pinjam')
+    // Menerima loans_items (ubah status menjadi 'dipakai')
     public function accept($id)
     {
         $loans_items = Loans_item::findOrFail($id);
-        $item = Item::findOrFail($loans_items->item_id); // Ambil data barang terkait
-    
-        // Periksa apakah status sudah diproses sebelumnya
+
         if ($loans_items->status !== 'loading') {
             return redirect()->back()->withErrors(['error' => 'Peminjaman sudah diproses.']);
         }
-    
-        // Validasi stok
-        if ($item->stock < $loans_items->quantity) {
+
+        $item = Item::findOrFail($loans_items->item_id);
+
+        if ($item->stock < $loans_items->jumlah_pinjam) {
             return redirect()->back()->withErrors(['error' => 'Jumlah pinjaman melebihi stok yang tersedia.']);
         }
-    
-        // Kurangi stok barang
-        $item->stock -= $loans_items->quantity;
+
+        $item->stock -= $loans_items->jumlah_pinjam;
         $item->save();
-    
-        // Ubah status menjadi "dipakai"
+
         $loans_items->status = 'dipakai';
         $loans_items->save();
-    
+
         return redirect()->route('loans_item.index')->with('success', 'Peminjaman diterima.');
     }
-    
 
-
-    // Membatalkan loans_items
-    // Membatalkan loans_items
     // Membatalkan loans_items
     public function cancel($id)
     {
@@ -143,12 +166,10 @@ class LoansItemController extends Controller
             return redirect()->back()->withErrors(['error' => 'Peminjaman sudah dibatalkan sebelumnya.']);
         }
 
-        // Kembalikan stok ke item
         $item = Item::findOrFail($loans_items->item_id);
         $item->stock += $loans_items->jumlah_pinjam;
         $item->save();
 
-        // Update status menjadi 'ditolak'
         $loans_items->status = 'ditolak';
         $loans_items->save();
 
@@ -163,12 +184,10 @@ class LoansItemController extends Controller
             ->get();
 
         foreach ($overdueLoans as $loans_items) {
-            // Kembalikan stok barang
             $item = Item::findOrFail($loans_items->item_id);
             $item->stock += $loans_items->jumlah_pinjam;
             $item->save();
 
-            // Update status peminjaman menjadi 'selesai'
             $loans_items->status = 'selesai';
             $loans_items->save();
         }

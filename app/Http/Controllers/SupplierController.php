@@ -20,7 +20,7 @@ class SupplierController extends Controller
     {
         // Validasi input
         $validated = $request->validate([
-            'nama_supplier' => 'required|string|max:255',
+            'nama_supplier' => 'required|string|max:255|unique:suppliers,nama_supplier',
             'alamat' => 'required|string',
             'kontak' => 'nullable|string|max:255',
         ]);
@@ -43,7 +43,7 @@ class SupplierController extends Controller
     {
         // Validasi input
         $validated = $request->validate([
-            'nama_supplier' => 'required|string|max:255',
+            'nama_supplier' => 'required|string|max:255|unique:suppliers , nama_supplier,' . $supplier->id,
             'alamat' => 'required|string',
             'kontak' => 'nullable|string|max:255',
         ]);

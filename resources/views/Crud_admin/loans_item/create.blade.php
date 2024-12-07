@@ -31,12 +31,7 @@
                     <div class="mb-3">
                         <label for="tendik_id" class="form-label">Pilih Peminjam</label>
                         <select class="form-select @error('tendik_id') is-invalid @enderror" id="tendik_id" name="tendik_id">
-                            <option value="" disabled selected>-- Pilih Peminjam --</option>
-                            @foreach ($tendiks as $tendik)
-                                <option value="{{ $tendik->id }}" {{ old('tendik_id') == $tendik->id ? 'selected' : '' }}>
-                                    {{ $tendik->name }}
-                                </option>
-                            @endforeach
+                            <option value="" disabled selected>-- Pilih atau Tambahkan Peminjam --</option>
                         </select>
                         @error('tendik_id')
                             <div class="text-danger mt-1">{{ $message }}</div>
@@ -86,4 +81,65 @@
             </div>
         </div>
     </div>
+
+    <!-- Tambahkan Script untuk Select2 -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Inisialisasi Select2 untuk Peminjam
+            $('#tendik_id').select2({
+                tags: true, // Memungkinkan menambahkan data baru
+                placeholder: '-- Pilih atau Tambahkan Peminjam --',
+                ajax: {
+                    url: '{{ route('tendiks.index') }}', // Endpoint untuk mendapatkan data peminjam
+                    dataType: 'json',
+                    delay: 250,
+                    processResults: function (data) {
+                        return {
+                            results: data.map(function (item) {
+                                return { id: item.id, text: item.name };
+                            }),
+                        };
+                    },
+                    cache: true,
+                },
+                createTag: function (params) {
+                    var term = $.trim(params.term);
+                    if (term === '') {
+                        return null;
+                    }
+                    return {
+                        id: term,
+                        text: term,
+                        newTag: true, // Tandai sebagai entri baru
+                    };
+                },
+            });
+
+            // Tangkap event saat data baru ditambahkan
+            $('#tendik_id').on('select2:select', function (e) {
+                var data = e.params.data;
+
+                if (data.newTag) {
+                    // Kirim data baru ke server
+                    $.ajax({
+                        url: '{{ route('tendiks.store') }}', // Endpoint untuk menyimpan data baru
+                        type: 'POST',
+                        data: {
+                            name: data.text,
+                            _token: '{{ csrf_token() }}', // Kirim CSRF token
+                        },
+                        success: function (response) {
+                            // Tambahkan data baru ke dropdown Select2
+                            var newOption = new Option(response.name, response.id, false, true);
+                            $('#tendik_id').append(newOption).trigger('change');
+                        },
+                        error: function () {
+                            alert('Gagal menambahkan peminjam baru.');
+                        },
+                    });
+                }
+            });
+        });
+    </script>
 @endsection
