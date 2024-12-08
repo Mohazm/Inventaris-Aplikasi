@@ -9,4 +9,7 @@ class Borrower extends Model
 {
     use HasFactory;
     protected $guarded = [];
+    public function Loans_items(){
+        return $this->hasMany(Loans_item::class);
+    }
 }

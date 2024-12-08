@@ -11,6 +11,9 @@ class Loans_item extends Model
 
     protected $guarded = [];
 
+    public function borrower(){
+        return $this->belongsTo(Borrower::class);
+    }
     public function item()
     {
         return $this->belongsTo(Item::class, 'item_id');

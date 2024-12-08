@@ -108,7 +108,7 @@ object-fit: cover;
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $loan->item->nama_barang ?? 'Barang tidak ditemukan' }}</td>
-                                <td>{{ $loan->tendik->name ?? 'Pengguna tidak ditemukan' }}</td>
+                                <td>{{ $loan->borrower->nama_peminjam ?? 'Peminjam tidak ditemukan' }}</td>
                                 <td>{{ $loan->jumlah_pinjam }}</td>
                                 <td>{{ $loan->tanggal_pinjam ? \Carbon\Carbon::parse($loan->tanggal_pinjam)->format('d M Y, H:i') : '-' }}</td>
                                 <td>{{ $loan->tanggal_kembali ? \Carbon\Carbon::parse($loan->tanggal_kembali)->format('d M Y, H:i') : '-' }}</td>

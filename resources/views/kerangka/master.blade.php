@@ -5,11 +5,7 @@
 <!-- PWA  -->
 <meta name="theme-color" content="#6777ef" />
 <link rel="apple-touch-icon" href="{{ asset('logo.png') }}">
-<link rel="manifest" href="{{ asset('/manifest.json') }}">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/css/select2.min.css" rel="stylesheet" />
-
-
 @include('layout.style')
 
 <body>

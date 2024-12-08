@@ -6,6 +6,7 @@ use App\Models\Loans_item;
 use App\Models\Item;
 use App\Models\Category;
 use App\Models\Tendik;
+use App\Models\Borrower;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -14,7 +15,7 @@ class LoansItemController extends Controller
     // Menampilkan semua loans_items
     public function index()
     {
-        $loans_items = Loans_item::with(['item.category', 'tendik'])->get();
+        $loans_items = Loans_item::with(['item.category', 'borrower',])->get();
         return view('Crud_admin.loans_item.index', compact('loans_items'));
     }
 
@@ -28,18 +29,19 @@ class LoansItemController extends Controller
         // Ambil item yang sesuai kategori
         $items = Item::whereIn('categories_id', $categoryIds)->get();
 
-        // Ambil semua tendik
-        $tendiks = Tendik::all();
+        // Ambil semua peminjam (tendik)
+        $borrowers = Borrower::all();  // Ubah variabel $borrow menjadi $borrowers dan sesuaikan dengan model Borrower
 
-        return view('Crud_admin.loans_item.create', compact('items', 'tendiks'));
+        return view('Crud_admin.loans_item.create', compact('items', 'borrowers'));  // Pastikan menggunakan $borrowers
     }
+
 
     // Menyimpan data loans_items baru
     public function store(Request $request)
     {
         $validated = $request->validate([
             'item_id' => 'required|exists:items,id',
-            'tendik_id' => 'required|exists:tendiks,id',
+            'borrower_id' => 'required|exists:borrowers,id',
             'tanggal_pinjam' => 'required|date',
             'tanggal_kembali' => 'required|date|after:tanggal_pinjam',
             'jumlah_pinjam' => 'required|integer|min:1',
@@ -47,7 +49,7 @@ class LoansItemController extends Controller
         ]);
 
         // Validasi kategori barang
-        $item = Item::with('category')->findOrFail($request->item_id);
+        $item = Item::with('category')->findOrFail(id: $request->item_id);
         $allowedCategories = ['Kebersihan', 'Olah Raga', 'Elektronik'];
         if (!in_array($item->category->name, $allowedCategories)) {
             return redirect()->back()->withErrors(['error' => 'Barang hanya bisa dipinjam jika termasuk kategori Kebersihan, Olah Raga, atau Elektronik.']);
@@ -67,6 +69,7 @@ class LoansItemController extends Controller
         return redirect()->route('loans_item.index')->with('success', 'Peminjaman berhasil dibuat dengan status loading.');
     }
 
+
     // Form untuk mengedit data loans_items
     public function edit($id)
     {
@@ -80,9 +83,9 @@ class LoansItemController extends Controller
         $items = Item::whereIn('categories_id', $categoryIds)->get();
 
         // Ambil semua tendik
-        $tendiks = Tendik::all();
+        $borrowers = Borrower::all();  
 
-        return view('Crud_admin.loans_item.edit', compact('loans_items', 'items', 'tendiks'));
+        return view('Crud_admin.loans_item.edit', compact('loans_items', 'items', 'borrowers'));
     }
 
     // Memperbarui data loans_items
@@ -90,7 +93,7 @@ class LoansItemController extends Controller
     {
         $validated = $request->validate([
             'item_id' => 'exists:items,id',
-            'tendik_id' => 'exists:tendiks,id',
+            'borrower_id' => 'exists:borrowers,id', // Ganti tendik_id dengan borrower_id
             'tanggal_pinjam' => 'date',
             'tanggal_kembali' => 'date|after:tanggal_pinjam',
             'jumlah_pinjam' => 'integer|min:1',
@@ -113,10 +116,19 @@ class LoansItemController extends Controller
             $item->save();
         }
 
-        $loans_items->update($validated);
+        // Ganti tendik_id dengan borrower_id saat update
+        $loans_items->update([
+            'borrower_id' => $validated['borrower_id'], // Update borrower_id
+            'item_id' => $validated['item_id'],
+            'tanggal_pinjam' => $validated['tanggal_pinjam'],
+            'tanggal_kembali' => $validated['tanggal_kembali'],
+            'jumlah_pinjam' => $validated['jumlah_pinjam'],
+            'tujuan_peminjaman' => $validated['tujuan_peminjaman'],
+        ]);
 
         return redirect()->route('loans_item.index')->with('success', 'Peminjaman berhasil diperbarui.');
     }
+
 
     // Menghapus data loans_items
     public function destroy($id)

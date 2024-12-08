@@ -11,6 +11,7 @@ class Tendik extends Model
 
     protected $guarded = [];
 
+  
     public function itemLoans()
     {
         return $this->hasMany(Loans_item::class, 'tendik_id');

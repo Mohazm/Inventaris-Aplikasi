@@ -28,16 +28,16 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="tendik_id" class="form-label">Pilih Peminjam</label>
-                        <select class="form-select @error('tendik_id') is-invalid @enderror" id="tendik_id" name="tendik_id">
-                            @foreach ($tendiks as $tendik)
-                                <option value="{{ $tendik->id }}" 
-                                        {{ $tendik->id == $loans_items->tendik_id ? 'selected' : '' }}>
-                                    {{ $tendik->name }}
+                        <label for="borrower_id" class="form-label">Pilih Peminjam</label>
+                        <select class="form-select @error('borrower_id') is-invalid @enderror" id="borrower_id" name="borrower_id">
+                            @foreach ($borrowers as $borrower)
+                                <option value="{{ $borrower->id }}" 
+                                        {{ $borrower->id == $loans_items->borrower_id ? 'selected' : '' }}>
+                                    {{ $borrower->nama_peminjam }}
                                 </option>
                             @endforeach
                         </select>
-                        @error('tendik_id')
+                        @error('borrower_id')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>

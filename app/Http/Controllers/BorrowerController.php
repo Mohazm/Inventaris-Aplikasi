@@ -29,26 +29,26 @@ class BorrowerController extends Controller
      */
     public function store(Request $request)
     {
-        // Validasi data yang diterima
         $validated = $request->validate([
-            'nama_peminjam' => 'required|unique:borrowers|string|max:255',
-            'no_telp' => [
-                'required',
-                'digits:12', // Menyesuaikan format nomor telepon
-                'regex:/^(?!-)\d{12}$/' // Validasi nomor telepon tidak boleh diawali dengan 08
-            ],
-        ], [
-            'nama_peminjam.unique' => 'Nama sudah ada',
-            'no_telp.regex' => 'Nomor telepon tidak boleh dimulai dengan 08',
-            'no_telp.digits' => 'Nomor telepon harus terdiri dari 12 digit',
+            'nama_peminjam' => 'required|string|max:255',
+            'no_telp' => 'required|string|max:15',
         ]);
 
-        // Simpan data peminjam baru
-        Borrower::create($validated);
+        // Coba untuk menyimpan data borrower
+        try {
+            $borrower = Borrower::create([
+                'nama_peminjam' => $validated['nama_peminjam'],
+                'no_telp' => $validated['no_telp'],
+            ]);
 
-        // Redirect setelah berhasil
-        return redirect()->route('borrowers.index')->with('success', 'Peminjam berhasil ditambahkan');
+            // Mengembalikan respons JSON jika berhasil
+            return response()->json($borrower, 201);
+        } catch (\Exception $e) {
+            // Jika terjadi error, kembalikan respons error dalam format JSON
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
+
     /**
      * Display the specified resource.
      */
@@ -97,6 +97,6 @@ class BorrowerController extends Controller
     public function destroy(Borrower $borrower)
     {
         $borrower->delete();
-        return redirect()->route('Crud_admin.borrowers.index')->with('success', 'Peminjam berhasil dihapus');
+        return redirect()->route('borrowers.index')->with('success', 'Peminjam berhasil dihapus');
     }
 }
