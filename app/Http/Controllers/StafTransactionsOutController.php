@@ -7,18 +7,18 @@ use App\Models\Item;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
-class TransactionsOutController extends Controller
+class StafTransactionsOutController extends Controller
 {
     public function index()
     {
-        $transactions_outs = Transactions_out::with('item')->simplePaginate(5); // 5 items per page
-        return view('Crud_admin.transactions_out.index', compact('transactions_outs'));
+        $transactions_outs = Transactions_out::with('item')->simplePaginate(5);
+        return view('staff.transactions_out.index', compact('transactions_outs'));
     }
 
     public function create()
     {
         $items = Item::all();
-        return view('Crud_admin.transactions_out.create', compact('items'));
+        return view('staff.transactions_out.create', compact('items'));
     }
 
     public function store(Request $request)
@@ -49,6 +49,9 @@ class TransactionsOutController extends Controller
             'jumlah.min' => 'Jumlah barang keluar minimal adalah 0.01.',
         ]);
 
+        $requestData = $request->all();
+        $requestData['tanggal_keluar'] = now()->toDateString();
+
         $items = Item::find($request->item_id);
 
         if ($request->jumlah > $items->stock) {
@@ -56,10 +59,10 @@ class TransactionsOutController extends Controller
         }
 
         try {
-            Transactions_out::create($request->all());
+            Transactions_out::create($requestData);
             $items->decrement('stock', $request->jumlah);
 
-            return redirect()->route('Transactions_out.index')->with('success', 'Transaksi barang keluar berhasil ditambahkan.');
+            return redirect()->route('StafTransactions_out.index')->with('success', 'Transaksi barang keluar berhasil ditambahkan.');
         } catch (\Exception $e) {
             Log::error('Error saat menyimpan transaksi barang keluar: ' . $e->getMessage());
             return back()->withErrors(['error' => 'Terjadi kesalahan saat menyimpan transaksi.'])->withInput();
@@ -72,10 +75,10 @@ class TransactionsOutController extends Controller
         $items = Item::all();
 
         if (!$transaction_out) {
-            return redirect()->route('Transactions_out.index')->withErrors(['error' => 'Transaksi tidak ditemukan.']);
+            return redirect()->route('StafTransactions_out.index')->withErrors(['error' => 'Transaksi tidak ditemukan.']);
         }
 
-        return view('Crud_admin.transactions_out.edit', compact('transaction_out', 'items'));
+        return view('staff.transactions_out.edit', compact('transaction_out', 'items'));
     }
 
     public function update(Request $request, $id)
@@ -83,7 +86,7 @@ class TransactionsOutController extends Controller
         $transaction_out = Transactions_out::find($id);
 
         if (!$transaction_out) {
-            return redirect()->route('Transactions_out.index')->withErrors(['error' => 'Transaksi tidak ditemukan.']);
+            return redirect()->route('StafTransactions_out.index')->withErrors(['error' => 'Transaksi tidak ditemukan.']);
         }
 
         $request->validate([
@@ -124,7 +127,7 @@ class TransactionsOutController extends Controller
             $transaction_out->update($request->all());
             $items->decrement('stock', $stockChange);
 
-            return redirect()->route('Transactions_out.index')->with('success', 'Transaksi barang keluar berhasil diperbarui.');
+            return redirect()->route('StafTransactions_out.index')->with('success', 'Transaksi barang keluar berhasil diperbarui.');
         } catch (\Exception $e) {
             Log::error('Error saat memperbarui transaksi barang keluar: ' . $e->getMessage());
             return back()->withErrors(['error' => 'Terjadi kesalahan saat memperbarui transaksi.'])->withInput();
@@ -136,7 +139,7 @@ class TransactionsOutController extends Controller
         $transaction_out = Transactions_out::find($id);
 
         if (!$transaction_out) {
-            return redirect()->route('Transactions_out.index')->withErrors(['error' => 'Transaksi tidak ditemukan.']);
+            return redirect()->route('StafTransactions_out.index')->withErrors(['error' => 'Transaksi tidak ditemukan.']);
         }
 
         try {
@@ -145,7 +148,7 @@ class TransactionsOutController extends Controller
 
             $transaction_out->delete();
 
-            return redirect()->route('Transactions_out.index')->with('success', 'Transaksi barang keluar berhasil dihapus.');
+            return redirect()->route('StafTransactions_out.index')->with('success', 'Transaksi barang keluar berhasil dihapus.');
         } catch (\Exception $e) {
             Log::error('Error saat menghapus transaksi barang keluar: ' . $e->getMessage());
             return back()->withErrors(['error' => 'Terjadi kesalahan saat menghapus transaksi.']);

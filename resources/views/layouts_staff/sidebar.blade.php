@@ -93,15 +93,21 @@
             </a>
         </li>
         <li class="menu-item">
+            <a href="{{route('StafTransactions_out.index')}}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-cube-alt"></i>
+                <div>Kelola Transactions Keluar</div>
+            </a>
+        </li>
+        <li class="menu-item">
             <a href="#" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-cube-alt"></i>
                 <div>Pengelola Transaksi</div>
             </a>
         </li>
         <li class="menu-item">
-            <a href="#" class="menu-link">
+            <a href="{{route('activities.index')}}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-user-circle"></i>
-                <div>Laporan dan Audit</div>
+                <div>Aktifitas Pengguna</div>
             </a>
         </li>
     </ul>

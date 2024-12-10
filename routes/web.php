@@ -11,9 +11,11 @@ use App\Http\Controllers\{
     StafItemController,
     StafTendikController,
     StafTransactionsInController,
+    StafTransactionsOutController,
     TransactionsInController,
     TransactionsOutController,
     LoansItemController,
+    ActivityController,
     DetailItemController,
     ProfileController
 };
@@ -88,6 +90,21 @@ Route::middleware(['auth', 'is_staff'])->group(function () {
     Route::get('/staff/transactions_in/{id}/edit', [StafTransactionsInController::class, 'edit'])->name('StafTransactions_in.edit');
     Route::put('/staff/transactions_in/{id}', [StafTransactionsInController::class, 'update'])->name('StafTransactions_in.update');
     Route::delete('/staff/transactions_in/{id}', [StafTransactionsInController::class, 'destroy'])->name('StafTransactions_in.destroy');
+
+    // Rute Untuk Transactions Out
+    Route::get('/staff/transactions_out', [StafTransactionsOutController::class, 'index'])->name('StafTransactions_out.index');
+    Route::get('/staff/transactions_out/create', [StafTransactionsOutController::class, 'create'])->name('StafTransactions_out.create');
+    Route::post('/staff/transactions_out', [StafTransactionsOutController::class, 'store'])->name('StafTransactions_out.store');
+    Route::get('/staff/transactions_out/{id}/edit', [StafTransactionsOutController::class, 'edit'])->name('StafTransactions_out.edit');
+    Route::put('/staff/transactions_out/{id}', [StafTransactionsOutController::class, 'update'])->name('StafTransactions_out.update');
+    Route::delete('/staff/transactions_out/{id}', [StafTransactionsOutController::class, 'destroy'])->name('StafTransactions_out.destroy');
+
+    Route::get('/activities', [ActivityController::class, 'index'])->name('activities.index');
+    Route::get('/activities/create', [ActivityController::class, 'create'])->name('activities.create');
+    Route::post('/activities', [ActivityController::class, 'store'])->name('activities.store');
+    Route::get('/activities/{activity}/edit', [ActivityController::class, 'edit'])->name('activities.edit');
+    Route::put('/activities/{activity}', [ActivityController::class, 'update'])->name('activities.update');
+    Route::delete('/activities/{activity}', [ActivityController::class, 'destroy'])->name('activities.destroy');
 });
 
 // Rute untuk profil pengguna

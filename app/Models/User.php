@@ -51,9 +51,9 @@ class User extends Authenticatable
         return $this->role === 'staff';
     }
 
-    public function activityLogs()
+    public function activity()
     {
-        return $this->hasMany(ActivityLog::class, 'user_id');
+        return $this->hasMany(Activity::class, 'user_id');
     }
 
 
