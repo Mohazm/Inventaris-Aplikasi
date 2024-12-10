@@ -162,6 +162,11 @@ object-fit: cover;
                                         <span>-</span>
                                     @endif
                                 </td>
+                                <td>
+                                    <a href="{{ route('Return.create') }}" class="btn btn-sm btn-warning me-2">
+                                        <i class="bx bx-edit-alt"></i> Return
+                                    </a>
+                                </td>
                             </tr>
                         @empty
                             <tr>
