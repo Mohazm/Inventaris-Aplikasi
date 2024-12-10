@@ -17,28 +17,32 @@ class ItemController extends Controller
         $filterCategory = $request->input('category_id');
         $searchQuery = $request->input('search');
         $perPage = $request->input('per_page', 10); // Default 10 items per page
-
+    
         // Query item dengan relasi kategori
         $itemsQuery = Item::with('category');
-
+    
         // Filter berdasarkan kategori
         if ($filterCategory) {
             $itemsQuery->where('categories_id', $filterCategory);
         }
-
+    
         // Pencarian berdasarkan nama barang
         if ($searchQuery) {
             $itemsQuery->where('nama_barang', 'like', '%' . $searchQuery . '%');
         }
-
+    
+        // Urutkan berdasarkan item yang terakhir kali dibuat (created_at descending)
+        $itemsQuery->orderBy('created_at', 'desc');
+    
         // Pagination
         $items = $itemsQuery->paginate($perPage);
-
+    
         // Ambil semua kategori untuk dropdown filter
         $categories = Category::all();
-
+    
         return view('Crud_admin.Items.index', compact('items', 'categories', 'filterCategory', 'searchQuery', 'perPage'));
     }
+    
 
     public function create()
     {

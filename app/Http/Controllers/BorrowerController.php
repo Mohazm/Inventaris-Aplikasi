@@ -11,10 +11,11 @@ class BorrowerController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    {
-        $borrowers = Borrower::all();  // Ambil semua data peminjam
-        return view('Crud_admin.borrowers.index', compact('borrowers'));
-    }
+{
+    $borrowers = Borrower::orderBy('created_at', 'desc')->get(); // Ambil semua data peminjam dengan urutan terbaru
+    return view('Crud_admin.borrowers.index', compact('borrowers'));
+}
+
 
     /**
      * Show the form for creating a new resource.

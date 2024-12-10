@@ -11,13 +11,15 @@ class TransactionsOutController extends Controller
 {
     public function index()
     {
-        $transactions_outs = Transactions_out::with('item')->simplePaginate(5); // 5 items per page
+        $transactions_outs = Transactions_out::with('item')->simplePaginate(5); // Pagination 5 items per page
         return view('Crud_admin.transactions_out.index', compact('transactions_outs'));
     }
 
     public function create()
     {
-        $items = Item::all();
+        // Filter items dengan stok >= 1
+        $items = Item::where('stock', '>=', 1)->get();
+
         return view('Crud_admin.transactions_out.create', compact('items'));
     }
 
@@ -49,15 +51,15 @@ class TransactionsOutController extends Controller
             'jumlah.min' => 'Jumlah barang keluar minimal adalah 0.01.',
         ]);
 
-        $items = Item::find($request->item_id);
+        $item = Item::findOrFail($request->item_id);
 
-        if ($request->jumlah > $items->stock) {
+        if ($request->jumlah > $item->stock) {
             return back()->withErrors(['error' => 'Jumlah barang keluar melebihi stok yang tersedia.'])->withInput();
         }
 
         try {
             Transactions_out::create($request->all());
-            $items->decrement('stock', $request->jumlah);
+            $item->decrement('stock', $request->jumlah);
 
             return redirect()->route('Transactions_out.index')->with('success', 'Transaksi barang keluar berhasil ditambahkan.');
         } catch (\Exception $e) {
@@ -68,23 +70,17 @@ class TransactionsOutController extends Controller
 
     public function edit($id)
     {
-        $transaction_out = Transactions_out::find($id);
-        $items = Item::all();
+        $transaction_out = Transactions_out::findOrFail($id);
 
-        if (!$transaction_out) {
-            return redirect()->route('Transactions_out.index')->withErrors(['error' => 'Transaksi tidak ditemukan.']);
-        }
+        // Filter items dengan stok >= 1
+        $items = Item::where('stock', '>=', 1)->get();
 
         return view('Crud_admin.transactions_out.edit', compact('transaction_out', 'items'));
     }
 
     public function update(Request $request, $id)
     {
-        $transaction_out = Transactions_out::find($id);
-
-        if (!$transaction_out) {
-            return redirect()->route('Transactions_out.index')->withErrors(['error' => 'Transaksi tidak ditemukan.']);
-        }
+        $transaction_out = Transactions_out::findOrFail($id);
 
         $request->validate([
             'tanggal_keluar' => [
@@ -112,17 +108,18 @@ class TransactionsOutController extends Controller
             'jumlah.min' => 'Jumlah barang keluar minimal adalah 0.01.',
         ]);
 
-        $items = Item::find($transaction_out->item_id);
+        $item = Item::findOrFail($transaction_out->item_id);
 
+        // Perhitungan perubahan stok
         $stockChange = $request->jumlah - $transaction_out->jumlah;
 
-        if ($stockChange > $items->stock) {
+        if ($stockChange > $item->stock) {
             return back()->withErrors(['error' => 'Jumlah barang keluar melebihi stok yang tersedia.'])->withInput();
         }
 
         try {
             $transaction_out->update($request->all());
-            $items->decrement('stock', $stockChange);
+            $item->decrement('stock', $stockChange);
 
             return redirect()->route('Transactions_out.index')->with('success', 'Transaksi barang keluar berhasil diperbarui.');
         } catch (\Exception $e) {
@@ -133,15 +130,11 @@ class TransactionsOutController extends Controller
 
     public function destroy($id)
     {
-        $transaction_out = Transactions_out::find($id);
-
-        if (!$transaction_out) {
-            return redirect()->route('Transactions_out.index')->withErrors(['error' => 'Transaksi tidak ditemukan.']);
-        }
+        $transaction_out = Transactions_out::findOrFail($id);
 
         try {
-            $items = Item::find($transaction_out->item_id);
-            $items->increment('stock', $transaction_out->jumlah);
+            $item = Item::findOrFail($transaction_out->item_id);
+            $item->increment('stock', $transaction_out->jumlah);
 
             $transaction_out->delete();
 

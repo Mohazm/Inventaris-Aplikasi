@@ -104,12 +104,6 @@
                     <div>Supplier</div>
                 </a>
             </li>
-            <li class="menu-item {{ Route::is('tendiks.index') ? 'active' : '' }}">
-                <a href="{{ route('tendiks.index') }}" class="menu-link">
-                    <i class="menu-icon tf-icons bx bx-store-alt"></i>
-                    <div>Daftar Pemimjam</div>
-                </a>
-            </li>
             {{-- <li class="menu-item">
                 <a href="#" class="menu-link">
                     <i class="menu-icon tf-icons bx bx-user"></i>

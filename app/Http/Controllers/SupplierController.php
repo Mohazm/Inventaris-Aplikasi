@@ -7,10 +7,12 @@ use Illuminate\Http\Request;
 class SupplierController extends Controller
 {
     public function index()
-    {
-        $suppliers = Supplier::all();  // Pastikan data diambil dari database
-        return view('Crud_admin.Supplier.index', compact('suppliers'));
-    }
+{
+    $suppliers = Supplier::orderBy('created_at', 'desc') // Urutkan berdasarkan waktu pembuatan terbaru
+        ->get();  // Mengambil semua data supplier
+    
+    return view('Crud_admin.Supplier.index', compact('suppliers'));
+}
 
     public function create()
     {

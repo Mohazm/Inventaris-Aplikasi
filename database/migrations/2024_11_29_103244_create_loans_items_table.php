@@ -14,12 +14,12 @@ return new class extends Migration
         Schema::create('loans_items', function (Blueprint $table) {
             $table->id();
             $table->foreignId('item_id')->constrained()->onDelete('restrict');
+            $table->foreignId('borrower_id')->constrained()->onDelete('restrict');
             $table->date('tanggal_pinjam');
             $table->date('tanggal_kembali');
-            $table->foreignId('borrower_id')->constrained()->onDelete('restrict');
             $table->integer('jumlah_pinjam');
             $table->string('tujuan_peminjaman'); 
-            $table->enum('status',['loading','dipakai','selesai','ditolak']); 
+            $table->enum('status',['menunggu','dipakai','selesai','ditolak']); 
             $table->timestamps();
         });
     }

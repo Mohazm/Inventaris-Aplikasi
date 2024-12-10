@@ -76,10 +76,10 @@ class LoansItemController extends Controller
             'tanggal_kembali' => $request->tanggal_kembali,
             'jumlah_pinjam' => $request->jumlah_pinjam,
             'tujuan_peminjaman' => $request->tujuan_peminjaman,
-            'status' => 'loading',
+            'status' => 'menunggu',
         ]);
 
-        return redirect()->route('loans_item.index')->with('success', 'Peminjaman berhasil dibuat dengan status loading.');
+        return redirect()->route('loans_item.index')->with('success', 'Peminjaman berhasil dibuat dengan status menunggu.');
     }
 
     // Form untuk mengedit data loans_items
@@ -155,7 +155,7 @@ class LoansItemController extends Controller
     {
         $loans_items = Loans_item::findOrFail($id);
 
-        if ($loans_items->status !== 'loading') {
+        if ($loans_items->status !== 'menunggu') {
             return redirect()->back()->withErrors(['error' => 'Peminjaman sudah diproses sebelumnya.']);
         }
 

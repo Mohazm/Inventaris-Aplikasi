@@ -1,4 +1,4 @@
-@extends('kerangka.master')
+@extends('kerangka.staff')
 
 @section('title', 'Daftar Peminjaman')
 
@@ -114,7 +114,7 @@ object-fit: cover;
                                 <td>{{ $loan->tanggal_kembali ? \Carbon\Carbon::parse($loan->tanggal_kembali)->format('d M Y, H:i') : '-' }}</td>
                                 <td>
                                     <span class="badge 
-                                        @if ($loan->status === 'menunggu') bg-warning 
+                                        @if ($loan->status === 'loading') bg-warning 
                                         @elseif($loan->status === 'dipakai') bg-primary 
                                         @elseif($loan->status === 'selesai') bg-success 
                                         @elseif($loan->status === 'ditolak') bg-danger 
@@ -123,7 +123,7 @@ object-fit: cover;
                                     </span>
                                 </td>
                                 <td>
-                                    @if ($loan->status === 'menunggu')
+                                    @if ($loan->status === 'loading')
                                       <div class="d-flex justify-content-center">
                                         <form id="accept-form-{{ $loan->id }}" action="{{ route('loans_item.accept', $loan->id) }}" method="POST" style="display: inline;">
                                             @csrf
@@ -145,7 +145,7 @@ object-fit: cover;
                                       </div>
                                 </td>
                                 <td>
-                                    @if ($loan->status !== ['ditolak','selesai'])   
+                                    @if ($loan->status !== 'ditolak')
                                         <div class="d-flex justify-content-center">
                                             <a href="{{ route('loans_item.edit', $loan->id) }}" class="btn btn-sm btn-warning me-2">
                                                 <i class="bx bx-edit-alt"></i> Edit

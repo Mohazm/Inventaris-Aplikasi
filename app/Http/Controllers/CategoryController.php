@@ -11,15 +11,16 @@ class CategoryController extends Controller
      * Display a listing of the resource.
      */
     public function index(Request $request)
-    {
-        // Pencarian kategori berdasarkan nama
-        $search = $request->input('search');
-        $categories = Category::where('name', 'like', "%$search%")
-                              ->paginate(10);  // Pagination, menampilkan 10 per halaman
+{
+    // Pencarian kategori berdasarkan nama
+    $search = $request->input('search');
+    $categories = Category::where('name', 'like', "%$search%")
+                          ->orderBy('created_at', 'desc') // Urutkan berdasarkan waktu pembuatan terbaru
+                          ->paginate(10); // Pagination, menampilkan 10 per halaman
 
-        // Menampilkan kategori dengan pencarian dan pagination
-        return view('Crud_admin.categories.index', compact('categories', 'search'));
-    }
+    // Menampilkan kategori dengan pencarian dan pagination
+    return view('Crud_admin.categories.index', compact('categories', 'search'));
+}
 
     /**
      * Show the form for creating a new resource.

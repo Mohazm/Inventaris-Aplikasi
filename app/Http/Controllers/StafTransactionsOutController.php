@@ -11,10 +11,13 @@ class StafTransactionsOutController extends Controller
 {
     public function index()
     {
-        $transactions_outs = Transactions_out::with('item')->simplePaginate(5);
+        $transactions_outs = Transactions_out::with('item')
+            ->orderBy('created_at', 'desc') // Urutkan berdasarkan waktu pembuatan terbaru
+            ->simplePaginate(5); // Tetap menggunakan paginasi sederhana dengan 5 data per halaman
+        
         return view('staff.transactions_out.index', compact('transactions_outs'));
     }
-
+    
     public function create()
     {
         $items = Item::all();
