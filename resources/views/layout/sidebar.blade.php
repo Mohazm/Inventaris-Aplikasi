@@ -104,12 +104,13 @@
                     <div>Supplier</div>
                 </a>
             </li>
-            {{-- <li class="menu-item">
-                <a href="#" class="menu-link">
+            <li class="menu-item {{ Route::is('admin.activities.index') ? 'active' : '' }}">
+                <a href="{{ route('admin.activities.index') }}" class="menu-link">
                     <i class="menu-icon tf-icons bx bx-user"></i>
                     <div>Log Aktivitas</div>
                 </a>
-            </li> --}}
+            </li>
+            
             <li class="menu-header small text-uppercase">
                 <span class="menu-header-text">Pengelola Transaksi</span>
             </li>

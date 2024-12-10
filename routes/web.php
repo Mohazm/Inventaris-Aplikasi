@@ -16,6 +16,7 @@ use App\Http\Controllers\{
     TransactionsOutController,
     LoansItemController,
     ActivityController,
+    AdminActivityController,
     DetailItemController,
     ProfileController
 };
@@ -74,6 +75,9 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
     Route::patch('/loans_item/accept/{id}', [LoansItemController::class, 'accept'])->name('loans_item.accept');
     Route::patch('/loans_item/cancel/{id}', [LoansItemController::class, 'cancel'])->name('loans_item.cancel');
     Route::post('/loans_item/checkOverdue', [LoansItemController::class, 'checkOverdueLoans'])->name('loans_item.checkOverdue');
+
+    Route::get('/adminactivities', [AdminActivityController::class, 'index'])->name('admin.activities.index');
+    Route::delete('/adminactivities/{id}', [AdminActivityController::class, 'destroy'])->name('admin.activities.destroy');
 });
 
 // Rute khusus staff

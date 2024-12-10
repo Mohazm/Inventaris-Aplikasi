@@ -11,10 +11,14 @@ class ActivityController extends Controller
     // Menampilkan daftar activities
     public function index()
     {
-        // Menampilkan hanya aktivitas milik pengguna yang sedang login
-        $activities = Activity::where('user_id', auth()->id())->get();  
+        // Menampilkan hanya aktivitas milik pengguna yang sedang login, diurutkan berdasarkan yang terbaru
+        $activities = Activity::where('user_id', auth()->id())
+            ->orderBy('created_at', 'desc') // Urutkan berdasarkan tanggal terbaru
+            ->get();
+    
         return view('staff.Activity.index', compact('activities'));
     }
+    
 
     // Form untuk membuat activities baru
     public function create()
@@ -28,7 +32,7 @@ class ActivityController extends Controller
         $currentTime = Carbon::now();
 
         // Memeriksa apakah waktu sekarang berada dalam rentang 3 sore sampai 8 malam
-        if ($currentTime->hour < 8 || $currentTime->hour >= 11) {
+        if ($currentTime->hour < 12 || $currentTime->hour >= 11) {
             return redirect()->back()->withErrors(['error' => 'Aktivitas hanya bisa diisi antara jam 3 sore hingga 8 malam.']);
         }
 

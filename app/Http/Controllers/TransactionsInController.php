@@ -17,7 +17,7 @@ class TransactionsInController extends Controller
     {
         $categoryId = $request->input('category');
         $supplierId = $request->input('supplier');
-
+    
         $transaction_ins = Transactions_in::with('item', 'supplier')
             ->when($categoryId, function ($query) use ($categoryId) {
                 $query->whereHas('item', function ($q) use ($categoryId) {
@@ -27,14 +27,15 @@ class TransactionsInController extends Controller
             ->when($supplierId, function ($query) use ($supplierId) {
                 $query->where('supplier_id', $supplierId);
             })
+            ->orderBy('created_at', 'desc') // Tambahkan pengurutan berdasarkan transaksi terbaru
             ->paginate(10);
-
+    
         $categories = Category::all();
         $suppliers = Supplier::all();
-
+    
         return view('Crud_admin.Transactions_in.index', compact('transaction_ins', 'categories', 'suppliers'));
     }
-
+    
     public function create()
     {
         $items = Item::all();

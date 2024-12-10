@@ -10,10 +10,13 @@ use Illuminate\Support\Facades\Log;
 class TransactionsOutController extends Controller
 {
     public function index()
-    {
-        $transactions_outs = Transactions_out::with('item')->simplePaginate(5); // Pagination 5 items per page
-        return view('Crud_admin.transactions_out.index', compact('transactions_outs'));
-    }
+{
+    $transactions_outs = Transactions_out::with('item')
+        ->orderBy('created_at', 'desc') // Urutkan berdasarkan tanggal transaksi terbaru
+        ->simplePaginate(5); // Pagination 5 items per halaman
+
+    return view('Crud_admin.transactions_out.index', compact('transactions_outs'));
+}
 
     public function create()
     {

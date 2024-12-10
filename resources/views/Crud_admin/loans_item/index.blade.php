@@ -4,10 +4,10 @@
 
 @section('content')
 @if (session('error'))
-<div class="bs-toast toast fade show bg-success" role="alert" aria-live="assertive" aria-atomic="true">
+<div class="bs-toast toast fade show bg-danger" role="alert" aria-live="assertive" aria-atomic="true">
     <div class="toast-header">
         <i class="bx bx-bell me-2"></i>
-        <div class="me-auto fw-semibold">Pemimjam</div>
+        <div class="me-auto fw-semibold">Peminjaman</div>
         <small></small>
         <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
     </div>
@@ -20,7 +20,7 @@
 <div class="bs-toast toast fade show bg-success" role="alert" aria-live="assertive" aria-atomic="true">
     <div class="toast-header">
         <i class="bx bx-bell me-2"></i>
-        <div class="me-auto fw-semibold">Pemimjam</div>
+        <div class="me-auto fw-semibold">Peminjaman</div>
         <small></small>
         <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
     </div>
@@ -28,7 +28,6 @@
         {{ session('success') }}
     </div>
 </div>
-
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         var toastElList = [].slice.call(document.querySelectorAll('.toast'));
@@ -41,34 +40,6 @@
     });
 </script>
 @endif
-<style>
-/* Toast/Alert styling */
-.toast {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 1055;
-    background-color: #28a745;
-    color: #fff;
-    border-radius: 0.25rem;
-}
-
-.toast .toast-body {
-    padding: 0.75rem;
-}
-
-.toast .close {
-    color: #fff;
-    opacity: 0.8;
-}
-.img-rounded {
-border-radius: 30px;
-width: 100px;
-height: 100px;
-object-fit: cover;
-}
-
-</style>
 
 <div class="container-xxl flex-grow-1 container-p-y">
     <h4 class="fw-bold py-3 mb-4 text-center">📋 Daftar Peminjaman</h4>
@@ -124,14 +95,15 @@ object-fit: cover;
                                 </td>
                                 <td>
                                     @if ($loan->status === 'menunggu')
-                                      <div class="d-flex justify-content-center">
+                                        <!-- Tombol Terima -->
                                         <form id="accept-form-{{ $loan->id }}" action="{{ route('loans_item.accept', $loan->id) }}" method="POST" style="display: inline;">
                                             @csrf
                                             @method('PATCH')
-                                            <button type="button" class="btn btn-sm btn-success me-3" onclick="confirmAccept({{ $loan->id }})">
+                                            <!-- Ganti type="button" dengan type="submit" -->
+                                            <button type="submit" class="btn btn-sm btn-success me-3">
                                                 <i class="bx bx-check-circle"></i> Terima
                                             </button>
-                                        </form>
+                                        </form>                                        
                                         <form action="{{ route('loans_item.cancel', $loan->id) }}" method="POST" style="display: inline;">
                                             @csrf
                                             @method('PATCH')
@@ -142,30 +114,33 @@ object-fit: cover;
                                     @else
                                         <span>-</span>
                                     @endif
-                                      </div>
                                 </td>
                                 <td>
-                                    @if ($loan->status !== ['ditolak','selesai'])   
-                                        <div class="d-flex justify-content-center">
+                                    <div class="d-flex justify-content-center">
+                                        @if ($loan->status === 'dipakai')
+                                            <!-- Tombol Return -->
+                                            <a href="#" class="btn btn-sm btn-success me-2">
+                                                <i class="bx bx-undo"></i> Return
+                                            </a>
+                                        @endif
+
+                                        @if (!in_array($loan->status, ['ditolak', 'selesai']))
+                                            <!-- Tombol Edit -->
                                             <a href="{{ route('loans_item.edit', $loan->id) }}" class="btn btn-sm btn-warning me-2">
                                                 <i class="bx bx-edit-alt"></i> Edit
                                             </a>
+                                            <!-- Tombol Delete -->
                                             <form action="{{ route('loans_item.destroy', $loan->id) }}" method="POST" style="display: inline;">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus peminjaman ini?')">
+                                                <button type="submit" class="btn btn-sm btn-danger me-2" onclick="return confirm('Apakah Anda yakin ingin menghapus peminjaman ini?')">
                                                     <i class="bx bx-trash"></i> Delete
                                                 </button>
                                             </form>
-                                        </div>
-                                    @else
-                                        <span>-</span>
-                                    @endif
-                                </td>
-                                <td>
-                                    <a href="{{ route('Return.create') }}" class="btn btn-sm btn-warning me-2">
-                                        <i class="bx bx-edit-alt"></i> Return
-                                    </a>
+                                        @else
+                                            <span>-</span>
+                                        @endif
+                                    </div>
                                 </td>
                             </tr>
                         @empty
@@ -182,20 +157,10 @@ object-fit: cover;
 
 <script>
     function confirmAccept(loanId) {
-        Swal.fire({
-            title: 'Apakah Anda yakin?',
-            text: "Anda tidak dapat membatalkan setelah tindakan ini!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Ya, Terima!',
-            cancelButtonText: 'Batal'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                document.getElementById('accept-form-' + loanId).submit();
-            }
-        });
+        if (confirm("Apakah Anda yakin ingin menerima peminjaman ini?")) {
+            document.getElementById('accept-form-' + loanId).submit();
+        }
     }
 </script>
+
 @endsection
