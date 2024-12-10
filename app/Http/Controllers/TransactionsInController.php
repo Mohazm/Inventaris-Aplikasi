@@ -7,7 +7,7 @@ use App\Models\Item;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
-class TransactionsOutController extends Controller
+class TransactionsInController extends Controller
 {
     public function index()
     {
