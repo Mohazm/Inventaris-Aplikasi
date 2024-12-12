@@ -120,3 +120,13 @@ Route::middleware('auth')->group(function () {
 
 // Menyertakan rute otentikasi (login, register, dll)
 require __DIR__ . '/auth.php';
+use App\Exports\TransactionsOutExport;
+use App\Exports\TransactionsIntExport;
+use Maatwebsite\Excel\Facades\Excel;
+
+Route::get('/transactions/export/{month}', function ($month) {
+    return Excel::download(new TransactionsOutExport($month), "transactions_out_month_{$month}.xlsx");
+})->name('transactions.export');
+Route::get('/transactions/export/{month}', function ($month) {
+    return Excel::download(new TransactionsIntExport($month), "transactions_ins_month_{$month}.xlsx");
+})->name('transactions.export');
