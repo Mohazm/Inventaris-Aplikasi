@@ -24,8 +24,12 @@ class SupplierController extends Controller
         $validated = $request->validate([
             'nama_supplier' => 'required|string|max:255|unique:suppliers,nama_supplier',
             'alamat' => 'required|string',
-            'kontak' => 'nullable|string|max:255',
+            'kontak' => 'nullable|string|max:255|regex:/^[0-9]{9,15}$/', // Validasi nomor telepon
+        ], [
+            'nama_supplier.unique' => 'Nama Supplier sudah ada.',
+            'kontak.regex' => 'Format nomor kontak tidak valid.', // Pesan error regex kontak
         ]);
+        
     
         try {
             // Membuat data supplier baru

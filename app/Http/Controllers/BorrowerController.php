@@ -32,8 +32,11 @@ class BorrowerController extends Controller
     {
         $validated = $request->validate([
             'nama_peminjam' => 'required|string|max:255',
-            'no_telp' => 'required|string|max:15',
+            'no_telp' => 'required|string|max:15|min:1|regex:/^\+?[0-9]{1,4}?[0-9]{7,15}$/',
+        ], [
+            'no_telp.regex' => 'Nomor Telepon tidak valid. Pastikan nomor telepon hanya mengandung angka dan opsional kode negara.',
         ]);
+        
 
         // Coba untuk menyimpan data borrower
         try {

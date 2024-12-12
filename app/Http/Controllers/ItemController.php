@@ -49,47 +49,46 @@ class ItemController extends Controller
         $categories = Category::all();
         return view('Crud_admin.Items.create', compact('categories'));
     }
-
     public function store(Request $request)
     {
         $request->validate([
             'nama_barang' => 'required|string|max:255',
-            'categories_id' => 'nullable|exists:categories,id',
-            // 'kondisi_barang' => 'required|in:baik,rusak ringan,rusak berat',
+            'categories_id' => 'nullable|string', // Ubah ke string untuk menangani kategori baru
             'photo_barang' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ], [
             'nama_barang.required' => 'Nama barang wajib diisi.',
             'nama_barang.string' => 'Nama barang harus berupa teks.',
             'nama_barang.max' => 'Nama barang maksimal 255 karakter.',
-            'categories_id.exists' => 'Kategori yang dipilih tidak valid.',
-            'stock.required' => 'Stok barang wajib diisi.',
-            'stock.integer' => 'Stok barang harus berupa angka.',
-            'stock.min' => 'Stok barang minimal adalah 0.', // Pesan untuk stok minimal 0
-            'stock.max' => 'Stok barang maksimal adalah 99999.',
-            // 'kondisi_barang.required' => 'Kondisi barang wajib dipilih.',
-            // 'kondisi_barang.in' => 'Kondisi barang tidak valid.',
+            'categories_id.string' => 'Kategori harus berupa teks.',
             'photo_barang.image' => 'File foto harus berupa gambar.',
             'photo_barang.mimes' => 'File foto harus berformat jpeg, png, atau jpg.',
             'photo_barang.max' => 'Ukuran file foto maksimal 2MB.',
         ]);
-        
-
+    
         try {
             $data = $request->all();
-
-            // Upload photo
+    
+            // Cek apakah kategori yang dikirimkan adalah kategori baru
+            if (isset($data['categories_id']) && !is_numeric($data['categories_id'])) {
+                $category = Category::firstOrCreate(['name' => $data['categories_id']]);
+                $data['categories_id'] = $category->id;
+            }
+                
+            // Upload foto jika ada
             if ($request->hasFile('photo_barang')) {
                 $data['photo_barang'] = $request->file('photo_barang')->store('uploads/items', 'public');
             }
-
+    
+            // Menyimpan produk baru
             Item::create($data);
-
+    
             return redirect()->route('Items.index')->with('success', 'Produk berhasil ditambahkan.');
         } catch (\Exception $e) {
             Log::error('Kesalahan saat menyimpan produk: ' . $e->getMessage());
             return back()->withErrors(['error' => 'Terjadi kesalahan saat menyimpan data. Silakan coba lagi.']);
         }
     }
+    
 
 
     public function edit($id)

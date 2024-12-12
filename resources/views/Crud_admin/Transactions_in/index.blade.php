@@ -83,6 +83,11 @@ object-fit: cover;
             + Tambah Transaksi Baru
         </a>
     </div>
+    <form method="GET" action="{{ route('transactions.export', date('m')) }}" class="mb-3">
+        <button type="submit" class="btn btn-success">
+            <i class="bi bi-download"></i> Ekspor ke Excel
+        </button>
+    </form>
 
     <!-- Kartu Transaksi -->
     <div class="row g-4">

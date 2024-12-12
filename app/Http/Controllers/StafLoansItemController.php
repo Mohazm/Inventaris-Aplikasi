@@ -8,7 +8,7 @@ use App\Models\Category;
 use App\Models\Borrower;
 use Illuminate\Http\Request;
 
-class StaffLoansItemController extends Controller
+class StafLoansItemController extends Controller
 {
     // Menampilkan daftar peminjaman yang diajukan staff
     public function index()

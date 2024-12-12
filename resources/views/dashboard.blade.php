@@ -66,13 +66,21 @@
                 </div>
             </div>
 
-            <!-- Total Revenue -->
+            <!-- Barang Masuk & Keluar -->
             <div class="col-12 col-lg-7 order-2 order-md-3 order-lg-2 mb-4">
                 <div class="card">
                     <div class="row row-bordered g-0">
                         <div class="col-lg-12">
-                            <h5 class="card-header m-0 me-2 pb-3">Total Revenue</h5>
-                            <div id="totalRevenueChart" class="px-2"></div>
+                            <h5 class="card-header m-0 me-2 pb-3">Barang Masuk & Keluar</h5>
+                            <div class="card-body">
+                                <div id="barangChart" style="height: 300px;"></div>
+                                <div class="mt-3">
+                                    <span class="fw-semibold">Barang Masuk:</span> <span id="barangMasuk">100</span> items
+                                </div>
+                                <div>
+                                    <span class="fw-semibold">Barang Keluar:</span> <span id="barangKeluar">80</span> items
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -100,6 +108,7 @@
     </div>
 
     <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // Kalender
@@ -111,6 +120,42 @@
             document.querySelector('.month').textContent = months[today.getMonth()];
             document.querySelector('.date').textContent = today.getDate();
             document.querySelector('.year').textContent = today.getFullYear();
+
+            // Data for chart
+            const dataBarangMasuk = 100;  // Example data
+            const dataBarangKeluar = 80;  // Example data
+
+            // Update text content with data
+            document.getElementById('barangMasuk').textContent = dataBarangMasuk;
+            document.getElementById('barangKeluar').textContent = dataBarangKeluar;
+
+            // Chart creation
+            const ctx = document.getElementById('barangChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Barang Masuk', 'Barang Keluar'],
+                    datasets: [{
+                        label: 'Jumlah Barang',
+                        data: [dataBarangMasuk, dataBarangKeluar],
+                        backgroundColor: [
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(255, 99, 132, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(255, 99, 132, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
         });
     </script>
 @endsection
