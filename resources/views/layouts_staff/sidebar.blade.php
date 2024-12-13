@@ -81,7 +81,7 @@
             </a>
         </li>
         <li class="menu-item">
-            <a href="{{route('staff.tendiks.index')}}" class="menu-link">
+            <a href="{{route('staff.borrower.index')}}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-cube-alt"></i>
                 <div>Daftar Pemimjam</div>
             </a>
