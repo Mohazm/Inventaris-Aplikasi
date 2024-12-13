@@ -181,17 +181,25 @@ class LoansItemController extends Controller
         return redirect()->route('loans_item.index')->with('success', 'Peminjaman berhasil dibatalkan.');
     }
 
-    // Mengecek peminjaman yang melebihi batas waktu
+  
+
     public function checkOverdueLoans()
     {
+        // Mengambil peminjaman yang belum selesai dan melebihi batas waktu
         $overdueLoans = Loans_item::where('status', 'dipakai')
             ->where('tanggal_kembali', '<', Carbon::now())
             ->get();
-
+    
+        // Update status peminjaman yang telat
         foreach ($overdueLoans as $loan) {
-            $loan->update(['status' => 'selesai']);
+            // Cek apakah sudah telat
+            if (Carbon::now()->gt(Carbon::parse($loan->tanggal_kembali))) {
+                $loan->update(['status' => 'terlambat']);
+            }
         }
-
+    
+        // Redirect setelah proses update
         return redirect()->route('loans_item.index')->with('success', 'Peminjaman yang melebihi batas waktu berhasil diperbarui.');
     }
+    
 }

@@ -82,35 +82,38 @@
                                 <td>{{ $loan->borrower->nama_peminjam ?? 'Peminjam tidak ditemukan' }}</td>
                                 <td>{{ $loan->jumlah_pinjam }}</td>
                                 <td>{{ $loan->tanggal_pinjam ? \Carbon\Carbon::parse($loan->tanggal_pinjam)->format('d M Y, H:i') : '-' }}</td>
-                                <td>{{ $loan->tanggal_kembali ? \Carbon\Carbon::parse($loan->tanggal_kembali)->format('d M Y, H:i') : '-' }}</td>
+                                <td>{{ $loan->tanggal_kembali ? \Carbon\Carbon::parse($loan->tanggal_kembali)->format('d M Y, H:i') : '-' }}</td>                                
                                 <td>
                                     <span class="badge 
                                         @if ($loan->status === 'menunggu') bg-warning 
                                         @elseif($loan->status === 'dipakai') bg-primary 
                                         @elseif($loan->status === 'selesai') bg-success 
                                         @elseif($loan->status === 'ditolak') bg-danger 
+                                        @elseif($loan->status === 'terlambat') bg-danger 
                                         @endif">
                                         {{ ucfirst($loan->status) }}
                                     </span>
                                 </td>
                                 <td>
                                     @if ($loan->status === 'menunggu')
-                                        <!-- Tombol Terima -->
-                                        <form id="accept-form-{{ $loan->id }}" action="{{ route('loans_item.accept', $loan->id) }}" method="POST" style="display: inline;">
-                                            @csrf
-                                            @method('PATCH')
-                                            <!-- Ganti type="button" dengan type="submit" -->
-                                            <button type="submit" class="btn btn-sm btn-success me-3">
-                                                <i class="bx bx-check-circle"></i> Terima
-                                            </button>
-                                        </form>                                        
-                                        <form action="{{ route('loans_item.cancel', $loan->id) }}" method="POST" style="display: inline;">
-                                            @csrf
-                                            @method('PATCH')
-                                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Apakah Anda yakin ingin membatalkan peminjaman ini?')">
-                                                <i class="bx bx-x-circle"></i> Batal
-                                            </button>
-                                        </form>
+                                        <div class="d-flex justify-content-between">
+                                            <!-- Tombol Terima -->
+                                            <form id="accept-form-{{ $loan->id }}" action="{{ route('loans_item.accept', $loan->id) }}" method="POST" style="display: inline;" class="me-2">
+                                                @csrf
+                                                @method('PATCH')
+                                                <button type="submit" class="btn btn-sm btn-success">
+                                                    <i class="bx bx-check-circle"></i> Terima
+                                                </button>
+                                            </form>
+                                            <!-- Tombol Batal -->
+                                            <form action="{{ route('loans_item.cancel', $loan->id) }}" method="POST" style="display: inline;">
+                                                @csrf
+                                                @method('PATCH')
+                                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Apakah Anda yakin ingin membatalkan peminjaman ini?')">
+                                                    <i class="bx bx-x-circle"></i> Batal
+                                                </button>
+                                            </form>
+                                        </div>
                                     @else
                                         <span>-</span>
                                     @endif
@@ -118,18 +121,15 @@
                                 <td>
                                     <div class="d-flex justify-content-center">
                                         @if ($loan->status === 'dipakai')
-                                            <!-- Tombol Return -->
                                             <a href="#" class="btn btn-sm btn-success me-2">
                                                 <i class="bx bx-undo"></i> Return
                                             </a>
                                         @endif
 
-                                        @if (!in_array($loan->status, ['ditolak', 'selesai']))
-                                            <!-- Tombol Edit -->
+                                        @if (!in_array($loan->status, ['ditolak', 'selesai',]))
                                             <a href="{{ route('loans_item.edit', $loan->id) }}" class="btn btn-sm btn-warning me-2">
                                                 <i class="bx bx-edit-alt"></i> Edit
                                             </a>
-                                            <!-- Tombol Delete -->
                                             <form action="{{ route('loans_item.destroy', $loan->id) }}" method="POST" style="display: inline;">
                                                 @csrf
                                                 @method('DELETE')
@@ -155,12 +155,30 @@
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    function confirmAccept(loanId) {
-        if (confirm("Apakah Anda yakin ingin menerima peminjaman ini?")) {
-            document.getElementById('accept-form-' + loanId).submit();
-        }
-    }
+    document.addEventListener('DOMContentLoaded', function() {
+        // Event listener for accept button
+        document.querySelectorAll('.btn-success').forEach(function(button) {
+            button.addEventListener('click', function(e) {
+                e.preventDefault(); // Prevent default form submission
+                const formId = this.closest('form').id; // Get the closest form
+                Swal.fire({
+                    title: 'Apakah Anda yakin?',
+                    text: "Peminjaman ini akan diterima!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Terima',
+                    cancelButtonText: 'Batal',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        document.getElementById(formId).submit(); // Submit the form if confirmed
+                    }
+                });
+            });
+        });
+    });
 </script>
 
 @endsection

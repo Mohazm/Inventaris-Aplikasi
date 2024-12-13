@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\User;
+use App\Models\Category;  // Pastikan ini sesuai dengan nama model Anda
 use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
@@ -27,6 +28,17 @@ class DatabaseSeeder extends Seeder
             'email' => 'cahya@gmail.com',
             'password' => Hash::make('password'),  // Gantilah dengan password yang aman
             'role' => 'staff',
+        ]);
+
+        // Menambahkan kategori
+        Category::create([  // Pastikan menggunakan nama model yang benar
+            'name' => 'Kebersihan',
+        ]);
+        Category::create([  // Pastikan menggunakan nama model yang benar
+            'name' => 'Olah Raga',
+        ]);
+        Category::create([  // Pastikan menggunakan nama model yang benar
+            'name' => 'Elektronik',
         ]);
     }
 }

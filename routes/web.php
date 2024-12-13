@@ -120,6 +120,7 @@ Route::middleware('auth')->group(function () {
 
 // Menyertakan rute otentikasi (login, register, dll)
 require __DIR__ . '/auth.php';
+
 use App\Exports\TransactionsOutExport;
 use App\Exports\TransactionsIntExport;
 use Maatwebsite\Excel\Facades\Excel;
