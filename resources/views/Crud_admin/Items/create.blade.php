@@ -32,6 +32,24 @@
                         </select>
                     </div>
 
+                    <div class="mb-3">
+                        <label for="status_pinjaman" class="form-label">Status Pinjaman</label>
+                        <select name="status_pinjaman" id="status_pinjaman" class="form-control">
+                            <option value="" selected>-- Pilih Status --</option>
+                            <option value="bisa di pinjam">Bisa Di Pinjam</option>
+                            <option value="tidak bisa di pinjam">Tidak Bisa Di Pinjam</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="Kondisi_barang" class="form-label">Status Pinjaman</label>
+                        <select name="Kondisi_barang" id="Kondisi_barang" class="form-control">
+                            <option value="" selected>-- Pilih Status --</option>
+                            <option value="barang rusak">Barang rusak</option>
+                            <option value="normal">Normal</option>
+                        </select>
+                    </div>
+                                    
+        
                     <!-- Foto Produk -->
                     <div class="form-group mb-3">
                         <label for="photo_barang">Foto Produk</label>

@@ -31,7 +31,9 @@
                                 <option value="" disabled selected>-- Pilih Barang --</option>
                                 @foreach ($items as $item)
                                     <option value="{{ $item->id }}" {{ old('item_id') == $item->id ? 'selected' : '' }}>
-                                        {{ $item->nama_barang }} (Stok: {{ $item->stock }})
+                                        {{ $item->nama_barang }} (Stok: {{ $item->stock }}) 
+                                        {{-- Status: {{ $item->status_pinjaman }} -
+                                        Kondisi: {{ $item->Kondisi_barang }} --}}
                                     </option>
                                 @endforeach
                             </select>
@@ -39,6 +41,7 @@
                                 <div class="text-danger mt-1">{{ $message }}</div>
                             @enderror
                         </div>
+
 
                         <div class="mb-3">
                             <label for="borrower_id" class="form-label">Pilih Peminjam</label>

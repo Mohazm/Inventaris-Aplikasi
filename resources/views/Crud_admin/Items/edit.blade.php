@@ -54,7 +54,7 @@
                 </div>
 
                 <!-- Stok -->
-                <div class="form-group mb-3">
+                {{-- <div class="form-group mb-3">
                     <label for="stock" class="form-label">Stok</label>
                     <input 
                         type="number" 
@@ -70,7 +70,18 @@
                             {{ $message }}
                         </div>
                     @enderror
-                </div>
+                </div> --}}
+                <select name="status_pinjaman" id="status_pinjaman" class="form-control">
+                    <option value="" {{ old('status_pinjaman', $item->status_pinjaman ?? '') == '' ? 'selected' : '' }}>-- Pilih Status --</option>
+                    <option value="bisa di pinjam" {{ old('status_pinjaman', $item->status_pinjaman ?? '') == 'bisa di pinjam' ? 'selected' : '' }}>Bisa Di Pinjam</option>
+                    <option value="tidak bisa di pinjam" {{ old('status_pinjaman', $item->status_pinjaman ?? '') == 'tidak bisa di pinjam' ? 'selected' : '' }}>Tidak Bisa Di Pinjam</option>
+                </select>
+                <select name="Kondisi_barang" id="Kondisi_barang" class="form-control">
+                    <option value="" {{ old('Kondisi_barang', $item->Kondisi_barang ?? '') == '' ? 'selected' : '' }}>-- Pilih Status --</option>
+                    <option value="bisa di pinjam" {{ old('Kondisi_barang', $item->Kondisi_barang ?? '') == 'barang rusak' ? 'selected' : '' }}>barang rusak</option>
+                    <option value="tidak bisa di pinjam" {{ old('Kondisi_barang', $item->Kondisi_barang ?? '') == 'normal' ? 'selected' : '' }}>normal</option>
+                </select>
+                
 
                 <!-- Gambar -->
                 <div class="form-group mb-3">

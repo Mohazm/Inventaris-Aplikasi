@@ -81,7 +81,6 @@ object-fit: cover;
             + Tambah Transaksi Baru
         </a>
     </div>
-
     <!-- Kartu Transaksi -->
     <div class="row g-4">
         @forelse ($transaction_ins as $transaction)

@@ -13,9 +13,10 @@ return new class extends Migration
             $table->string('nama_barang'); // Nama barang
             $table->foreignId('categories_id')->constrained()->onDelete('restrict'); // Relasi ke kategori
             $table->integer('stock')->default(0); // Stok barang, default 0
-            $table->enum('status_pinjaman', ['bisa di pinjam', 'tidak bisa di pinjam']); // Status
+            $table->enum('status_pinjaman', ['bisa di pinjam', 'tidak bisa di pinjam'])->nullable(); // Status
+            $table->enum('Kondisi_barang', ['barang rusak','normal'])->nullable(); // Status
             $table->string('photo_barang')->nullable(); // Foto barang (opsional)
-            $table->timestamps();
+            $table->timestamps();   
         });
     }
 

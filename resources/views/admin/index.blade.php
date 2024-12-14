@@ -8,7 +8,8 @@
                     <div class="d-flex align-items-end row">
                         <div class="col-sm-6">
                             <div class="card-body">
-                                <h5 class="card-title text-primary">Selamat Datang {{ Auth::user()->role }} {{ Auth::user()->name }} 🎉</h5>
+                                <h5 class="card-title text-primary">Selamat Datang {{ Auth::user()->role }}
+                                    {{ Auth::user()->name }} 🎉</h5>
                                 <p class="mb-4">
                                     Selamat bekerja, nikmati harimu dengan lebih baik!
                                 </p>
@@ -32,7 +33,8 @@
                         <div class="card">
                             <div class="card-body text-center">
                                 <div class="avatar mb-3">
-                                    <img src="{{ asset('/assets/img/icons/unicons/chart-success.png') }}" alt="chart success" class="rounded" />
+                                    <img src="{{ asset('/assets/img/icons/unicons/chart-success.png') }}"
+                                        alt="chart success" class="rounded" />
                                 </div>
                                 <span class="fw-semibold d-block mb-1">Data User</span>
                                 <h3 class="card-title mb-2">10,000</h3>
@@ -46,7 +48,8 @@
                         <div class="card">
                             <div class="card-body text-center">
                                 <div class="avatar mb-3">
-                                    <img src="{{ asset('/assets/img/icons/unicons/wallet-info.png') }}" alt="Credit Card" class="rounded" />
+                                    <img src="{{ asset('/assets/img/icons/unicons/wallet-info.png') }}" alt="Credit Card"
+                                        class="rounded" />
                                 </div>
                                 <span class="fw-semibold d-block mb-1">Data Produk</span>
                                 <h3 class="card-title mb-2">$4,679</h3>
@@ -60,10 +63,20 @@
             </div>
 
             <!-- Informasi Barang Masuk -->
+            <!-- Informasi Barang Masuk -->
+            <!-- Informasi Barang Masuk -->
             <div class="col-lg-6 order-2 mb-4">
                 <div class="card">
                     <h5 class="card-header">Informasi Barang Masuk</h5>
                     <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <button class="btn btn-primary btn-sm" onclick="changeMonth(-1)">&#8592; Bulan
+                                Sebelumnya</button>
+                            <span id="monthLabel"
+                                class="fw-bold">{{ \Carbon\Carbon::parse($currentMonth . '-01')->format('F Y') }}</span>
+                            <button class="btn btn-primary btn-sm" onclick="changeMonth(1)">Bulan Berikutnya
+                                &#8594;</button>
+                        </div>
                         <table class="table">
                             <thead>
                                 <tr>
@@ -73,18 +86,22 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>Barang A</td>
-                                    <td>50</td>
-                                    <td>2024-12-10</td>
-                                </tr>
-                                <tr>
-                                    <td>Barang B</td>
-                                    <td>30</td>
-                                    <td>2024-12-11</td>
-                                </tr>
+                                @forelse ($transactionsins as $in)
+                                    <tr>
+                                        <td>{{ $in->item->nama_barang }}</td>
+                                        <td>{{ $in->jumlah }}</td>
+                                        <td>{{ $in->tanggal_masuk }}</td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="3" class="text-center">Tidak ada data</td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
+                        <div class="mt-3">
+                            {{ $transactionsins->links() }}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -94,6 +111,14 @@
                 <div class="card">
                     <h5 class="card-header">Informasi Barang Keluar</h5>
                     <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <button class="btn btn-primary btn-sm" onclick="changeMonth(-1)">&#8592; Bulan
+                                Sebelumnya</button>
+                            <span id="monthLabel"
+                                class="fw-bold">{{ \Carbon\Carbon::parse($currentMonth . '-01')->format('F Y') }}</span>
+                            <button class="btn btn-primary btn-sm" onclick="changeMonth(1)">Bulan Berikutnya
+                                &#8594;</button>
+                        </div>
                         <table class="table">
                             <thead>
                                 <tr>
@@ -103,21 +128,26 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>Barang C</td>
-                                    <td>20</td>
-                                    <td>2024-12-09</td>
-                                </tr>
-                                <tr>
-                                    <td>Barang D</td>
-                                    <td>15</td>
-                                    <td>2024-12-10</td>
-                                </tr>
+                                @forelse ($transactionsouts as $out)
+                                    <tr>
+                                        <td>{{ $out->item->nama_barang }}</td>
+                                        <td>{{ $out->jumlah }}</td>
+                                        <td>{{ $out->tanggal_keluar }}</td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="3" class="text-center">Tidak ada data</td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
+                        <div class="mt-3">
+                            {{ $transactionsins->links() }}
+                        </div>
                     </div>
                 </div>
             </div>
+
 
             <!-- Total Revenue -->
             <div class="col-12 col-lg-7 order-2 mb-4">
@@ -128,7 +158,6 @@
                     </div>
                 </div>
             </div>
-
             <!-- Kalender -->
             <div class="col-lg-5 mb-4 order-2">
                 <div class="card">
@@ -145,15 +174,135 @@
             </div>
         </div>
     </div>
+    <script>
+        function changeMonth(direction) {
+            const currentMonth = "{{ request('month', \Carbon\Carbon::now()->format('Y-m')) }}";
+            const [year, month] = currentMonth.split('-').map(Number);
+            const newDate = new Date(year, month - 1 + direction, 1); // Update bulan
+            const newMonth = `${newDate.getFullYear()}-${String(newDate.getMonth() + 1).padStart(2, '0')}`;
+            window.location.href = `?month=${newMonth}`;
+        }
+    </script>
 
+    <script>
+        // Data Barang Masuk
+        const dataBarangMasuk = {
+            "2024-12": [{
+                    nama: "Barang A",
+                    jumlah: 20,
+                    tanggal: "2024-12-09"
+                },
+                {
+                    nama: "Barang B",
+                    jumlah: 15,
+                    tanggal: "2024-12-10"
+                }
+            ],
+            "2025-01": [{
+                    nama: "Barang C",
+                    jumlah: 10,
+                    tanggal: "2025-01-05"
+                },
+                {
+                    nama: "Barang D",
+                    jumlah: 25,
+                    tanggal: "2025-01-20"
+                }
+            ]
+        };
+
+        // Data Barang Keluar
+        const dataBarangKeluar = {
+            "2024-12": [{
+                    nama: "Barang X",
+                    jumlah: 20,
+                    tanggal: "2024-12-09"
+                },
+                {
+                    nama: "Barang Y",
+                    jumlah: 15,
+                    tanggal: "2024-12-10"
+                }
+            ],
+            "2025-01": [{
+                nama: "Barang Z",
+                jumlah: 30,
+                tanggal: "2025-01-15"
+            }]
+        };
+
+        // Fungsi Render Barang
+        function renderTable(data, month, dataBodyId, monthLabelId) {
+            const dataSet = data[month] || [];
+            const dataBody = document.getElementById(dataBodyId);
+            const monthLabel = document.getElementById(monthLabelId);
+
+            dataBody.innerHTML = dataSet
+                .map(item => `
+            <tr>
+                <td>${item.nama}</td>
+                <td>${item.jumlah}</td>
+                <td>${item.tanggal}</td>
+            </tr>
+        `)
+                .join("");
+
+            const [year, monthNum] = month.split("-");
+            const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September",
+                "Oktober", "November", "Desember"
+            ];
+            monthLabel.textContent = `${monthNames[parseInt(monthNum) - 1]} ${year}`;
+        }
+
+        // Barang Masuk
+        let currentMonthMasuk = "2024-12";
+        document.getElementById("prevMonthMasuk").addEventListener("click", () => {
+            currentMonthMasuk = getPreviousMonth(currentMonthMasuk);
+            renderTable(dataBarangMasuk, currentMonthMasuk, "dataBodyMasuk", "monthLabelMasuk");
+        });
+        document.getElementById("nextMonthMasuk").addEventListener("click", () => {
+            currentMonthMasuk = getNextMonth(currentMonthMasuk);
+            renderTable(dataBarangMasuk, currentMonthMasuk, "dataBodyMasuk", "monthLabelMasuk");
+        });
+
+        // Barang Keluar
+        let currentMonthKeluar = "2024-12";
+        document.getElementById("prevMonthKeluar").addEventListener("click", () => {
+            currentMonthKeluar = getPreviousMonth(currentMonthKeluar);
+            renderTable(dataBarangKeluar, currentMonthKeluar, "dataBodyKeluar", "monthLabelKeluar");
+        });
+        document.getElementById("nextMonthKeluar").addEventListener("click", () => {
+            currentMonthKeluar = getNextMonth(currentMonthKeluar);
+            renderTable(dataBarangKeluar, currentMonthKeluar, "dataBodyKeluar", "monthLabelKeluar");
+        });
+
+        // Fungsi untuk Mendapatkan Bulan Sebelumnya dan Berikutnya
+        function getPreviousMonth(currentMonth) {
+            const [year, month] = currentMonth.split("-").map(Number);
+            const prevMonth = new Date(year, month - 2); // Bulan sebelumnya
+            return `${prevMonth.getFullYear()}-${String(prevMonth.getMonth() + 1).padStart(2, "0")}`;
+        }
+
+        function getNextMonth(currentMonth) {
+            const [year, month] = currentMonth.split("-").map(Number);
+            const nextMonth = new Date(year, month); // Bulan berikutnya
+            return `${nextMonth.getFullYear()}-${String(nextMonth.getMonth() + 1).padStart(2, "0")}`;
+        }
+
+        // Render Awal
+        renderTable(dataBarangMasuk, currentMonthMasuk, "dataBodyMasuk", "monthLabelMasuk");
+        renderTable(dataBarangKeluar, currentMonthKeluar, "dataBodyKeluar", "monthLabelKeluar");
+    </script>
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             // Kalender
             const today = new Date();
             const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
-            const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+            const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September",
+                "Oktober", "November", "Desember"
+            ];
 
             document.querySelector('.day').textContent = days[today.getDay()];
             document.querySelector('.month').textContent = months[today.getMonth()];

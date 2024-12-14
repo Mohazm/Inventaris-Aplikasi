@@ -34,13 +34,14 @@ use App\Http\Controllers\{
 */
 
 // Rute utama untuk semua pengguna dengan middleware auth
-Route::get('/', [DashboardController::class, 'index'])->middleware('auth');
+Route::get('/', [DashboardController::class, 'index'])->middleware('auth')->name('admin.index');
 
 // Rute khusus admin
 Route::middleware(['auth', 'is_admin'])->group(function () {
-    Route::get('/admin/dashboard', function () {
-        return view('admin.index');
-    })->name('admin.index');
+    // Route::get('/admin/dashboard', function () {
+    //     return view('admin.index');
+    // })->name('admin.index');
+
     Route::resource('borrowers', BorrowerController::class);
     Route::resource('/category', CategoryController::class);
     Route::resource('/Items', ItemController::class);
@@ -66,7 +67,7 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
     Route::get('transactions_out/{id}/edit', [TransactionsOutController::class, 'edit'])->name('Transactions_out.edit');
     Route::put('transactions_out/{id}', [TransactionsOutController::class, 'update'])->name('Transactions_out.update');
     Route::delete('transactions_out/{id}', [TransactionsOutController::class, 'destroy'])->name('Transactions_out.destroy');
-    
+
     Route::get('loans_item', [LoansItemController::class, 'index'])->name('loans_item.index');
     Route::get('loans_item/create', [LoansItemController::class, 'create'])->name('loans_item.create');
     Route::post('loans_item', [LoansItemController::class, 'store'])->name('loans_item.store');
@@ -76,7 +77,7 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
     Route::patch('/loans_item/accept/{id}', [LoansItemController::class, 'accept'])->name('loans_item.accept');
     Route::patch('/loans_item/cancel/{id}', [LoansItemController::class, 'cancel'])->name('loans_item.cancel');
     Route::post('/loans_item/checkOverdue', [LoansItemController::class, 'checkOverdueLoans'])->name('loans_item.checkOverdue');
-    
+
     Route::get('/adminactivities', [AdminActivityController::class, 'index'])->name('admin.activities.index');
     Route::delete('/adminactivities/{id}', [AdminActivityController::class, 'destroy'])->name('admin.activities.destroy');
 });
