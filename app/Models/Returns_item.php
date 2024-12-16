@@ -11,8 +11,8 @@ class Returns_item extends Model
 
     protected $guarded = [];
 
-    public function itemLoan(): BelongsTo
+    public function itemLoan()
     {
-        return $this->belongsTo(ItemLoan::class, 'peminjaman_id');
+        return $this->belongsTo(Loans_item::class, 'peminjaman_id');
     }
 }

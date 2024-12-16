@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container">
-    <h1 class="mb-4">Tambah Transaksi Barang Masuk</h1>
+    <h1 class="mb-4 text-center ">Tambah Transaksi Barang Masuk</h1>
     
     <!-- Menampilkan error validasi -->
     @if ($errors->any())

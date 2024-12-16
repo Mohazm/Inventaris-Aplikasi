@@ -2,8 +2,7 @@
 
 @section('content')
     <div class="container">
-        <h1>Tambah Aktivitas</h1>
-
+        <h1 class="text-center">Tambah Aktivitas</h1>
         <!-- Menampilkan pesan error jika ada -->
         @if ($errors->any())
             <div class="alert alert-danger">

@@ -153,6 +153,7 @@
                                         @if ($loan->status === 'menunggu') bg-warning 
                                         @elseif($loan->status === 'dipakai') bg-primary 
                                         @elseif($loan->status === 'selesai') bg-success 
+                                        @elseif($loan->status === 'di kembalikan') bg-warning 
                                         @elseif($loan->status === 'ditolak') bg-danger 
                                         @elseif($loan->status === 'terlambat') bg-danger @endif">
                                             {{ ucfirst($loan->status) }}
@@ -189,11 +190,14 @@
                                     <td>
                                         <div class="d-flex justify-content-center">
                                             @if ($loan->status === 'dipakai')
-                                                <a href="#" class="btn btn-sm btn-success me-2">
+                                            <form action="{{ route('loans_item.return', $loan->id) }}" method="POST" class="d-inline">
+                                                @csrf
+                                                <button type="submit" class="btn btn-sm btn-primary me-2">
                                                     <i class="bx bx-undo"></i> Return
-                                                </a>
-                                            @endif
-
+                                                </button>
+                                            </form>
+                                        @endif
+                                        
                                             @if (!in_array($loan->status, ['ditolak', 'selesai']))
                                                 <a href="{{ route('loans_item.edit', $loan->id) }}"
                                                     class="btn btn-sm btn-warning me-2">
@@ -245,7 +249,7 @@
                     }).then((result) => {
                         if (result.isConfirmed) {
                             document.getElementById(formId)
-                        .submit(); // Submit the form if confirmed
+                                .submit(); // Submit the form if confirmed
                         }
                     });
                 });

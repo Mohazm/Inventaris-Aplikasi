@@ -75,7 +75,11 @@
     <a href="{{ route('StafTransactions_out.create') }}" class="btn btn-primary btn-lg mb-3 shadow">
         <i class="bi bi-plus-circle"></i> Tambah Transaksi Baru
     </a>
-
+ <form method="GET" action="{{ route('transactions.export', date('m')) }}" class="mb-3">
+        <button type="submit" class="btn btn-success">
+            <i class="bi bi-download"></i> Ekspor ke Excel
+        </button>
+    </form>
     <!-- Tabel Transaksi -->
     <div class="table-responsive shadow-lg rounded">
         <table class="table align-middle table-hover">

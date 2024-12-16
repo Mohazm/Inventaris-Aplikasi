@@ -10,8 +10,14 @@ class Loans_item extends Model
     use HasFactory;
 
     protected $guarded = [];
+    public function validateStatusChange($newStatus)
+    {
+        $validStatuses = ['dipakai', 'di kembalikan']; // Status yang valid
+        return in_array($newStatus, $validStatuses);
+    }
 
-    public function borrower(){
+    public function borrower()
+    {
         return $this->belongsTo(Borrower::class);
     }
     public function item()
@@ -26,6 +32,6 @@ class Loans_item extends Model
 
     public function itemReturn()
     {
-        return $this->hasOne(ItemReturn::class, 'peminjaman_id');
+        return $this->hasOne(Returns_item::class, 'peminjaman_id');
     }
 }

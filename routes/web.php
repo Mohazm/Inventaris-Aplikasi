@@ -19,7 +19,8 @@ use App\Http\Controllers\{
     ActivityController,
     AdminActivityController,
     DetailItemController,
-    ProfileController
+    ProfileController,
+    ReturnsItemController
 };
 
 /*
@@ -48,6 +49,7 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
     Route::resource('/suppliers', SupplierController::class);
     Route::resource('/tendiks', TendikController::class);
 
+    Route::post('/loans_item/return/{id}', [ReturnsItemController::class, 'returnItem'])->name('loans_item.return');
     Route::get('items/{itemId}/details', [DetailItemController::class, 'index'])->name('details.index');
     Route::get('details/{kode_barang}/edit', [DetailItemController::class, 'edit'])->name('details.edit');
     Route::put('details/{kode_barang}', [DetailItemController::class, 'update'])->name('details.update');
