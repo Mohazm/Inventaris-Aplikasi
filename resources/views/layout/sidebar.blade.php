@@ -64,13 +64,6 @@
                     <div>Dashboard</div>
                 </a>
             </li>
-            <li class="menu-item {{ Route::is('staff.index') ? 'active' : '' }}">
-                <a href="{{ route('staff.index') }}" class="menu-link">
-                    <i class="menu-icon tf-icons bx bx-home-circle"></i>
-                    <div>Staff</div>
-                </a>
-            </li>
-
             <li class="menu-header small text-uppercase">
                 <span class="menu-header-text">Pengelolaan Data Master</span>
             </li>
@@ -80,7 +73,7 @@
                     <div>Barang</div>
                 </a>
             </li>
-            {{-- <li class="menu-item {{ Route::is('c') ? 'active' : '' }}">
+            {{-- <li class="menu-item {{ Route::is('') ? 'active' : '' }}">
                 <a href="{{ route('cekbarang.index') }}" class="menu-link">
                     <i class="menu-icon tf-icons bx bx-box"></i>
                     <div>Cek Barang</div>

@@ -110,10 +110,26 @@
             }
         </style>
 
-        <a href="{{ route('borrowers.create') }}" class="btn btn-primary mb-3">Tambah Peminjam</a>
+        {{-- Tombol untuk menambah peminjam siswa dan guru --}}
+        <div class="d-flex justify-content-between mb-3">
+            <a href="{{ route('stundent.create') }}" class="btn btn-primary">Tambah Peminjam Siswa</a>
+            <a href="{{ route('teacher.create') }}" class="btn btn-success">Tambah Peminjam Guru</a>
+        </div>
+
+        {{-- Filter Dropdown --}}
+        <div class="mb-3">
+            <form action="{{ route('borrowers.index') }}" method="GET">
+                <label for="filter" class="form-label">Filter Peminjam</label>
+                <select name="filter" id="filter" class="form-select" onchange="this.form.submit()">
+                    <option value="">Semua Peminjam</option>
+                    <option value="student" {{ request('filter') == 'student' ? 'selected' : '' }}>Siswa</option>
+                    <option value="teacher" {{ request('filter') == 'teacher' ? 'selected' : '' }}>Guru</option>
+                </select>
+            </form>
+        </div>
 
         <div class="row">
-            @foreach ($borrowers as $borrower)
+            @forelse ($borrowers as $borrower)
                 <div class="col-md-4 mb-4">
                     <div class="card">
                         <div class="card-body">
@@ -122,11 +138,28 @@
                                     <i class="bx bxs-user text-white" style="font-size: 3rem;"></i>
                                 </div>
                             </div>
-                            <h5 class="card-title text-center">{{ $borrower->nama_peminjam }}</h5>
-                            <p class="card-text text-center"><strong>No Telepon:</strong> {{ $borrower->no_telp }}</p>
+                            <!-- Borrower Name -->
+                            
+                            <!-- Borrower Email and Phone -->
+                            {{-- <p class="card-text text-center"><strong>Email:</strong> {{ $borrower->email }}</p>
+                            <p class="card-text text-center"><strong>No Telepon:</strong> {{ $borrower->phone }}</p> --}}
+                            
+                            @if ($borrower->borrower_type == 'student' && $borrower->student)
+                                <h5 class="card-title text-center">{{ $borrower->student->name }}</h5>
+                                <p class="card-text text-center"><strong>Email:</strong> {{ $borrower->student->email }}</p>
+                                <p class="card-text text-center"><strong>No Telepon:</strong> {{ $borrower->student->phone }}</p>
+                                <p class="card-text text-center"><strong>Kelas:</strong> {{ $borrower->student->class }}</p>
+                            @endif
+                            
+                            @if ($borrower->borrower_type == 'teacher' && $borrower->teacher)
+                            <h5 class="card-title text-center">{{ $borrower->teacher->name }}</h5>
+                            <p class="card-text text-center"><strong>Email:</strong> {{ $borrower->teacher->email }}</p>
+                            <p class="card-text text-center"><strong>No Telepon:</strong> {{ $borrower->teacher->phone }}</p>                                
+                            @endif
+
                             <div class="d-flex justify-content-between">
                                 <a href="{{ route('borrowers.edit', $borrower) }}" class="btn btn-warning btn-sm">Edit</a>
-                                <form action="{{ route('borrowers.destroy', $borrower) }}" method="POST" style="display:inline;">
+                                <form action="{{ route('borrowers.destroy', ['borrowerType' => $borrower->borrower_type, 'borrowerId' => $borrower->borrower_id]) }}" method="POST" style="display:inline;">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
@@ -135,7 +168,12 @@
                         </div>
                     </div>
                 </div>
-            @endforeach
+            @empty
+                <p class="text-center">Tidak ada peminjam</p>
+            @endforelse
         </div>
+        
+        
+        
     </div>
 @endsection

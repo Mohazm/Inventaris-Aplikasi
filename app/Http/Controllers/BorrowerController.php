@@ -1,24 +1,49 @@
 <?php
-
+// app/Http/Controllers/BorrowerController.php
 namespace App\Http\Controllers;
 
 use App\Models\Borrower;
+use App\Models\Teacher;
+use App\Models\Student;
 use Illuminate\Http\Request;
 
 class BorrowerController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Menampilkan semua peminjam.
      */
-    public function index()
-{
-    $borrowers = Borrower::orderBy('created_at', 'desc')->get(); // Ambil semua data peminjam dengan urutan terbaru
-    return view('Crud_admin.borrowers.index', compact('borrowers'));
-}
+  // app/Http/Controllers/BorrowerController.php
+  public function index(Request $request)
+  {
+      $filter = $request->get('filter', ''); // Ambil filter dari request, default 'Semua'
+  
+      if ($filter == 'student') {
+          $borrowers = Borrower::with('student') // Memuat relasi student
+                              ->where('borrower_type', 'student')
+                              ->get();
+      } elseif ($filter == 'teacher') {
+          $borrowers = Borrower::with('teacher') // Memuat relasi teacher
+                              ->where('borrower_type', 'teacher')
+                              ->get();
+      } else {
+          $borrowers = Borrower::with(['student', 'teacher']) // Memuat kedua relasi
+                              ->get();
+      }
+  
+      // Mengambil data teacher dan student jika dibutuhkan untuk filter
+      $teachers = Teacher::all(); 
+      $students = Student::all(); 
+  
+    //   dd($borrowers);
+      return view('Crud_admin.borrowers.index', compact('borrowers', 'teachers', 'students'));
+
+  }
+  
+  
 
 
     /**
-     * Show the form for creating a new resource.
+     * Menampilkan form untuk menambahkan peminjam baru.
      */
     public function create()
     {
@@ -26,81 +51,71 @@ class BorrowerController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Menyimpan data peminjam baru.
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'nama_peminjam' => 'required|string|max:255',
-            'no_telp' => 'required|string|max:15|min:1|regex:/^\+?[0-9]{1,4}?[0-9]{7,15}$/',
-        ], [
-            'no_telp.regex' => 'Nomor Telepon tidak valid. Pastikan nomor telepon hanya mengandung angka dan opsional kode negara.',
+        $request->validate([
+            'borrower_type' => 'required|in:teacher,student',
+            'borrower_id' => 'required|exists:teachers,id|exists:students,id',
+            'name' => 'required|string',
         ]);
-        
 
-        // Coba untuk menyimpan data borrower
-        try {
-            $borrower = Borrower::create([
-                'nama_peminjam' => $validated['nama_peminjam'],
-                'no_telp' => $validated['no_telp'],
-            ]);
-
-            // Mengembalikan respons JSON jika berhasil
-            return response()->json($borrower, 201);
-        } catch (\Exception $e) {
-            // Jika terjadi error, kembalikan respons error dalam format JSON
-            return response()->json(['error' => $e->getMessage()], 500);
+        // Tentukan peminjam berdasarkan tipe (teacher atau student)
+        if ($request->borrower_type === 'teacher') {
+            $borrowerable = Teacher::find($request->borrower_id);
+        } else {
+            $borrowerable = Student::find($request->borrower_id);
         }
-    }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Borrower $borrower)
-    {
-        return view('Crud_admin.borrowers.show', compact('borrower'));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Borrower $borrower)
-    {
-        return view('Crud_admin.borrowers.edit', compact('borrower'));
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Borrower $borrower)
-    {
-        // Validasi data yang diterima
-        $validated = $request->validate([
-            'nama_peminjam' => 'required|string|max:255',
-            'no_telp' => [
-                'required',
-                'digits:12', // Menyesuaikan format nomor telepon
-                'regex:/^(?!-)\d{12}$/' // Validasi nomor telepon tidak boleh diawali dengan 08
-            ],
-        ], [
-            'nama_peminjam.unique' => 'Nama sudah ada',
-            'no_telp.regex' => 'Nomor telepon tidak boleh dimulai dengan 08',
-            'no_telp.digits' => 'Nomor telepon harus terdiri dari 12 digit',
+        // Simpan peminjam ke dalam tabel borrowers dengan relasi polymorphic
+        $borrower = Borrower::create([
+            'borrower_type' => $request->borrower_type,
+            'borrower_id' => $request->borrower_id,
+            'name' => $request->name, // Nama peminjam
         ]);
 
-        // Perbarui data peminjam
-        $borrower->update($validated);
+        // Jika tipe peminjam adalah teacher atau student, buat relasi polymorphic
+        $borrowerable->borrower()->save($borrower);
 
-        // Redirect setelah berhasil
-        return redirect()->route('borrowers.index')->with('success', 'Peminjam berhasil diperbarui');
+        // Redirect ke halaman daftar peminjam setelah berhasil
+        return redirect()->route('borrowers.index')->with('success', 'Peminjam berhasil ditambahkan');
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Menampilkan detail peminjam berdasarkan tipe dan ID peminjam.
      */
-    public function destroy(Borrower $borrower)
+    public function show($borrowerType, $borrowerId)
     {
+        $borrower = Borrower::where('borrower_type', $borrowerType)
+                            ->where('borrower_id', $borrowerId)
+                            ->first();
+
+        if (!$borrower) {
+            return redirect()->route('borrowers.index')->with('error', 'Peminjam tidak ditemukan');
+        }
+
+        return view('borrowers.show', compact('borrower'));
+    }
+
+    /**
+     * Menghapus peminjam berdasarkan tipe dan ID peminjam.
+     */
+    public function destroy($borrowerType, $borrowerId)
+    {
+        // Cari borrower berdasarkan tipe dan ID
+        $borrower = Borrower::where('borrower_type', $borrowerType)
+                            ->where('borrower_id', $borrowerId)
+                            ->first();
+    
+        if (!$borrower) {
+            return redirect()->route('borrowers.index')->with('error', 'Peminjam tidak ditemukan');
+        }
+    
+        // Hapus borrower
         $borrower->delete();
+    
         return redirect()->route('borrowers.index')->with('success', 'Peminjam berhasil dihapus');
     }
+    
 }

@@ -13,10 +13,12 @@ return new class extends Migration
     {
         Schema::create('borrowers', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_peminjam');
-            $table->string('no_telp');
+            $table->string('borrower_type');  // Menyimpan tipe peminjam (student/teacher)
+            $table->string('borrower_id'); // Menyimpan ID peminjam
+            $table->string('name');  // Menyimpan nama peminjam
             $table->timestamps();
         });
+
     }
 
     /**

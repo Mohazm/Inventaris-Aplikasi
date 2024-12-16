@@ -41,7 +41,7 @@
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label for="Kondisi_barang" class="form-label">Status Pinjaman</label>
+                        <label for="Kondisi_barang" class="form-label">Kondisi Barang</label>
                         <select name="Kondisi_barang" id="Kondisi_barang" class="form-control">
                             <option value="" selected>-- Pilih Status --</option>
                             <option value="barang rusak">Barang rusak</option>

@@ -20,7 +20,9 @@ use App\Http\Controllers\{
     AdminActivityController,
     DetailItemController,
     ProfileController,
-    ReturnsItemController
+    ReturnsItemController,
+    TeacherController,
+    StudentController
 };
 
 /*
@@ -44,6 +46,10 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
     // })->name('admin.index');
 
     Route::resource('borrowers', BorrowerController::class);
+    Route::delete('/borrowers/{borrowerType}/{borrowerId}', [BorrowerController::class, 'destroy'])->name('borrowers.destroy');
+ 
+    Route::resource('teacher', TeacherController::class);
+    Route::resource('stundent', StudentController::class);
     Route::resource('/category', CategoryController::class);
     Route::resource('/Items', ItemController::class);
     Route::resource('/suppliers', SupplierController::class);
