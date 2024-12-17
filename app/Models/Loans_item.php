@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
 
 class Loans_item extends Model
 {
-    use HasFactory;
+    use HasFactory,Notifiable;
 
     protected $guarded = [];
     public function validateStatusChange($newStatus)
@@ -34,4 +35,5 @@ class Loans_item extends Model
     {
         return $this->hasOne(Returns_item::class, 'peminjaman_id');
     }
+    
 }

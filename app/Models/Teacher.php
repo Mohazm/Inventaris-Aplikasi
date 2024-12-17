@@ -16,7 +16,7 @@ class Teacher extends Model
 
     public function borrower()
     {
-        return $this->hasOne(Borrower::class, 'borrower_id');
+        return $this->hasOne(Borrower::class,'borrower_id');
     }
     
 }

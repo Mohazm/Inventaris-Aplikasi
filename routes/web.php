@@ -8,7 +8,6 @@ use App\Http\Controllers\{
     CategoryController,
     ItemController,
     AdminActivityController,
-    
     StafBorrowerController,
     StafItemController,
     StafTeacherController,
@@ -16,7 +15,6 @@ use App\Http\Controllers\{
     StafTransactionsInController,
     StafTransactionsOutController,
     ActivityController,
-    
     TransactionsInController,
     TransactionsOutController,
     LoansItemController,
@@ -25,7 +23,8 @@ use App\Http\Controllers\{
     ReturnsItemController,
     TeacherController,
     UserController,
-    StudentController
+    StudentController,
+    
 };
 
 /*
@@ -50,7 +49,7 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
 
     
     Route::resource('teacher', TeacherController::class);
-    Route::resource('users', UserController::class);
+    Route::resource('users', usercontroller::class);
     Route::resource('stundent', StudentController::class);
     Route::resource('/category', CategoryController::class);
     Route::resource('/Items', ItemController::class);

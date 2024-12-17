@@ -117,7 +117,7 @@
                         <button type="submit" class="btn btn-secondary">
                             <i class="bx bx-refresh"></i> Perbarui Status Overdue
                         </button>
-                    </form>
+                    </form>                    
                 </div>
 
                 <!-- Tabel -->
@@ -141,87 +141,106 @@
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $loan->item->nama_barang ?? 'Barang tidak ditemukan' }}</td>
-                                    <td>{{ $loan->borrower->nama_peminjam ?? 'Peminjam tidak ditemukan' }}</td>
-                                    <td>{{ $loan->jumlah_pinjam }}</td>
-                                    <td>{{ $loan->tanggal_pinjam ? \Carbon\Carbon::parse($loan->tanggal_pinjam)->format('d M Y, H:i') : '-' }}
-                                    </td>
-                                    <td>{{ $loan->tanggal_kembali ? \Carbon\Carbon::parse($loan->tanggal_kembali)->format('d M Y, H:i') : '-' }}
-                                    </td>
-                                    <td>
-                                        <span
-                                            class="badge 
+                                    @forelse ($loans_items as $item)
+                                        <td>
+                                            @if ($item->borrower->student)
+                                                <!-- Cek apakah peminjam adalah siswa -->
+                                                {{ $item->borrower->student->name ?? 'Peminjam siswa tidak ditemukan' }}
+                                            @elseif ($item->borrower->teacher)
+                                                <!-- Cek apakah peminjam adalah guru -->
+                                                {{ $item->borrower->teacher->name ?? 'Peminjam guru tidak ditemukan' }}
+                                            @else
+                                                Peminjam tidak ditemukan
+                                            @endif
+                                        </td>
+
+                                    @empty
+                                <tr>
+                                    <td colspan="5">Tidak ada data peminjam</td>
+                                </tr>
+                            @endforelse
+
+                            <td>{{ $loan->jumlah_pinjam }}</td>
+                            <td>{{ $loan->tanggal_pinjam ? \Carbon\Carbon::parse($loan->tanggal_pinjam)->format('d M Y, H:i') : '-' }}
+                            </td>
+                            <td>{{ $loan->tanggal_kembali ? \Carbon\Carbon::parse($loan->tanggal_kembali)->format('d M Y, H:i') : '-' }}
+                            </td>
+                            <td>
+                                <span
+                                    class="badge 
                                         @if ($loan->status === 'menunggu') bg-warning 
                                         @elseif($loan->status === 'dipakai') bg-primary 
                                         @elseif($loan->status === 'selesai') bg-success 
                                         @elseif($loan->status === 'di kembalikan') bg-warning 
                                         @elseif($loan->status === 'ditolak') bg-danger 
                                         @elseif($loan->status === 'terlambat') bg-danger @endif">
-                                            {{ ucfirst($loan->status) }}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        @if ($loan->status === 'menunggu')
-                                            <div class="d-flex justify-content-between">
-                                                <!-- Tombol Terima -->
-                                                <form id="accept-form-{{ $loan->id }}"
-                                                    action="{{ route('loans_item.accept', $loan->id) }}" method="POST"
-                                                    style="display: inline;" class="me-2">
-                                                    @csrf
-                                                    @method('PATCH')
-                                                    <button type="submit" class="btn btn-sm btn-success">
-                                                        <i class="bx bx-check-circle"></i> Terima
-                                                    </button>
-                                                </form>
-                                                <!-- Tombol Batal -->
-                                                <form action="{{ route('loans_item.cancel', $loan->id) }}" method="POST"
-                                                    style="display: inline;">
-                                                    @csrf
-                                                    @method('PATCH')
-                                                    <button type="submit" class="btn btn-sm btn-danger"
-                                                        onclick="return confirm('Apakah Anda yakin ingin membatalkan peminjaman ini?')">
-                                                        <i class="bx bx-x-circle"></i> Batal
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        @else
-                                            <span>-</span>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        <div class="d-flex justify-content-center">
-                                            @if ($loan->status === 'dipakai')
-                                            <form action="{{ route('loans_item.return', $loan->id) }}" method="POST" class="d-inline">
-                                                @csrf
-                                                <button type="submit" class="btn btn-sm btn-primary me-2">
-                                                    <i class="bx bx-undo"></i> Return
-                                                </button>
-                                            </form>
-                                        @endif
-                                        
-                                            @if (!in_array($loan->status, ['ditolak', 'selesai']))
-                                                <a href="{{ route('loans_item.edit', $loan->id) }}"
-                                                    class="btn btn-sm btn-warning me-2">
-                                                    <i class="bx bx-edit-alt"></i> Edit
-                                                </a>
-                                                <form action="{{ route('loans_item.destroy', $loan->id) }}" method="POST"
-                                                    style="display: inline;">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm btn-danger me-2"
-                                                        onclick="return confirm('Apakah Anda yakin ingin menghapus peminjaman ini?')">
-                                                        <i class="bx bx-trash"></i> Delete
-                                                    </button>
-                                                </form>
-                                            @else
-                                                <span>-</span>
-                                            @endif
-                                        </div>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="9" class="text-center">Tidak ada data peminjaman.</td>
-                                </tr>
+                                    {{ ucfirst($loan->status) }}
+                                </span>
+                            </td>
+                            <td>
+                                @if ($loan->status === 'menunggu')
+                                    <div class="d-flex justify-content-between">
+                                        <!-- Tombol Terima -->
+                                        <form id="accept-form-{{ $loan->id }}"
+                                            action="{{ route('loans_item.accept', $loan->id) }}" method="POST"
+                                            style="display: inline;" class="me-2">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button type="submit" class="btn btn-sm btn-success">
+                                                <i class="bx bx-check-circle"></i> Terima
+                                            </button>
+                                        </form>
+                                        <!-- Tombol Batal -->
+                                        <form action="{{ route('loans_item.cancel', $loan->id) }}" method="POST"
+                                            style="display: inline;">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button type="submit" class="btn btn-sm btn-danger"
+                                                onclick="return confirm('Apakah Anda yakin ingin membatalkan peminjaman ini?')">
+                                                <i class="bx bx-x-circle"></i> Batal
+                                            </button>
+                                        </form>
+                                    </div>
+                                @else
+                                    <span>-</span>
+                                @endif
+                            </td>
+                            <td>
+                                <div class="d-flex justify-content-center">
+                                    @if ($loan->status === 'dipakai')
+                                        <form action="{{ route('loans_item.return', $loan->id) }}" method="POST"
+                                            class="d-inline">
+                                            @csrf
+                                            <button type="submit" class="btn btn-sm btn-primary me-2">
+                                                <i class="bx bx-undo"></i> Return
+                                            </button>
+                                        </form>
+                                    @endif
+
+                                    @if (!in_array($loan->status, ['selesai']))
+                                        <a href="{{ route('loans_item.edit', $loan->id) }}"
+                                            class="btn btn-sm btn-warning me-2">
+                                            <i class="bx bx-edit-alt"></i> Edit
+                                        </a>
+                                        <form action="{{ route('loans_item.destroy', $loan->id) }}" method="POST"
+                                            style="display: inline;">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-sm btn-danger me-2"
+                                                onclick="return confirm('Apakah Anda yakin ingin menghapus peminjaman ini?')">
+                                                <i class="bx bx-trash"></i> Delete
+                                            </button>
+                                        </form>
+                                    @else
+                                        <span>-</span>
+                                    @endif
+                                </div>
+                            </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="9" class="text-center">Tidak ada data peminjaman.</td>
+                            </tr>
                             @endforelse
                         </tbody>
                     </table>

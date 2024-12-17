@@ -13,10 +13,8 @@ class Student extends Model
 
     protected $fillable = ['name', 'email', 'phone', 'class'];
 
-   // Model Student
-public function borrower()
-{
-    return $this->hasOne(Borrower::class, 'borrower_id');
-}
-
+    public function borrower()
+    {
+        return $this->hasOne(Borrower::class,'borrower_id');
+    }
 }

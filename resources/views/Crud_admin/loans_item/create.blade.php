@@ -31,7 +31,7 @@
                                 <option value="" disabled selected>-- Pilih Barang --</option>
                                 @foreach ($items as $item)
                                     <option value="{{ $item->id }}" {{ old('item_id') == $item->id ? 'selected' : '' }}>
-                                        {{ $item->nama_barang }} (Stok: {{ $item->stock }}) 
+                                        {{ $item->nama_barang }} (Stok: {{ $item->stock }})
                                         {{-- Status: {{ $item->status_pinjaman }} -
                                         Kondisi: {{ $item->Kondisi_barang }} --}}
                                     </option>
@@ -43,84 +43,164 @@
                         </div>
 
 
-                        <div class="mb-3">
-                            <label for="borrower_id" class="form-label">Pilih Peminjam</label>
-                            <select class="form-select" id="borrower_id" name="borrower_id">
-                                <option value="" disabled selected>-- Pilih atau Tambahkan Peminjam --</option>
-                                @foreach ($borrowers as $borrower)
-                                    <option value="{{ $borrower->id }}">{{ $borrower->nama_peminjam }}</option>
-                                @endforeach
-                            </select>
-                            <button type="button" id="add-borrower" class="btn btn-secondary mt-2">Tambah Peminjam</button>
-                        </div>
+                        <select class="form-select" id="borrower_id" name="borrower_id" required>
+                            <option value="" disabled selected>-- Pilih atau Tambahkan Peminjam --</option>
+                            @foreach ($borrowers as $borrower)
+                                @if ($borrower->student)
+                                    <option value="{{ $borrower->id }}">Siswa:{{ $borrower->student->name }}</option>
+                                @elseif ($borrower->teacher)
+                                    <option value="{{ $borrower->id }}">Guru:{{ $borrower->teacher->name }}</option>
+                                @endif
+                                <p class="small">Not Data</p>
+                            @endforeach
+                        </select>
+                        <button type="button" id="add-Student" class="btn btn-secondary mt-2">Tambah Siswa</button>
+                        <button type="button" id="add-Teacher" class="btn btn-secondary mt-2">Tambah Guru</button>
+
 
                         <!-- Form untuk tambah peminjam -->
-                        <div id="add-borrower-form" style="display:none;">
+                        <div id="add-student-form" style="display:none;">
                             <div class="mb-3">
-                                <label for="borrower_name" class="form-label">Nama Peminjam Baru</label>
-                                <input type="text" class="form-control" id="borrower_name"
-                                    placeholder="Masukkan nama peminjam">
+                                <label for="student_name" class="form-label">Nama Siswa</label>
+                                <input type="text" class="form-control" id="student_name"
+                                    placeholder="Masukkan nama siswa">
                             </div>
                             <div class="mb-3">
-                                <label for="borrower_phone" class="form-label">Nomor Telepon</label>
-                                <input type="text" class="form-control" id="borrower_phone"
-                                    placeholder="Masukkan nomor telepon">
+                                <label for="student_email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="student_email"
+                                    placeholder="Masukkan email siswa">
                             </div>
-                            <button type="button" id="save-borrower" class="btn btn-primary">Simpan</button>
+                            <div class="mb-3">
+                                <label for="student_phone" class="form-label">Nomor Telepon</label>
+                                <input type="text" class="form-control" id="student_phone"
+                                    placeholder="Masukkan nomor telepon siswa">
+                            </div>
+                            <div class="mb-3">
+                                <label for="student_class" class="form-label">Kelas</label>
+                                <input type="text" class="form-control" id="student_class"
+                                    placeholder="Masukkan kelas siswa">
+                            </div>
+                            <button type="button" id="save-student" class="btn btn-primary">Simpan</button>
+                        </div>
+
+                        <div id="add-teacher-form" style="display:none;">
+                            <div class="mb-3">
+                                <label for="teacher_name" class="form-label">Nama Guru</label>
+                                <input type="text" class="form-control" id="teacher_name"
+                                    placeholder="Masukkan nama guru">
+                            </div>
+                            <div class="mb-3">
+                                <label for="teacher_email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="teacher_email"
+                                    placeholder="Masukkan email guru">
+                            </div>
+                            <div class="mb-3">
+                                <label for="teacher_phone" class="form-label">Nomor Telepon</label>
+                                <input type="text" class="form-control" id="teacher_phone"
+                                    placeholder="Masukkan nomor telepon guru">
+                            </div>
+                            <button type="button" id="save-teacher" class="btn btn-primary">Simpan</button>
                         </div>
                         <meta name="csrf-token" content="{{ csrf_token() }}">
 
                         <script>
                             document.addEventListener('DOMContentLoaded', () => {
+                                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+                                // Form Elements
+                                const addStudentForm = document.getElementById('add-student-form');
+                                const addTeacherForm = document.getElementById('add-teacher-form');
                                 const addBorrowerForm = document.getElementById('add-borrower-form');
+
                                 const borrowerSelect = document.getElementById('borrower_id');
-                                const addBorrowerBtn = document.getElementById('add-borrower');
+
+                                // Buttons
+                                const addStudentBtn = document.getElementById('add-Student');
+                                const addTeacherBtn = document.getElementById('add-Teacher');
+                                const addBorrowerBtn = document.getElementById('add-Borrower');
+
                                 const saveBorrowerBtn = document.getElementById('save-borrower');
-                                const borrowerNameInput = document.getElementById('borrower_name');
-                                const borrowerPhoneInput = document.getElementById('borrower_phone');
+                                const saveStudentBtn = document.getElementById('save-student');
+                                const saveTeacherBtn = document.getElementById('save-teacher');
 
-                                // Tampilkan form tambah peminjam
-                                addBorrowerBtn.addEventListener('click', () => {
-                                    addBorrowerForm.style.display = 'block';
-                                });
+                                // Toggle Forms
+                                const toggleForm = (form) => {
+                                    if (addBorrowerForm) addBorrowerForm.style.display = 'none';
+                                    if (addStudentForm) addStudentForm.style.display = 'none';
+                                    if (addTeacherForm) addTeacherForm.style.display = 'none';
+                                    if (form) form.style.display = 'block';
+                                };
 
-                                // Simpan peminjam baru via Ajax
-                                saveBorrowerBtn.addEventListener('click', () => {
-                                    const name = borrowerNameInput.value.trim();
-                                    const phone = borrowerPhoneInput.value.trim();
-                                    if (!name) return alert('Nama peminjam harus diisi.');
+                                if (addBorrowerBtn) {
+                                    addBorrowerBtn.addEventListener('click', () => toggleForm(addBorrowerForm));
+                                }
+                                if (addStudentBtn) {
+                                    addStudentBtn.addEventListener('click', () => toggleForm(addStudentForm));
+                                }
+                                if (addTeacherBtn) {
+                                    addTeacherBtn.addEventListener('click', () => toggleForm(addTeacherForm));
+                                }
 
-                                    fetch('{{ route('borrowers.store') }}', {
+
+                                // Save Student
+                                saveStudentBtn.addEventListener('click', () => {
+                                    const name = document.getElementById('student_name').value.trim();
+                                    const email = document.getElementById('student_email').value.trim();
+                                    const phone = document.getElementById('student_phone').value.trim();
+                                    const className = document.getElementById('student_class').value.trim();
+
+                                    if (!name || !email || !phone || !className) return alert('Semua field harus diisi.');
+
+                                    fetch('{{ route('stundent.store') }}', {
                                             method: 'POST',
                                             headers: {
-                                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                                'Content-Type': 'application/json'
+                                                'X-CSRF-TOKEN': csrfToken,
+                                                'Content-Type': 'application/json',
                                             },
                                             body: JSON.stringify({
-                                                nama_peminjam: name,
-                                                no_telp: phone,
+                                                name,
+                                                email,
+                                                phone,
+                                                class: className
                                             }),
                                         })
-                                        .then(response => {
-                                            if (!response.ok) {
-                                                // Tangani kesalahan respons, bisa jadi HTML atau error lainnya
-                                                return response.text().then(text => {
-                                                    throw new Error('Terjadi kesalahan: ' + text);
-                                                });
-                                            }
-                                            return response.json();
-                                        })
-                                        .then(data => {
-                                            const option = new Option(data.nama_peminjam, data.id, true, true);
+                                        .then((res) => res.json())
+                                        .then((data) => {
+                                            const option = new Option(data.name, data.id, true, true);
                                             borrowerSelect.add(option);
-                                            borrowerNameInput.value = '';
-                                            borrowerPhoneInput.value = '';
-                                            addBorrowerForm.style.display = 'none';
+                                            toggleForm(addBorrowerForm); // Hide all forms
                                         })
-                                        .catch(err => alert('Terjadi kesalahan: ' + err.message));
+                                        .catch((err) => alert('Error: ' + err.message));
                                 });
 
+                                // Save Teacher
+                                saveTeacherBtn.addEventListener('click', () => {
+                                    const name = document.getElementById('teacher_name').value.trim();
+                                    const email = document.getElementById('teacher_email').value.trim();
+                                    const phone = document.getElementById('teacher_phone').value.trim();
 
+                                    if (!name || !email || !phone) return alert('Semua field harus diisi.');
+
+                                    fetch('{{ route('teacher.store') }}', {
+                                            method: 'POST',
+                                            headers: {
+                                                'X-CSRF-TOKEN': csrfToken,
+                                                'Content-Type': 'application/json',
+                                            },
+                                            body: JSON.stringify({
+                                                name,
+                                                email,
+                                                phone
+                                            }),
+                                        })
+                                        .then((res) => res.json())
+                                        .then((data) => {
+                                            const option = new Option(data.name, data.id, true, true);
+                                            borrowerSelect.add(option);
+                                            toggleForm(addBorrowerForm); // Hide all forms
+                                        })
+                                        .catch((err) => alert('Error: ' + err.message));
+                                });
                             });
                         </script>
 
@@ -130,7 +210,8 @@
                         <div class="mb-3">
                             <label for="jumlah_pinjam" class="form-label">Jumlah Pinjam</label>
                             <input type="number" class="form-control @error('jumlah_pinjam') is-invalid @enderror"
-                                id="jumlah_pinjam" name="jumlah_pinjam" min="1" value="{{ old('jumlah_pinjam') }}">
+                                id="jumlah_pinjam" name="jumlah_pinjam" min="1"
+                                value="{{ old('jumlah_pinjam') }}">
                             @error('jumlah_pinjam')
                                 <div class="text-danger mt-1">{{ $message }}</div>
                             @enderror
@@ -139,8 +220,9 @@
                         <!-- Tanggal Pinjam -->
                         <div class="mb-3">
                             <label for="tanggal_pinjam" class="form-label">Tanggal Pinjam</label>
-                            <input type="datetime-local" class="form-control @error('tanggal_pinjam') is-invalid @enderror"
-                                id="tanggal_pinjam" name="tanggal_pinjam" value="{{ old('tanggal_pinjam') }}">
+                            <input type="datetime-local"
+                                class="form-control @error('tanggal_pinjam') is-invalid @enderror" id="tanggal_pinjam"
+                                name="tanggal_pinjam" value="{{ old('tanggal_pinjam') }}">
                             @error('tanggal_pinjam')
                                 <div class="text-danger mt-1">{{ $message }}</div>
                             @enderror
@@ -149,8 +231,9 @@
                         <!-- Tanggal Kembali -->
                         <div class="mb-3">
                             <label for="tanggal_kembali" class="form-label">Tanggal Kembali</label>
-                            <input type="datetime-local" class="form-control @error('tanggal_kembali') is-invalid @enderror"
-                                id="tanggal_kembali" name="tanggal_kembali" value="{{ old('tanggal_kembali') }}">
+                            <input type="datetime-local"
+                                class="form-control @error('tanggal_kembali') is-invalid @enderror" id="tanggal_kembali"
+                                name="tanggal_kembali" value="{{ old('tanggal_kembali') }}">
                             @error('tanggal_kembali')
                                 <div class="text-danger mt-1">{{ $message }}</div>
                             @enderror

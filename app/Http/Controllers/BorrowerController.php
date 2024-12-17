@@ -13,34 +13,33 @@ class BorrowerController extends Controller
     /**
      * Menampilkan semua peminjam.
      */
-  // app/Http/Controllers/BorrowerController.php
-  public function index(Request $request)
-  {
-      $filter = $request->get('filter', ''); // Ambil filter dari request, default 'Semua'
-  
-      if ($filter == 'student') {
-          $borrowers = Borrower::with('student') // Memuat relasi student
-                              ->where('borrower_type', 'student')
-                              ->get();
-      } elseif ($filter == 'teacher') {
-          $borrowers = Borrower::with('teacher') // Memuat relasi teacher
-                              ->where('borrower_type', 'teacher')
-                              ->get();
-      } else {
-          $borrowers = Borrower::with(['student', 'teacher']) // Memuat kedua relasi
-                              ->get();
-      }
-  
-      // Mengambil data teacher dan student jika dibutuhkan untuk filter
-      $teachers = Teacher::all(); 
-      $students = Student::all(); 
-  
-    //   dd($borrowers);
-      return view('Crud_admin.borrowers.index', compact('borrowers', 'teachers', 'students'));
+    // app/Http/Controllers/BorrowerController.php
+    public function index(Request $request)
+    {
+        $filter = $request->get('filter', ''); // Ambil filter dari request, default 'Semua'
 
-  }
-  
-  
+        if ($filter == 'student') {
+            $borrowers = Borrower::with('student') // Memuat relasi student
+                ->where('borrower_type', 'student')
+                ->get();
+        } elseif ($filter == 'teacher') {
+            $borrowers = Borrower::with('teacher') // Memuat relasi teacher
+                ->where('borrower_type', 'teacher')
+                ->get();
+        } else {
+            $borrowers = Borrower::with(['student', 'teacher']) // Memuat kedua relasi
+                ->get();
+        }
+
+        // Mengambil data teacher dan student jika dibutuhkan untuk filter
+        $teachers = Teacher::all();
+        $students = Student::all();
+
+        //   dd($borrowers);
+        return view('Crud_admin.borrowers.index', compact('borrowers', 'teachers', 'students'));
+    }
+
+
 
 
     /**
@@ -89,8 +88,8 @@ class BorrowerController extends Controller
     public function show($borrowerType, $borrowerId)
     {
         $borrower = Borrower::where('borrower_type', $borrowerType)
-                            ->where('borrower_id', $borrowerId)
-                            ->first();
+            ->where('borrower_id', $borrowerId)
+            ->first();
 
         if (!$borrower) {
             return redirect()->route('borrowers.index')->with('error', 'Peminjam tidak ditemukan');
@@ -106,17 +105,24 @@ class BorrowerController extends Controller
     {
         // Cari borrower berdasarkan tipe dan ID
         $borrower = Borrower::where('borrower_type', $borrowerType)
-                            ->where('borrower_id', $borrowerId)
-                            ->first();
-    
+            ->where('borrower_id', $borrowerId)
+            ->first();
+
+        // Cek apakah borrower ditemukan
         if (!$borrower) {
             return redirect()->route('borrowers.index')->with('error', 'Peminjam tidak ditemukan');
         }
-    
-        // Hapus borrower
-        $borrower->delete();
-    
-        return redirect()->route('borrowers.index')->with('success', 'Peminjam berhasil dihapus');
+
+        // Coba hapus borrower, jika gagal
+        try {
+            // Hapus borrower
+            $borrower->delete();
+
+            // Redirect jika berhasil
+            return redirect()->route('borrowers.index')->with('success', 'Peminjam berhasil dihapus');
+        } catch (\Exception $e) {
+            // Tangani error jika gagal menghapus
+            return redirect()->route('borrowers.index')->with('error', 'Terjadi kesalahan saat menghapus peminjam');
+        }
     }
-    
 }
