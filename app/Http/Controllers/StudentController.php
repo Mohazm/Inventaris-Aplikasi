@@ -20,7 +20,7 @@ class StudentController extends Controller
             'name' => 'required|string',
             'email' => 'required|email|unique:students,email',
             'phone' => 'required|string',
-            'class' => 'required|string',
+            'class' => 'required|string'
         ]);
     
         // Menambahkan siswa baru
@@ -38,7 +38,12 @@ class StudentController extends Controller
         $student->save();
     
         // Redirect ke halaman daftar peminjam (borrowers) dengan pesan sukses
-        return redirect()->route('borrowers.index')->with('success', 'Siswa berhasil ditambahkan dan menjadi peminjam');
+        return response()->json([
+            'id' => $student->id,
+            'name' => $student->name,
+            'redirect' => route('borrowers.index'),
+            'message' => 'berhasil',
+        ], 201);
     }
     
     

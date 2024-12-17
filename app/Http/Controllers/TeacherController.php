@@ -45,7 +45,11 @@ class TeacherController extends Controller
         $teacher->save();
     
         // Redirect ke halaman daftar guru dengan pesan sukses
-        return redirect()->route('borrowers.index')->with('success', 'Guru berhasil ditambahkan dan menjadi peminjam');
+        return response()->json([
+            'id' => $teacher->id,
+            'name' => $teacher->name,
+            'redirect' => route('borrowers.index'),
+        ], 201);
     }
     
 

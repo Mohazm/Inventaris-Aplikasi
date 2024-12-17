@@ -8,7 +8,6 @@
             <div class="toast-header">
                 <i class="bx bx-bell me-2"></i>
                 <div class="me-auto fw-semibold">Peminjaman</div>
-                <small></small>
                 <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
             <div class="toast-body">
@@ -16,12 +15,12 @@
             </div>
         </div>
     @endif
+
     @if (session('success'))
         <div class="bs-toast toast fade show bg-success" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="toast-header">
                 <i class="bx bx-bell me-2"></i>
-                <div class="me-auto fw-semibold">Category</div>
-                <small></small>
+                <div class="me-auto fw-semibold">Sukses</div>
                 <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
             <div class="toast-body">
@@ -31,41 +30,23 @@
         <script>
             document.addEventListener('DOMContentLoaded', function() {
                 var toastElList = [].slice.call(document.querySelectorAll('.toast'));
-                var toastList = toastElList.map(function(toastEl) {
-                    return new bootstrap.Toast(toastEl, {
+                toastElList.forEach(function(toastEl) {
+                    var toast = new bootstrap.Toast(toastEl, {
                         delay: 3000
                     });
+                    toast.show();
                 });
-                toastList.forEach(toast => toast.show());
             });
         </script>
     @endif
-    <style>
-        /* Toast/Alert styling */
-        .toast {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1055;
-            background-color: #28a745;
-            color: #fff;
-            border-radius: 0.25rem;
-        }
-
-        .toast .toast-body {
-            padding: 0.75rem;
-        }
-
-        .toast .close {
-            color: #fff;
-            opacity: 0.8;
-        }
-    </style>
 
     <div class="container-xxl flex-grow-1 container-p-y">
+        <!-- Title -->
         <h4 class="fw-bold py-3 mb-4 text-center">📋 Daftar Peminjaman</h4>
-        <form action="{{ route('loans_item.index') }}" method="GET" class="d-flex flex-column mb-4">
-            <div class="row mb-2">
+
+        <!-- Filter Form -->
+        <form action="{{ route('loans_item.index') }}" method="GET" class="mb-4">
+            <div class="row">
                 <div class="col-md-4">
                     <label for="tanggal_pinjam" class="form-label">Tanggal Pinjam</label>
                     <select name="tanggal_pinjam" id="tanggal_pinjam" class="form-control">
@@ -96,16 +77,9 @@
                     </button>
                 </div>
             </div>
-            {{-- <div class="row">
-            <div class="col-md-12">
-                <a href="{{ route('loans_item.index') }}" class="btn btn-secondary w-100">
-                    <i class="bx bx-reset"></i> Reset
-                </a>
-            </div>
-        </div> --}}
         </form>
 
-
+        <!-- Actions and Table -->
         <div class="card shadow-sm border-light">
             <div class="card-body">
                 <div class="d-flex justify-content-between mb-3">
@@ -117,10 +91,10 @@
                         <button type="submit" class="btn btn-secondary">
                             <i class="bx bx-refresh"></i> Perbarui Status Overdue
                         </button>
-                    </form>                    
+                    </form>
                 </div>
 
-                <!-- Tabel -->
+                <!-- Table -->
                 <div class="table-responsive">
                     <table class="table table-hover table-striped align-middle text-center">
                         <thead class="table-primary">
@@ -137,110 +111,95 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse ($loans_items as $index => $loan)
+                            @forelse ($loans_items as $loan)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $loan->item->nama_barang ?? 'Barang tidak ditemukan' }}</td>
-                                    @forelse ($loans_items as $item)
-                                        <td>
-                                            @if ($item->borrower->student)
-                                                <!-- Cek apakah peminjam adalah siswa -->
-                                                {{ $item->borrower->student->name ?? 'Peminjam siswa tidak ditemukan' }}
-                                            @elseif ($item->borrower->teacher)
-                                                <!-- Cek apakah peminjam adalah guru -->
-                                                {{ $item->borrower->teacher->name ?? 'Peminjam guru tidak ditemukan' }}
-                                            @else
-                                                Peminjam tidak ditemukan
+                                    <td>
+                                        @if ($loan->borrower->student)
+                                            {{ $loan->borrower->student->name ?? 'Peminjam siswa tidak ditemukan' }}
+                                        @elseif ($loan->borrower->teacher)
+                                            {{ $loan->borrower->teacher->name ?? 'Peminjam guru tidak ditemukan' }}
+                                        @else
+                                            Peminjam tidak ditemukan
+                                        @endif
+                                    </td>
+                                    <td>{{ $loan->jumlah_pinjam }}</td>
+                                    <td>{{ $loan->tanggal_pinjam ? \Carbon\Carbon::parse($loan->tanggal_pinjam)->format('d M Y, H:i') : '-' }}
+                                    </td>
+                                    <td>{{ $loan->tanggal_kembali ? \Carbon\Carbon::parse($loan->tanggal_kembali)->format('d M Y, H:i') : '-' }}
+                                    </td>
+                                    <td>
+                                        <span
+                                            class="badge 
+                                            @switch($loan->status)
+                                                @case('menunggu') bg-warning @break
+                                                @case('dipakai') bg-primary @break
+                                                @case('selesai') bg-success @break
+                                                @case('terlambat') bg-danger @break
+                                                @default bg-secondary
+                                            @endswitch">
+                                            {{ ucfirst($loan->status) }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        @if ($loan->status === 'menunggu')
+                                            <form action="{{ route('loans_item.accept', $loan->id) }}" method="POST"
+                                                class="d-inline">
+                                                @csrf
+                                                @method('PATCH')
+                                                <button type="submit" class="btn btn-sm btn-success me-1">
+                                                    <i class="bx bx-check-circle"></i> Terima
+                                                </button>
+                                            </form>
+                                            <form action="{{ route('loans_item.cancel', $loan->id) }}" method="POST"
+                                                class="d-inline">
+                                                @csrf
+                                                @method('PATCH')
+                                                <button type="submit" class="btn btn-sm btn-danger"
+                                                    onclick="return confirm('Yakin ingin membatalkan peminjaman ini?')">
+                                                    <i class="bx bx-x-circle"></i> Batal
+                                                </button>
+                                            </form>
+                                        @else
+                                            <span>-</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <div class="d-flex justify-content-center">
+                                            @if ($loan->status === 'dipakai')
+                                                <form action="{{ route('loans_item.return', $loan->id) }}" method="POST"
+                                                    class="me-2">
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-sm btn-primary">
+                                                        <i class="bx bx-undo"></i> Return
+                                                    </button>
+                                                </form>
                                             @endif
-                                        </td>
-
-                                    @empty
-                                <tr>
-                                    <td colspan="5">Tidak ada data peminjam</td>
+                                            <a href="{{ route('loans_item.detail', $loan->id) }}"
+                                                class="btn btn-sm btn-info me-2">
+                                                Detail
+                                            </a>
+                                            <a href="{{ route('loans_item.edit', $loan->id) }}"
+                                                class="btn btn-sm btn-warning me-2">
+                                                Edit
+                                            </a>
+                                            <form action="{{ route('loans_item.destroy', $loan->id) }}" method="POST"
+                                                class="d-inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-sm btn-danger"
+                                                    onclick="return confirm('Yakin ingin menghapus data ini?')">
+                                                    Hapus
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
                                 </tr>
-                            @endforelse
-
-                            <td>{{ $loan->jumlah_pinjam }}</td>
-                            <td>{{ $loan->tanggal_pinjam ? \Carbon\Carbon::parse($loan->tanggal_pinjam)->format('d M Y, H:i') : '-' }}
-                            </td>
-                            <td>{{ $loan->tanggal_kembali ? \Carbon\Carbon::parse($loan->tanggal_kembali)->format('d M Y, H:i') : '-' }}
-                            </td>
-                            <td>
-                                <span
-                                    class="badge 
-                                        @if ($loan->status === 'menunggu') bg-warning 
-                                        @elseif($loan->status === 'dipakai') bg-primary 
-                                        @elseif($loan->status === 'selesai') bg-success 
-                                        @elseif($loan->status === 'di kembalikan') bg-warning 
-                                        @elseif($loan->status === 'ditolak') bg-danger 
-                                        @elseif($loan->status === 'terlambat') bg-danger @endif">
-                                    {{ ucfirst($loan->status) }}
-                                </span>
-                            </td>
-                            <td>
-                                @if ($loan->status === 'menunggu')
-                                    <div class="d-flex justify-content-between">
-                                        <!-- Tombol Terima -->
-                                        <form id="accept-form-{{ $loan->id }}"
-                                            action="{{ route('loans_item.accept', $loan->id) }}" method="POST"
-                                            style="display: inline;" class="me-2">
-                                            @csrf
-                                            @method('PATCH')
-                                            <button type="submit" class="btn btn-sm btn-success">
-                                                <i class="bx bx-check-circle"></i> Terima
-                                            </button>
-                                        </form>
-                                        <!-- Tombol Batal -->
-                                        <form action="{{ route('loans_item.cancel', $loan->id) }}" method="POST"
-                                            style="display: inline;">
-                                            @csrf
-                                            @method('PATCH')
-                                            <button type="submit" class="btn btn-sm btn-danger"
-                                                onclick="return confirm('Apakah Anda yakin ingin membatalkan peminjaman ini?')">
-                                                <i class="bx bx-x-circle"></i> Batal
-                                            </button>
-                                        </form>
-                                    </div>
-                                @else
-                                    <span>-</span>
-                                @endif
-                            </td>
-                            <td>
-                                <div class="d-flex justify-content-center">
-                                    @if ($loan->status === 'dipakai')
-                                        <form action="{{ route('loans_item.return', $loan->id) }}" method="POST"
-                                            class="d-inline">
-                                            @csrf
-                                            <button type="submit" class="btn btn-sm btn-primary me-2">
-                                                <i class="bx bx-undo"></i> Return
-                                            </button>
-                                        </form>
-   
-                                    @if (!in_array($loan->status, ['selesai']))
-                                    <a class="btn btn-primary" href="{{route('loans_item.detail', $loan->id)}}"  >Detail</a>  
-                                        <a href="{{ route('loans_item.edit', $loan->id) }}"
-                                            class="btn btn-sm btn-warning me-2">
-                                            <i class="bx bx-edit-alt"></i> Edit
-                                        </a>
-                                        <form action="{{ route('loans_item.destroy', $loan->id) }}" method="POST"
-                                            style="display: inline;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-danger me-2"
-                                                onclick="return confirm('Apakah Anda yakin ingin menghapus peminjaman ini?')">
-                                                <i class="bx bx-trash"></i> Delete
-                                            </button>
-                                        </form>
-                                    @else
-                                        <span>-</span>
-                                    @endif
-                                </div>
-                            </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="9" class="text-center">Tidak ada data peminjaman.</td>
-                            </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="9">Tidak ada data peminjaman.</td>
+                                </tr>
                             @endforelse
                         </tbody>
                     </table>
@@ -248,6 +207,8 @@
             </div>
         </div>
     </div>
+
+
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
