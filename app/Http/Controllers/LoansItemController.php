@@ -214,6 +214,18 @@ class LoansItemController extends Controller
         return redirect()->route('loans_item.index')->with('success', 'Peminjaman berhasil diperbarui.');
     }
 
+public function show($id)
+{
+    // Ambil data Loans_items dengan relasi
+    $loanItem = Loans_Item::with([
+        'item',           // Relasi ke Item
+        'borrower.student', // Relasi Borrowers ke Students
+        'borrower.teacher'  // Relasi Borrowers ke Teachers
+    ])->findOrFail($id);
+
+    // Kirim ke view
+    return view('Crud_admin.loans_item.detail', compact('loanItem'));
+}
 
     // Menghapus data loans_items
     public function destroy($id)
@@ -258,7 +270,6 @@ class LoansItemController extends Controller
 
         return redirect()->route('loans_item.index')->with('success', 'Peminjaman berhasil dibatalkan.');
     }
-
 
 
     public function checkOverdueLoans()

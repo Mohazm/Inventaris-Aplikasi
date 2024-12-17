@@ -6,7 +6,7 @@ use App\Models\Transactions_out;
 use App\Models\Item;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-
+use Illuminate\support\Str;
 class TransactionsOutController extends Controller
 {
     public function index()
@@ -25,51 +25,67 @@ class TransactionsOutController extends Controller
 
         return view('Crud_admin.transactions_out.create', compact('items'));
     }
+public function store(Request $request)
+{
+    // Validasi input
+    $request->validate([
+        'tanggal_keluar' => [
+            'required',
+            'date',
+            function ($attribute, $value, $fail) {
+                if ($value !== now()->toDateString()) {
+                    $fail('Tanggal keluar hanya bisa diisi dengan tanggal hari ini.');
+                }
+            },
+        ],
+        'item_id' => 'required|exists:items,id',
+        'tujuan_keluar' => 'required|string|max:255',
+        'jumlah' => 'required|numeric|min:0.01',
+    ], [
+        'tanggal_keluar.required' => 'Tanggal keluar wajib diisi.',
+        'tanggal_keluar.date' => 'Format tanggal keluar tidak valid.',
+        'item_id.required' => 'Barang wajib dipilih.',
+        'item_id.exists' => 'Barang yang dipilih tidak valid.',
+        'tujuan_keluar.required' => 'Tujuan keluar wajib diisi.',
+        'tujuan_keluar.string' => 'Tujuan keluar harus berupa teks.',
+        'tujuan_keluar.max' => 'Tujuan keluar tidak boleh lebih dari 255 karakter.',
+        'jumlah.required' => 'Jumlah barang keluar wajib diisi.',
+        'jumlah.numeric' => 'Jumlah barang keluar harus berupa angka.',
+        'jumlah.min' => 'Jumlah barang keluar minimal adalah 0.01.',
+    ]);
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'tanggal_keluar' => [
-                'required',
-                'date',
-                function ($attribute, $value, $fail) {
-                    if ($value !== now()->toDateString()) {
-                        $fail('Tanggal keluar hanya bisa diisi dengan tanggal hari ini.');
-                    }
-                },
-            ],
-            'item_id' => 'required|exists:items,id',
-            'tujuan_keluar' => 'required|string|max:255',
-            'jumlah' => 'required|numeric|min:0.01',
-        ], [
-            'tanggal_keluar.required' => 'Tanggal keluar wajib diisi.',
-            'tanggal_keluar.date' => 'Format tanggal keluar tidak valid.',
-            'item_id.required' => 'Barang wajib dipilih.',
-            'item_id.exists' => 'Barang yang dipilih tidak valid.',
-            'tujuan_keluar.required' => 'Tujuan keluar wajib diisi.',
-            'tujuan_keluar.string' => 'Tujuan keluar harus berupa teks.',
-            'tujuan_keluar.max' => 'Tujuan keluar tidak boleh lebih dari 255 karakter.',
-            'jumlah.required' => 'Jumlah barang keluar wajib diisi.',
-            'jumlah.numeric' => 'Jumlah barang keluar harus berupa angka.',
-            'jumlah.min' => 'Jumlah barang keluar minimal adalah 0.01.',
+    // Temukan item berdasarkan ID
+    $item = Item::findOrFail($request->item_id);
+
+    // Validasi jika jumlah barang keluar lebih banyak dari stok yang ada
+    if ($request->jumlah > $item->stock) {
+        return back()->withErrors(['error' => 'Jumlah barang keluar melebihi stok yang tersedia.'])->withInput();
+    }
+
+    // Generate kode barang otomatis
+    $kodeBarang = strtoupper(substr($item->nama_barang, 0, 3)) . '-' . Str::random(5);
+
+    try {
+        // Simpan transaksi barang keluar
+        $transactionOut = Transactions_out::create([
+            'tanggal_keluar' => $request->tanggal_keluar,
+            'item_id' => $request->item_id,
+            'tujuan_keluar' => $request->tujuan_keluar,
+            'jumlah' => $request->jumlah,
+            'kode_barang' => $kodeBarang, // Simpan kode barang yang telah digenerate
         ]);
 
-        $item = Item::findOrFail($request->item_id);
+        // Kurangi stok barang setelah transaksi keluar
+        $item->decrement('stock', $request->jumlah);
 
-        if ($request->jumlah > $item->stock) {
-            return back()->withErrors(['error' => 'Jumlah barang keluar melebihi stok yang tersedia.'])->withInput();
-        }
-
-        try {
-            Transactions_out::create($request->all());
-            $item->decrement('stock', $request->jumlah);
-
-            return redirect()->route('Transactions_out.index')->with('success', 'Transaksi barang keluar berhasil ditambahkan.');
-        } catch (\Exception $e) {
-            Log::error('Error saat menyimpan transaksi barang keluar: ' . $e->getMessage());
-            return back()->withErrors(['error' => 'Terjadi kesalahan saat menyimpan transaksi.'])->withInput();
-        }
+        return redirect()->route('Transactions_out.index')->with('success', 'Transaksi barang keluar berhasil ditambahkan.');
+    } catch (\Exception $e) {
+        // Log error dan beri pesan
+        Log::error('Error saat menyimpan transaksi barang keluar: ' . $e->getMessage());
+        return back()->withErrors(['error' => 'Terjadi kesalahan saat menyimpan transaksi.'])->withInput();
     }
+}
+
 
     public function edit($id)
     {

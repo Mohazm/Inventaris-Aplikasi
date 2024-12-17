@@ -105,6 +105,9 @@ object-fit: cover;
                         <p class="mb-3 text-muted">
                             <strong>Jumlah:</strong> {{ $transaction->jumlah }}
                         </p>
+                        <p class="mb-3 text-muted">
+                            <strong>kode_barang:</strong> {{ $transaction->kode_barang }}
+                        </p>
                         <div class="d-flex justify-content-between">
                             <a href="{{ route('Transactions_in.edit', $transaction->id) }}" class="btn btn-sm btn-outline-warning shadow-sm">
                                 ✏️ Edit

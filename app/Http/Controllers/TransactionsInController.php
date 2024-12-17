@@ -62,42 +62,48 @@ class TransactionsInController extends Controller
             'jumlah.*.required' => 'Jumlah wajib diisi.',
             'jumlah.*.integer' => 'Jumlah harus berupa angka.',
         ]);
-
+    
         try {
             // Loop melalui data array untuk menyimpan setiap record
             foreach ($request->tanggal_masuk as $index => $tanggal_masuk) {
                 $itemId = $request->item_id[$index];
                 $supplierId = $request->supplier_id[$index];
                 $jumlah = $request->jumlah[$index];
-
+    
+                // Ambil data item
+                $item = Item::find($itemId);
+                // Generate kode_barang secara otomatis
+                $kodeBarang = strtoupper(substr($item->nama_barang, 0, 3)) . '-' . Str::random(5);
+    
                 // Simpan transaksi barang masuk
                 $transaction = Transactions_in::create([
                     'tanggal_masuk' => $tanggal_masuk,
                     'item_id' => $itemId,
                     'supplier_id' => $supplierId,
                     'jumlah' => $jumlah,
+                    'kode_barang' => $kodeBarang, // Gunakan kode_barang yang di-generate
                 ]);
-
+    
                 // Perbarui stok barang
-                $item = Item::find($itemId);
                 $item->increment('stock', $jumlah);
-
+    
                 // Tambahkan detail barang
                 for ($i = 1; $i <= $jumlah; $i++) {
                     Detail_item::create([
                         'item_id' => $itemId,
-                        'kode_barang' => strtoupper(substr($item->nama_barang, 0, 3)) . '-' . Str::random(5),
+                        'kode_barang' => $kodeBarang, // Gunakan kode_barang yang sama untuk detail
                         'kondisi_barang' => 'Normal',
                     ]);
                 }
             }
-
+    
             return redirect()->route('Transactions_in.index')->with('success', 'Transaksi barang masuk berhasil disimpan.');
         } catch (\Exception $e) {
             Log::error('Kesalahan saat menyimpan transaksi barang masuk: ' . $e->getMessage());
             return back()->withErrors(['error' => 'Terjadi kesalahan saat menyimpan transaksi. Silakan coba lagi.']);
         }
     }
+    
 
 
     public function edit($id)

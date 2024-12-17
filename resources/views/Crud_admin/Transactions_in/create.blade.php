@@ -32,7 +32,7 @@
                         value="{{ old('tanggal_masuk', date('Y-m-d')) }}" 
                         readonly>
                 </div>
-
+        
                 <!-- Barang -->
                 <div class="mb-3">
                     <label for="item_id" class="form-label">Barang</label>
@@ -45,7 +45,7 @@
                         @endforeach
                     </select>
                 </div>
-
+        
                 <!-- Supplier -->
                 <div class="mb-3">
                     <label for="supplier_id" class="form-label">Supplier</label>
@@ -58,7 +58,7 @@
                         @endforeach
                     </select>
                 </div>
-
+        
                 <!-- Jumlah -->
                 <div class="mb-3">
                     <label for="jumlah" class="form-label">Jumlah</label>
@@ -69,11 +69,12 @@
                         value="{{ old('jumlah') }}" 
                         required>
                 </div>
-
+        
                 <!-- Tombol Hapus -->
                 <button type="button" class="btn btn-danger btn-sm remove-form">Hapus</button>
             </div>
         </div>
+        
 
         <!-- Tombol Tambah Form -->
         <!-- Tombol Simpan dan Batal -->

@@ -215,9 +215,9 @@
                                                 <i class="bx bx-undo"></i> Return
                                             </button>
                                         </form>
-                                    @endif
-
+   
                                     @if (!in_array($loan->status, ['selesai']))
+                                    <a class="btn btn-primary" href="{{route('loans_item.detail', $loan->id)}}"  >Detail</a>  
                                         <a href="{{ route('loans_item.edit', $loan->id) }}"
                                             class="btn btn-sm btn-warning me-2">
                                             <i class="bx bx-edit-alt"></i> Edit

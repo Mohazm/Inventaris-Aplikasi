@@ -97,6 +97,7 @@
                         <th>Barang</th>
                         <th>Tujuan</th>
                         <th>Jumlah</th>
+                        <th>Kode_barang</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -118,6 +119,9 @@
                             <td>{{ $transaction->tujuan_keluar }}</td>
                             <td>
                                 <span class="badge bg-success">{{ $transaction->jumlah }}</span>
+                            </td>
+                            <td>
+                                <span class="badge bg-success">{{ $transaction->kode_barang }}</span>
                             </td>
                             <td>
                                 <div class="d-flex gap-2 justify-content-center">

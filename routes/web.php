@@ -10,7 +10,7 @@ use App\Http\Controllers\{
     AdminActivityController,
     StafBorrowerController,
     StafItemController,
-    StafTeacherController,
+     StafTeacherController ,
     StafStudentController,
     StafTransactionsInController,
     StafTransactionsOutController,
@@ -49,7 +49,7 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
 
     
     Route::resource('teacher', TeacherController::class);
-    Route::resource('users', usercontroller::class);
+    Route::resource('users', UserController::class);
     Route::resource('stundent', StudentController::class);
     Route::resource('/category', CategoryController::class);
     Route::resource('/Items', ItemController::class);
@@ -92,6 +92,7 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
     Route::patch('/loans_item/accept/{id}', [LoansItemController::class, 'accept'])->name('loans_item.accept');
     Route::patch('/loans_item/cancel/{id}', [LoansItemController::class, 'cancel'])->name('loans_item.cancel');
     Route::post('/loans_item/checkOverdue', [LoansItemController::class, 'checkOverdueLoans'])->name('loans_item.checkOverdue');
+    Route::get('loans_item/{id}', [LoansItemController::class, 'show'])->name('loans_item.detail');
     
     Route::get('/adminactivities', [AdminActivityController::class, 'index'])->name('admin.activities.index');
     Route::delete('/adminactivities/{id}', [AdminActivityController::class, 'destroy'])->name('admin.activities.destroy');
@@ -109,12 +110,12 @@ Route::middleware(['auth', 'is_staff'])->group(function () {
     Route::put('stafborrower/{id}', [StafBorrowerController::class, 'update'])->name('staff.borrower.update');
     Route::delete('stafborrower/{borrowerType}/{borrowerId}', [StafBorrowerController::class, 'destroy'])->name('staff.borrower.destroy');
     
-    Route::get('/stafteacher', [StafTeacherController::class, 'index'])->name('stafteacher.index');
-    Route::get('/stafteacher/create', [StafTeacherController::class, 'create'])->name('stafteacher.create');
-    Route::post('/stafteacher', [StafTeacherController::class, 'store'])->name('stafteacher.store');
-    Route::get('/stafteacher/{id}/edit', [StafTeacherController::class, 'edit'])->name('stafteacher.edit');
-    Route::put('/stafteacher/{id}', [StafTeacherController::class, 'update'])->name('stafteacher.update');
-    Route::delete('/stafteacher/{id}', [StafTeacherController::class, 'destroy'])->name('stafteacher.destroy');
+    Route::get('/stafteacher', [ StafTeacherController ::class, 'index'])->name('stafteacher.index');
+    Route::get('/stafteacher/create', [ StafTeacherController ::class, 'create'])->name('stafteacher.create');
+    Route::post('/stafteacher', [ StafTeacherController ::class, 'store'])->name('stafteacher.store');
+    Route::get('/stafteacher/{id}/edit', [ StafTeacherController ::class, 'edit'])->name('stafteacher.edit');
+    Route::put('/stafteacher/{id}', [ StafTeacherController ::class, 'update'])->name('stafteacher.update');
+    Route::delete('/stafteacher/{id}', [ StafTeacherController ::class, 'destroy'])->name('stafteacher.destroy');
     
     Route::get('/stafstudent', [StafStudentController::class, 'index'])->name('stafstudent.index');
     Route::get('/stafstudent/create', [StafStudentController::class, 'create'])->name('stafstudent.create');
