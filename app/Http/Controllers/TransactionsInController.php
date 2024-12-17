@@ -10,7 +10,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use App\Models\Category;
-
+ use Illuminate\Support\Facades\DB;
+// use Illuminate\Support\Facades\Log;
+// use Illuminate\Support\Str;
 class TransactionsInController extends Controller
 {
     public function index(Request $request)
@@ -44,6 +46,8 @@ class TransactionsInController extends Controller
         return view('Crud_admin.Transactions_in.create', compact('items', 'suppliers'));
     }
 
+   
+    
     public function store(Request $request)
     {
         $request->validate([
@@ -62,6 +66,9 @@ class TransactionsInController extends Controller
             'jumlah.*.required' => 'Jumlah wajib diisi.',
             'jumlah.*.integer' => 'Jumlah harus berupa angka.',
         ]);
+        
+        // Mulai transaksi database
+        DB::beginTransaction();
     
         try {
             // Loop melalui data array untuk menyimpan setiap record
@@ -72,6 +79,17 @@ class TransactionsInController extends Controller
     
                 // Ambil data item
                 $item = Item::find($itemId);
+    
+                // Mengecek apakah item ditemukan
+                if (!$item) {
+                    return back()->withErrors(['item' => 'Barang tidak ditemukan.']);
+                }
+    
+                // Mengecek apakah stok cukup untuk menambah barang
+                if ($item->stock + $jumlah < 0) {
+                    return back()->withErrors(['stock' => 'Stok barang tidak cukup.']);
+                }
+    
                 // Generate kode_barang secara otomatis
                 $kodeBarang = strtoupper(substr($item->nama_barang, 0, 3)) . '-' . Str::random(5);
     
@@ -97,9 +115,16 @@ class TransactionsInController extends Controller
                 }
             }
     
+            // Commit transaksi jika semuanya berhasil
+            DB::commit();
+    
             return redirect()->route('Transactions_in.index')->with('success', 'Transaksi barang masuk berhasil disimpan.');
         } catch (\Exception $e) {
+            // Rollback transaksi jika terjadi kesalahan
+            DB::rollBack();
+    
             Log::error('Kesalahan saat menyimpan transaksi barang masuk: ' . $e->getMessage());
+    
             return back()->withErrors(['error' => 'Terjadi kesalahan saat menyimpan transaksi. Silakan coba lagi.']);
         }
     }

@@ -69,7 +69,15 @@
                         value="{{ old('jumlah') }}" 
                         required>
                 </div>
-        
+                <div class="mb-3">
+                    <input 
+                        type="hidden" 
+                        name="kode_barang" 
+                        id="kode_barang" 
+                        class="form-control" 
+                        value="{{ old('kode_barang', 'AUTO') }}" 
+                        readonly>
+                </div>
                 <!-- Tombol Hapus -->
                 <button type="button" class="btn btn-danger btn-sm remove-form">Hapus</button>
             </div>
