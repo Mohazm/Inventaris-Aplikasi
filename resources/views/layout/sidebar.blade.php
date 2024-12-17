@@ -64,6 +64,12 @@
                     <div>Dashboard</div>
                 </a>
             </li>
+            <li class="menu-item {{ Route::is('users.index') ? 'active' : '' }}">
+                <a href="{{ route('users.index') }}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                    <div>staff</div>
+                </a>
+            </li>
             <li class="menu-header small text-uppercase">
                 <span class="menu-header-text">Pengelolaan Data Master</span>
             </li>

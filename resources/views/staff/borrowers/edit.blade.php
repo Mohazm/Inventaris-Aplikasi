@@ -1,10 +1,10 @@
-@extends('kerangka.staff')
+@extends('kerangka.master')
 
 @section('content')
 <div class="container">
     <h1 class="mt-2 text-center">Edit Peminjam</h1>
 <hr>
-    <form action="{{ route('staff.borrowers.update', $borrower) }}" method="POST">
+    <form action="{{ route('borrowers.update', $borrower) }}" method="POST">
         @csrf
         @method('PUT')
         <div class="mb-3">

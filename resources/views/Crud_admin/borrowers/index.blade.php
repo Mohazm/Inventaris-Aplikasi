@@ -149,12 +149,14 @@
                                 <p class="card-text text-center"><strong>Email:</strong> {{ $borrower->student->email }}</p>
                                 <p class="card-text text-center"><strong>No Telepon:</strong> {{ $borrower->student->phone }}</p>
                                 <p class="card-text text-center"><strong>Kelas:</strong> {{ $borrower->student->class }}</p>
+                                <p class="card-text text-center"><strong>job:</strong> {{ $borrower->borrower_type }}</p>
                             @endif
-                            
+
                             @if ($borrower->borrower_type == 'teacher' && $borrower->teacher)
-                            <h5 class="card-title text-center">{{ $borrower->teacher->name }}</h5>
-                            <p class="card-text text-center"><strong>Email:</strong> {{ $borrower->teacher->email }}</p>
-                            <p class="card-text text-center"><strong>No Telepon:</strong> {{ $borrower->teacher->phone }}</p>                                
+                                <h5 class="card-title text-center">{{ $borrower->teacher->name }}</h5>
+                                <p class="card-text text-center"><strong>Email:</strong> {{ $borrower->teacher->email }}</p>
+                                <p class="card-text text-center"><strong>No Telepon:</strong> {{ $borrower->teacher->phone }}</p>
+                                <p class="card-text text-center"><strong>job:</strong> {{ $borrower->borrower_type }}</p>
                             @endif
 
                             <div class="d-flex justify-content-between">

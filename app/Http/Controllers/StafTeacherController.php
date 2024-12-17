@@ -6,7 +6,7 @@ use App\Models\Teacher;
 use App\Models\Borrower;
 use Illuminate\Http\Request;
 
-class TeacherController extends Controller
+class StafTeacherController extends Controller
 {
     /**
      * Menampilkan daftar semua guru.
@@ -17,7 +17,7 @@ class TeacherController extends Controller
      */
     public function create()
     {
-        return view('Crud_admin.borrowers.teacher.create');
+        return view('staff.borrowers.teacher.create');
     }
 
     /**
@@ -45,7 +45,7 @@ class TeacherController extends Controller
         $teacher->save();
     
         // Redirect ke halaman daftar guru dengan pesan sukses
-        return redirect()->route('borrowers.index')->with('success', 'Guru berhasil ditambahkan dan menjadi peminjam');
+        return redirect()->route('staff.borrower.index')->with('success', 'Guru berhasil ditambahkan dan menjadi peminjam');
     }
     
 
@@ -57,10 +57,10 @@ class TeacherController extends Controller
         $teacher = Teacher::find($id);
 
         if (!$teacher) {
-            return redirect()->route('teachers.index')->with('error', 'Guru tidak ditemukan');
+            return redirect()->route('stafteachers.idex')->with('error', 'Guru tidak ditemukan');
         }
 
-        return view('Crud_admin.borrowers.teacher.edit', compact('teacher'));
+        return view('staff.borrowers.teacher.edit', compact('teacher'));
     }
 
     /**
@@ -71,12 +71,12 @@ class TeacherController extends Controller
         $teacher = Teacher::find($id);
 
         if (!$teacher) {
-            return redirect()->route('teachers.index')->with('error', 'Guru tidak ditemukan');
+            return redirect()->route('stafteachers.idex')->with('error', 'Guru tidak ditemukan');
         }
 
         $teacher->update($request->all());
 
-        return redirect()->route('teachers.index')->with('success', 'Data guru berhasil diupdate');
+        return redirect()->route('stafteachers.idex')->with('success', 'Data guru berhasil diupdate');
     }
 
     /**
@@ -87,11 +87,11 @@ class TeacherController extends Controller
         $teacher = Teacher::find($id);
 
         if (!$teacher) {
-            return redirect()->route('teachers.index')->with('error', 'Guru tidak ditemukan');
+            return redirect()->route('stafteachers.idex')->with('error', 'Guru tidak ditemukan');
         }
 
         $teacher->delete();
 
-        return redirect()->route('teachers.index')->with('success', 'Guru berhasil dihapus');
+        return redirect()->route('stafteachers.idex')->with('success', 'Guru berhasil dihapus');
     }
 }
