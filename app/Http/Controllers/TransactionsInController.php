@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use App\Models\Category;
- use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\DB;
 // use Illuminate\Support\Facades\Log;
 // use Illuminate\Support\Str;
 class TransactionsInController extends Controller
@@ -46,8 +46,7 @@ class TransactionsInController extends Controller
         return view('Crud_admin.Transactions_in.create', compact('items', 'suppliers'));
     }
 
-   
-    
+
     public function store(Request $request)
     {
         $request->validate([
@@ -66,69 +65,61 @@ class TransactionsInController extends Controller
             'jumlah.*.required' => 'Jumlah wajib diisi.',
             'jumlah.*.integer' => 'Jumlah harus berupa angka.',
         ]);
-        
-        // Mulai transaksi database
+
         DB::beginTransaction();
-    
+
         try {
-            // Loop melalui data array untuk menyimpan setiap record
             foreach ($request->tanggal_masuk as $index => $tanggal_masuk) {
                 $itemId = $request->item_id[$index];
                 $supplierId = $request->supplier_id[$index];
                 $jumlah = $request->jumlah[$index];
-    
+
                 // Ambil data item
                 $item = Item::find($itemId);
-    
-                // Mengecek apakah item ditemukan
+
                 if (!$item) {
                     return back()->withErrors(['item' => 'Barang tidak ditemukan.']);
                 }
-    
-                // Mengecek apakah stok cukup untuk menambah barang
-                if ($item->stock + $jumlah < 0) {
-                    return back()->withErrors(['stock' => 'Stok barang tidak cukup.']);
-                }
-    
-                // Generate kode_barang secara otomatis
-                $kodeBarang = strtoupper(substr($item->nama_barang, 0, 3)) . '-' . Str::random(5);
-    
-                // Simpan transaksi barang masuk
+
+                // Transaksi barang masuk
                 $transaction = Transactions_in::create([
                     'tanggal_masuk' => $tanggal_masuk,
                     'item_id' => $itemId,
                     'supplier_id' => $supplierId,
                     'jumlah' => $jumlah,
-                    'kode_barang' => $kodeBarang, // Gunakan kode_barang yang di-generate
+                    'kode_barang' => strtoupper(substr($item->nama_barang, 0, 3)) . '-' . Str::random(5), // kode_barang global transaksi
                 ]);
-    
+
                 // Perbarui stok barang
                 $item->increment('stock', $jumlah);
-    
-                // Tambahkan detail barang
-                for ($i = 1; $i <= $jumlah; $i++) {
-                    Detail_item::create([
+
+                // Persiapkan data untuk batch insert ke Detail_item
+                $detailItems = [];
+                for ($i = 0; $i < $jumlah; $i++) {
+                    $detailItems[] = [
                         'item_id' => $itemId,
-                        'kode_barang' => $kodeBarang, // Gunakan kode_barang yang sama untuk detail
+                        'kode_barang' => strtoupper(substr($item->nama_barang, 0, 3)) . '-' . Str::random(5), // kode_barang unik
                         'kondisi_barang' => 'Normal',
-                    ]);
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
                 }
+
+                // Insert batch ke tabel Detail_item
+                Detail_item::insert($detailItems);
             }
-    
-            // Commit transaksi jika semuanya berhasil
+
             DB::commit();
-    
+
             return redirect()->route('Transactions_in.index')->with('success', 'Transaksi barang masuk berhasil disimpan.');
         } catch (\Exception $e) {
-            // Rollback transaksi jika terjadi kesalahan
             DB::rollBack();
-    
+
             Log::error('Kesalahan saat menyimpan transaksi barang masuk: ' . $e->getMessage());
-    
+
             return back()->withErrors(['error' => 'Terjadi kesalahan saat menyimpan transaksi. Silakan coba lagi.']);
         }
     }
-    
 
 
     public function edit($id)

@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Detail_item;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-
 class DetailItemController extends Controller
 {
     /**
@@ -14,19 +13,26 @@ class DetailItemController extends Controller
     public function index($itemId)
     {
         try {
-            // Ambil semua detail barang berdasarkan item_id
-            $detail_items = Detail_item::where('item_id', $itemId)->simplePaginate(2);
+            // Ambil semua detail barang berdasarkan item_id dengan paginasi
+            $detail_items = Detail_item::where('item_id', $itemId)->simplePaginate(10);
 
+            // Cek apakah data kosong
             if ($detail_items->isEmpty()) {
-                return redirect()->route('items.index')->withErrors(['error' => 'Tidak ada detail barang ditemukan untuk produk ini.']);
+                return redirect()->route('items.index')
+                    ->with('warning', 'Tidak ada detail barang ditemukan untuk produk ini.');
             }
 
             return view('Crud_admin.Detail_item.index', compact('detail_items'));
         } catch (\Exception $e) {
+            // Log error untuk keperluan debugging
             Log::error('Kesalahan saat mengambil data detail barang: ' . $e->getMessage());
-            return back()->withErrors(['error' => 'Terjadi kesalahan saat mengambil data.']);
+            
+            // Redirect dengan pesan kesalahan
+            return redirect()->route('Items.index')
+                ->withErrors(['error' => 'Terjadi kesalahan saat mengambil data.']);
         }
     }
+
 
     /**
      * Show the form for editing the specified resource.
