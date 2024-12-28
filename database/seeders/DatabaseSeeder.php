@@ -25,7 +25,7 @@ class DatabaseSeeder extends Seeder
         // Menambahkan user staff
         User::create([
             'name' => 'Cahya',
-            'email' => 'cahya@gmail.com',
+            'email' => 'staff@gmail.com',
             'password' => Hash::make('password'),  // Gantilah dengan password yang aman
             'role' => 'staff',
         ]);

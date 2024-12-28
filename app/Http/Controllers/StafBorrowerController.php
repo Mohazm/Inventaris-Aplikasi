@@ -97,13 +97,13 @@ class StafBorrowerController extends Controller
                             ->first();
     
         if (!$borrower) {
-            return redirect()->route('stafborrowers.index')->with('error', 'Peminjam tidak ditemukan');
+            return redirect()->route('staff.borrower.index')->with('error', 'Peminjam tidak ditemukan');
         }
     
         // Hapus borrower
         $borrower->delete();
     
-        return redirect()->route('stafborrowers.index')->with('success', 'Peminjam berhasil dihapus');
+        return redirect()->route('staff.borrower.index')->with('success', 'Peminjam berhasil dihapus');
     }
     
 }

@@ -110,5 +110,11 @@
                 <div>Aktifitas Pengguna</div>
             </a>
         </li>
+        <li class="menu-item">
+            <a href="{{route('loans.index')}}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-user-circle"></i>
+                <div>Monitor Peminjaman</div>
+            </a>
+        </li>
     </ul>
 </aside>

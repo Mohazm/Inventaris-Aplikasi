@@ -4,7 +4,7 @@
     <div class="container">
         <h1 class="mb-4 text-center">Daftar Peminjam</h1><hr>
 
-        @if (session('success'))
+        @if (session('message'))
             <div class="bs-toast toast fade show bg-success" role="alert" aria-live="assertive" aria-atomic="true">
                 <div class="toast-header">
                     <i class="bx bx-bell me-2"></i>
@@ -12,7 +12,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
                 </div>
                 <div class="toast-body">
-                    {{ session('success') }}
+                    {{ session('message') }}
                 </div>
             </div>
             <script>
@@ -160,7 +160,7 @@
                             @endif
 
                             <div class="d-flex justify-content-between">
-                                <a href="{{ route('staff.borrower.edit', $borrower) }}" class="btn btn-warning btn-sm">Edit</a>
+                                {{-- <a href="{{ route('staff.borrower.edit', $borrower) }}" class="btn btn-warning btn-sm">Edit</a> --}}
                                 <form action="{{ route('staff.borrower.destroy', ['borrowerType' => $borrower->borrower_type, 'borrowerId' => $borrower->borrower_id]) }}" method="POST" style="display:inline;">
                                     @csrf
                                     @method('DELETE')

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Teacher;
 use App\Models\Borrower;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class StafTeacherController extends Controller
 {
@@ -25,28 +26,40 @@ class StafTeacherController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string',
-            'email' => 'required|email|unique:teachers,email',
-            'phone' => 'nullable|string',
-        ]);
+        try {
+            $request->validate([
+                'name' => 'required|string',
+                'email' => 'required|email|unique:teachers,email',
+                'phone' => 'nullable|string',
+            ]);
     
-        // Menambahkan guru baru
-        $teacher = Teacher::create($request->all());
+            // Menyimpan data guru
+            $teacher = Teacher::create($request->all());
     
-        // Menambahkan guru ke tabel borrowers
-        $borrower = Borrower::create([
-            'borrower_type' => 'teacher',  // Menandakan tipe peminjam adalah siswa
-            'borrower_id' => $teacher->id, // Menyimpan ID siswa ke borrower_id
-            'name' => $teacher->name,      // Menyimpan nama siswa
-        ]);
-
-        $teacher->borrower_id = $borrower->id;
-        $teacher->save();
+            // Menambahkan data guru ke tabel borrowers
+            $borrower = Borrower::create([
+                'borrower_type' => 'teacher',
+                'borrower_id' => $teacher->id,
+                'name' => $teacher->name,
+            ]);
     
-        // Redirect ke halaman daftar guru dengan pesan sukses
-        return redirect()->route('staff.borrower.index')->with('success', 'Guru berhasil ditambahkan dan menjadi peminjam');
+            // Menyimpan borrower_id di tabel teachers
+            $teacher->borrower_id = $borrower->id;
+            $teacher->save();
+    
+            return response()->json([
+                'id' => $teacher->id,
+                'name' => $teacher->name,
+                'redirect' => route('staff.borrower.index'), // Sesuaikan dengan route index stafteacher
+            ], 201);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage()); // Log error jika terjadi masalah
+            return response()->json([
+                'message' => 'Terjadi kesalahan saat menyimpan data. Silakan coba lagi.',
+            ], 500);
+        }
     }
+    
     
 
     /**
@@ -57,10 +70,10 @@ class StafTeacherController extends Controller
         $teacher = Teacher::find($id);
 
         if (!$teacher) {
-            return redirect()->route('stafteachers.idex')->with('error', 'Guru tidak ditemukan');
+            return redirect()->route('teachers.index')->with('error', 'Guru tidak ditemukan');
         }
 
-        return view('staff.borrowers.teacher.edit', compact('teacher'));
+        return view('Crud_admin.borrowers.teacher.edit', compact('teacher'));
     }
 
     /**
@@ -71,12 +84,12 @@ class StafTeacherController extends Controller
         $teacher = Teacher::find($id);
 
         if (!$teacher) {
-            return redirect()->route('stafteachers.idex')->with('error', 'Guru tidak ditemukan');
+            return redirect()->route('teachers.index')->with('error', 'Guru tidak ditemukan');
         }
 
         $teacher->update($request->all());
 
-        return redirect()->route('stafteachers.idex')->with('success', 'Data guru berhasil diupdate');
+        return redirect()->route('teachers.index')->with('success', 'Data guru berhasil diupdate');
     }
 
     /**
@@ -87,11 +100,11 @@ class StafTeacherController extends Controller
         $teacher = Teacher::find($id);
 
         if (!$teacher) {
-            return redirect()->route('stafteachers.idex')->with('error', 'Guru tidak ditemukan');
+            return redirect()->route('teachers.index')->with('error', 'Guru tidak ditemukan');
         }
 
         $teacher->delete();
 
-        return redirect()->route('stafteachers.idex')->with('success', 'Guru berhasil dihapus');
+        return redirect()->route('teachers.index')->with('success', 'Guru berhasil dihapus');
     }
 }

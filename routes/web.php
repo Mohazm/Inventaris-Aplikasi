@@ -18,6 +18,7 @@ use App\Http\Controllers\{
     TransactionsInController,
     TransactionsOutController,
     LoansItemController,
+    staffLoansItemController,
     DetailItemController,
     ProfileController,
     ReturnsItemController,
@@ -112,7 +113,7 @@ Route::middleware(['auth', 'is_staff'])->group(function () {
     
     Route::get('/stafteacher', [ StafTeacherController ::class, 'index'])->name('stafteacher.index');
     Route::get('/stafteacher/create', [ StafTeacherController ::class, 'create'])->name('stafteacher.create');
-    Route::post('/stafteacher', [ StafTeacherController ::class, 'store'])->name('stafteacher.store');
+    Route::post('/stafteacher', [StafTeacherController::class, 'store'])->name('stafteacher.store');
     Route::get('/stafteacher/{id}/edit', [ StafTeacherController ::class, 'edit'])->name('stafteacher.edit');
     Route::put('/stafteacher/{id}', [ StafTeacherController ::class, 'update'])->name('stafteacher.update');
     Route::delete('/stafteacher/{id}', [ StafTeacherController ::class, 'destroy'])->name('stafteacher.destroy');
@@ -124,6 +125,14 @@ Route::middleware(['auth', 'is_staff'])->group(function () {
     Route::put('/stafstudent/{id}', [StafStudentController::class, 'update'])->name('stafstudent.update');
     Route::delete('/stafstudent/{id}', [StafStudentController::class, 'destroy'])->name('stafstudent.destroy');
 
+    Route::get('/loans',[staffLoansItemController::class,'index'])->name('loans.index');  
+    Route::get('/loans/create', [staffLoansItemController::class, 'create'])->name('loans.create');
+    Route::post('/loans', [staffLoansItemController::class, 'store'])->name('loans.store');
+    Route::get('loans/{id}/edit', [staffLoansItemController::class, 'edit'])->name('loans.edit');
+    Route::put('loans/{id}', [staffLoansItemController::class, 'update'])->name('loans.update');
+    Route::post('/loans/checkOverdue', [staffLoansItemController::class, 'checkOverdueLoans'])->name('loans.checkOverdue');
+    Route::get('loans/{id}', [staffLoansItemController::class, 'show'])->name('loans.detail');
+    Route::delete('loans/{id}', [staffLoansItemController::class, 'destroy'])->name('loans.destroy');
     // Rute Untuk Transactions In
     Route::get('/staff/transactions_in', [StafTransactionsInController::class, 'index'])->name('StafTransactions_in.index');
     Route::get('/staff/transactions_in/create', [StafTransactionsInController::class, 'create'])->name('StafTransactions_in.create');
