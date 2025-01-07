@@ -17,28 +17,76 @@
     @endif
 
     @if (session('success'))
-        <div class="bs-toast toast fade show bg-success" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="toast-header">
-                <i class="bx bx-bell me-2"></i>
-                <div class="me-auto fw-semibold">Sukses</div>
-                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-            </div>
-            <div class="toast-body">
-                {{ session('success') }}
-            </div>
+    <div class="bs-toast toast fade show bg-success" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <i class="bx bx-bell me-2"></i>
+            <div class="me-auto fw-semibold">Category</div>
+            <small></small>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                var toastElList = [].slice.call(document.querySelectorAll('.toast'));
-                toastElList.forEach(function(toastEl) {
-                    var toast = new bootstrap.Toast(toastEl, {
-                        delay: 3000
-                    });
-                    toast.show();
+        <div class="toast-body">
+            {{ session('success') }}
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var toastElList = [].slice.call(document.querySelectorAll('.toast'));
+            var toastList = toastElList.map(function(toastEl) {
+                return new bootstrap.Toast(toastEl, {
+                    delay: 3000
                 });
             });
-        </script>
-    @endif
+            toastList.forEach(toast => toast.show());
+        });
+    </script>
+@endif
+
+<style>
+    .table-hover tbody tr:hover {
+        background-color: rgba(0, 123, 255, 0.1);
+    }
+
+    .badge {
+        font-size: 0.9rem;
+        padding: 0.4em 0.6em;
+        text-transform: capitalize;
+    }
+
+    .table img {
+        border-radius: 10px;
+        width: 70px;
+        height: 70px;
+        object-fit: cover;
+        transition: transform 0.2s;
+    }
+
+    .table img:hover {
+        transform: scale(1.1);
+    }
+
+    .btn-action {
+        margin: 0 5px;
+    }
+
+    .toast {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1055;
+        background-color: #28a745;
+        color: #fff;
+        border-radius: 0.25rem;
+    }
+
+    .toast .toast-body {
+        padding: 0.75rem;
+    }
+
+    .toast .close {
+        color: #fff;
+        opacity: 0.8;
+    }
+</style>
 
     <div class="container-xxl flex-grow-1 container-p-y">
         <!-- Title -->
@@ -91,7 +139,7 @@
                         <button type="submit" class="btn btn-secondary">
                             <i class="bx bx-refresh"></i> Perbarui Status Overdue
                         </button>
-                    </form>
+                    </form>                    
                 </div>
 
                 <!-- Table -->
@@ -125,13 +173,10 @@
                                         @endif
                                     </td>
                                     <td>{{ $loan->jumlah_pinjam }}</td>
-                                    <td>{{ $loan->tanggal_pinjam ? \Carbon\Carbon::parse($loan->tanggal_pinjam)->format('d M Y, H:i') : '-' }}
-                                    </td>
-                                    <td>{{ $loan->tanggal_kembali ? \Carbon\Carbon::parse($loan->tanggal_kembali)->format('d M Y, H:i') : '-' }}
-                                    </td>
+                                    <td>{{ $loan->tanggal_pinjam ? \Carbon\Carbon::parse($loan->tanggal_pinjam)->format('d M Y, H:i') : '-' }}</td>
+                                    <td>{{ $loan->tanggal_kembali ? \Carbon\Carbon::parse($loan->tanggal_kembali)->format('d M Y, H:i') : '-' }}</td>
                                     <td>
-                                        <span
-                                            class="badge 
+                                        <span class="badge 
                                             @switch($loan->status)
                                                 @case('menunggu') bg-warning @break
                                                 @case('dipakai') bg-primary @break
@@ -141,22 +186,21 @@
                                             @endswitch">
                                             {{ ucfirst($loan->status) }}
                                         </span>
-                                    </td>
+                                    </td>                                    
                                     <td>
                                         @if ($loan->status === 'menunggu')
-                                            <form action="{{ route('loans_item.accept', $loan->id) }}" method="POST"
-                                                class="d-inline">
-                                                @csrf
-                                                @method('PATCH')
-                                                <button type="submit" class="btn btn-sm btn-success me-1">
-                                                    <i class="bx bx-check-circle"></i> Terima
-                                                </button>
-                                            </form>
+                                        <form id="form-{{ $loan->id }}" action="{{ route('loans_item.accept', $loan->id) }}" method="POST" class="d-inline">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button type="submit" class="btn btn-sm btn-success  me-2">
+                                                <i class="bx bx-check-circle"></i> Terima
+                                            </button>
+                                        </form>                                        
                                             <form action="{{ route('loans_item.cancel', $loan->id) }}" method="POST"
                                                 class="d-inline">
                                                 @csrf
                                                 @method('PATCH')
-                                                <button type="submit" class="btn btn-sm btn-danger"
+                                                <button type="submit" class="btn btn-sm btn-danger  me-2"
                                                     onclick="return confirm('Yakin ingin membatalkan peminjaman ini?')">
                                                     <i class="bx bx-x-circle"></i> Batal
                                                 </button>
@@ -166,12 +210,12 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <div class="d-flex justify-content-center">
-                                            @if ($loan->status === 'dipakai')
+                                        <div class="d-flex justify-content-center d-flex  me-2">
+                                            @if ($loan->status === 'dipakai' || $loan->status === 'terlambat')
                                                 <form action="{{ route('loans_item.return', $loan->id) }}" method="POST"
                                                     class="me-2">
                                                     @csrf
-                                                    <button type="submit" class="btn btn-sm btn-primary">
+                                                    <button type="submit" class="btn btn-sm btn-primary  me-2">
                                                         <i class="bx bx-undo"></i> Return
                                                     </button>
                                                 </form>
@@ -188,7 +232,7 @@
                                                 class="d-inline">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-danger"
+                                                <button type="submit" class="btn btn-sm btn-danger  me-2"
                                                     onclick="return confirm('Yakin ingin menghapus data ini?')">
                                                     Hapus
                                                 </button>
@@ -210,31 +254,29 @@
 
 
 
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Event listener for accept button
-            document.querySelectorAll('.btn-success').forEach(function(button) {
-                button.addEventListener('click', function(e) {
-                    e.preventDefault(); // Prevent default form submission
-                    const formId = this.closest('form').id; // Get the closest form
-                    Swal.fire({
-                        title: 'Apakah Anda yakin?',
-                        text: "Peminjaman ini akan diterima!",
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonText: 'Terima',
-                        cancelButtonText: 'Batal',
-                        reverseButtons: true
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            document.getElementById(formId)
-                                .submit(); // Submit the form if confirmed
-                        }
-                    });
+   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.btn-success').forEach(function(button) {
+            button.addEventListener('click', function(e) {
+                e.preventDefault(); // Cegah aksi submit form default
+                const formId = this.closest('form').id; // Ambil ID form terdekat
+                Swal.fire({
+                    title: 'Apakah Anda yakin?',
+                    text: "Peminjaman ini akan diterima!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Terima',
+                    cancelButtonText: 'Batal',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        document.getElementById(formId).submit(); // Submit form jika dikonfirmasi
+                    }
                 });
             });
         });
-    </script>
+    });
+</script>
 
 @endsection

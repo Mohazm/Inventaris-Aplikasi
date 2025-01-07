@@ -10,7 +10,7 @@ use App\Http\Controllers\{
     AdminActivityController,
     StafBorrowerController,
     StafItemController,
-     StafTeacherController ,
+    StafTeacherController,
     StafStudentController,
     StafTransactionsInController,
     StafTransactionsOutController,
@@ -25,7 +25,6 @@ use App\Http\Controllers\{
     TeacherController,
     UserController,
     StudentController,
-    
 };
 
 /*
@@ -48,7 +47,7 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
     //     return view('admin.index');
     // })->name('admin.index')
 
-    
+
     Route::resource('teacher', TeacherController::class);
     Route::resource('users', UserController::class);
     Route::resource('stundent', StudentController::class);
@@ -62,7 +61,7 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
     Route::get('borrowers/{id}/edit', [BorrowerController::class, 'edit'])->name('borrowers.edit');
     Route::put('borrowers/{id}', [BorrowerController::class, 'update'])->name('borrowers.update');
     Route::delete('/borrowers/{borrowerType}/{borrowerId}', [BorrowerController::class, 'destroy'])->name('borrowers.destroy');
-    
+
     Route::post('/loans_item/return/{id}', [ReturnsItemController::class, 'returnItem'])->name('loans_item.return');
     Route::get('items/{itemId}/details', [DetailItemController::class, 'index'])->name('details.index');
     Route::get('details/{kode_barang}/edit', [DetailItemController::class, 'edit'])->name('details.edit');
@@ -83,7 +82,7 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
     Route::get('transactions_out/{id}/edit', [TransactionsOutController::class, 'edit'])->name('Transactions_out.edit');
     Route::put('transactions_out/{id}', [TransactionsOutController::class, 'update'])->name('Transactions_out.update');
     Route::delete('transactions_out/{id}', [TransactionsOutController::class, 'destroy'])->name('Transactions_out.destroy');
-    
+
     Route::get('loans_item', [LoansItemController::class, 'index'])->name('loans_item.index');
     Route::get('loans_item/create', [LoansItemController::class, 'create'])->name('loans_item.create');
     Route::post('loans_item', [LoansItemController::class, 'store'])->name('loans_item.store');
@@ -92,9 +91,11 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
     Route::delete('loans_item/{id}', [LoansItemController::class, 'destroy'])->name('loans_item.destroy');
     Route::patch('/loans_item/accept/{id}', [LoansItemController::class, 'accept'])->name('loans_item.accept');
     Route::patch('/loans_item/cancel/{id}', [LoansItemController::class, 'cancel'])->name('loans_item.cancel');
-    Route::post('/loans_item/checkOverdue', [LoansItemController::class, 'checkOverdueLoans'])->name('loans_item.checkOverdue');
     Route::get('loans_item/{id}', [LoansItemController::class, 'show'])->name('loans_item.detail');
-    
+    // routes/web.php 
+    Route::post('/loans_item/checkOverdue', [LoansItemController::class, 'checkOverdueLoans'])->name('loans_item.checkOverdue');
+
+
     Route::get('/adminactivities', [AdminActivityController::class, 'index'])->name('admin.activities.index');
     Route::delete('/adminactivities/{id}', [AdminActivityController::class, 'destroy'])->name('admin.activities.destroy');
 });
@@ -103,21 +104,21 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
 Route::middleware(['auth', 'is_staff'])->group(function () {
     Route::get('/staff/dashboard', [StafItemController::class, 'index'])->name('staff.index');
     Route::get('/staff/items', [StafItemController::class, 'list'])->name('staff.items.list');
-    
+
     Route::get('stafborrower', [StafBorrowerController::class, 'index'])->name('staff.borrower.index');
     Route::get('stafborrower/create', [StafBorrowerController::class, 'create'])->name('staff.borrower.create');
     Route::post('stafborrower', [StafBorrowerController::class, 'store'])->name('staff.borrower.store');
     Route::get('stafborrower/{id}/edit', [StafBorrowerController::class, 'edit'])->name('staff.borrower.edit');
     Route::put('stafborrower/{id}', [StafBorrowerController::class, 'update'])->name('staff.borrower.update');
     Route::delete('stafborrower/{borrowerType}/{borrowerId}', [StafBorrowerController::class, 'destroy'])->name('staff.borrower.destroy');
-    
-    Route::get('/stafteacher', [ StafTeacherController ::class, 'index'])->name('stafteacher.index');
-    Route::get('/stafteacher/create', [ StafTeacherController ::class, 'create'])->name('stafteacher.create');
+
+    Route::get('/stafteacher', [StafTeacherController::class, 'index'])->name('stafteacher.index');
+    Route::get('/stafteacher/create', [StafTeacherController::class, 'create'])->name('stafteacher.create');
     Route::post('/stafteacher', [StafTeacherController::class, 'store'])->name('stafteacher.store');
-    Route::get('/stafteacher/{id}/edit', [ StafTeacherController ::class, 'edit'])->name('stafteacher.edit');
-    Route::put('/stafteacher/{id}', [ StafTeacherController ::class, 'update'])->name('stafteacher.update');
-    Route::delete('/stafteacher/{id}', [ StafTeacherController ::class, 'destroy'])->name('stafteacher.destroy');
-    
+    Route::get('/stafteacher/{id}/edit', [StafTeacherController::class, 'edit'])->name('stafteacher.edit');
+    Route::put('/stafteacher/{id}', [StafTeacherController::class, 'update'])->name('stafteacher.update');
+    Route::delete('/stafteacher/{id}', [StafTeacherController::class, 'destroy'])->name('stafteacher.destroy');
+
     Route::get('/stafstudent', [StafStudentController::class, 'index'])->name('stafstudent.index');
     Route::get('/stafstudent/create', [StafStudentController::class, 'create'])->name('stafstudent.create');
     Route::post('/stafstudent', [StafStudentController::class, 'store'])->name('stafstudent.store');
@@ -125,7 +126,7 @@ Route::middleware(['auth', 'is_staff'])->group(function () {
     Route::put('/stafstudent/{id}', [StafStudentController::class, 'update'])->name('stafstudent.update');
     Route::delete('/stafstudent/{id}', [StafStudentController::class, 'destroy'])->name('stafstudent.destroy');
 
-    Route::get('/loans',[staffLoansItemController::class,'index'])->name('loans.index');  
+    Route::get('/loans', [staffLoansItemController::class, 'index'])->name('loans.index');
     Route::get('/loans/create', [staffLoansItemController::class, 'create'])->name('loans.create');
     Route::post('/loans', [staffLoansItemController::class, 'store'])->name('loans.store');
     Route::get('loans/{id}/edit', [staffLoansItemController::class, 'edit'])->name('loans.edit');

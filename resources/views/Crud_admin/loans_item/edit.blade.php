@@ -27,21 +27,23 @@
                         @enderror
                     </div>
 
-                    <div class="mb-3">
-                        <label for="borrower_id" class="form-label">Pilih Peminjam</label>
-                        <select class="form-select @error('borrower_id') is-invalid @enderror" id="borrower_id" name="borrower_id">
-                            @foreach ($borrowers as $borrower)
-                                <option value="{{ $borrower->id }}" 
-                                        {{ $borrower->id == $loans_items->borrower_id ? 'selected' : '' }}>
-                                    {{ $borrower->nama_peminjam }}
+                    <select class="form-select" id="borrower_id" name="borrower_id" required>
+                        <option value="" disabled {{ old('borrower_id') ? '' : 'selected' }}>--Edit Peminjam</option>
+                        @forelse ($borrowers as $borrower)
+                            @if ($borrower->student)
+                                <option value="{{ $borrower->id }}" {{ old('borrower_id') == $borrower->id ? 'selected' : '' }}>
+                                    Siswa: {{ $borrower->student->name }}
                                 </option>
-                            @endforeach
-                        </select>
-                        @error('borrower_id')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
+                            @elseif ($borrower->teacher)
+                                <option value="{{ $borrower->id }}" {{ old('borrower_id') == $borrower->id ? 'selected' : '' }}>
+                                    Guru: {{ $borrower->teacher->name }}
+                                </option>
+                            @endif
+                        @empty
+                            <option value="" disabled>Tidak ada data peminjam</option>
+                        @endforelse
+                    </select>
+                    
                     <div class="mb-3">
                         <label for="jumlah_pinjam" class="form-label">Jumlah Pinjam</label>
                         <input type="number" class="form-control @error('jumlah_pinjam') is-invalid @enderror" id="jumlah_pinjam" name="jumlah_pinjam" min="1"

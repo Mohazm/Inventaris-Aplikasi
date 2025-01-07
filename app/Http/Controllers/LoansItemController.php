@@ -16,6 +16,7 @@ use App\Models\Borrower;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\support\Facades\Log;
 use App\Mail\OverdueLoanMail; // Pastikan sudah membuat Mail class
 class LoansItemController extends Controller
 {
@@ -109,7 +110,7 @@ class LoansItemController extends Controller
         Loans_item::create([
             'item_id' => $request->item_id,
             'borrower_id' => $request->borrower_id,
-            'tanggal_pinjam' => $request->tanggal_pinjam,
+            'tanggal_pinjam' => now(),
             'tanggal_kembali' => $request->tanggal_kembali,
             'jumlah_pinjam' => $request->jumlah_pinjam,
             'tujuan_peminjaman' => $request->tujuan_peminjaman,
@@ -214,18 +215,18 @@ class LoansItemController extends Controller
         return redirect()->route('loans_item.index')->with('success', 'Peminjaman berhasil diperbarui.');
     }
 
-public function show($id)
-{
-    // Ambil data Loans_items dengan relasi
-    $loanItem = Loans_Item::with([
-        'item',           // Relasi ke Item
-        'borrower.student', // Relasi Borrowers ke Students
-        'borrower.teacher'  // Relasi Borrowers ke Teachers
-    ])->findOrFail($id);
+    public function show($id)
+    {
+        // Ambil data Loans_items dengan relasi
+        $loanItem = Loans_Item::with([
+            'item',           // Relasi ke Item
+            'borrower.student', // Relasi Borrowers ke Students
+            'borrower.teacher'  // Relasi Borrowers ke Teachers
+        ])->findOrFail($id);
 
-    // Kirim ke view
-    return view('Crud_admin.loans_item.detail', compact('loanItem'));
-}
+        // Kirim ke view
+        return view('Crud_admin.loans_item.detail', compact('loanItem'));
+    }
 
     // Menghapus data loans_items
     public function destroy($id)
@@ -243,15 +244,25 @@ public function show($id)
     // Menerima loans_items
     public function accept($id)
     {
-        $loans_items = Loans_item::findOrFail($id);
+        try {
+            // Cari data loans_item berdasarkan ID
+            $loans_items = Loans_item::findOrFail($id);
 
-        if ($loans_items->status !== 'menunggu') {
-            return redirect()->back()->withErrors(['error' => 'Peminjaman sudah diproses sebelumnya.']);
+            // Periksa status peminjaman
+            if ($loans_items->status !== 'menunggu') {
+                return redirect()->back()->withErrors(['error' => 'Peminjaman sudah diproses sebelumnya.']);
+            }
+
+            // Perbarui status
+            $loans_items->update(['status' => 'dipakai']);
+
+            // Redirect dengan pesan sukses
+            return redirect()->route('loans_item.index')->with('success', 'Peminjaman diterima dan status diubah menjadi "dipakai".');
+        } catch (\Exception $e) {
+            // Log error dan redirect dengan pesan kesalahan
+            Log::error('Kesalahan saat memproses peminjaman: ' . $e->getMessage());
+            return redirect()->back()->withErrors(['error' => 'Terjadi kesalahan saat memproses peminjaman.']);
         }
-
-        $loans_items->update(['status' => 'dipakai']);
-
-        return redirect()->route('loans_item.index')->with('success', 'Peminjaman diterima dan status diubah menjadi "dipakai".');
     }
 
     // Membatalkan loans_items
@@ -273,36 +284,35 @@ public function show($id)
 
 
     public function checkOverdueLoans()
-{
-    // Mengambil peminjaman yang belum selesai dan melebihi batas waktu
-    $overdueLoans = Loans_item::where('status', 'dipakai')
-        ->where('tanggal_kembali', '<', Carbon::now())
-        ->get();
+    {
+        // Mengambil semua peminjaman dengan status 'dipakai' yang sudah lewat waktu pengembaliannya
+        $overdueLoans = Loans_item::where('status', 'dipakai')
+            ->where('tanggal_kembali', '<', Carbon::now())
+            ->get();
 
-    // Update status peminjaman yang telat dan kirim email
-    foreach ($overdueLoans as $loan) {
-        // Cek apakah sudah telat
-        if (Carbon::now()->gt(Carbon::parse($loan->tanggal_kembali))) {
-            // Update status peminjaman menjadi terlambat
-            $loan->update(['status' => 'terlambat']);
+        // Update status peminjaman yang telat dan kirim email
+        foreach ($overdueLoans as $loan) {
+            // Cek apakah sudah telat
+            if (Carbon::now()->gt(Carbon::parse($loan->tanggal_kembali))) {
+                // Update status peminjaman menjadi terlambat
+                $loan->update(['status' => 'terlambat']);
 
-            // Mengakses borrower yang memiliki student dan teacher
-            $borrower = $loan->borrower;
+                // Mengakses borrower yang memiliki student dan teacher
+                $borrower = $loan->borrower;
 
-            // Kirim email kepada student jika ada
-            if ($borrower && $borrower->student && $borrower->student->email) {
-                Mail::to($borrower->student->email)->send(new OverdueLoanNotification($loan));
-            }
+                // Kirim email kepada student jika ada
+                if ($borrower && $borrower->student && $borrower->student->email) {
+                    Mail::to($borrower->student->email)->send(new OverdueLoanNotification($loan));
+                }
 
-            // Kirim email kepada teacher jika ada
-            if ($borrower && $borrower->teacher && $borrower->teacher->email) {
-                Mail::to($borrower->teacher->email)->send(new OverdueLoanNotification($loan));
+                // Kirim email kepada teacher jika ada
+                if ($borrower && $borrower->teacher && $borrower->teacher->email) {
+                    Mail::to($borrower->teacher->email)->send(new OverdueLoanNotification($loan));
+                }
             }
         }
+
+        // Redirect setelah proses update
+        return redirect()->route('loans_item.index')->with('success', 'Peminjaman yang melebihi batas waktu berhasil diperbarui dan pemberitahuan telah dikirim.');
     }
-
-    // Redirect setelah proses update
-    return redirect()->route('loans_item.index')->with('success', 'Peminjaman yang melebihi batas waktu berhasil diperbarui dan pemberitahuan telah dikirim.');
-}
-
 }

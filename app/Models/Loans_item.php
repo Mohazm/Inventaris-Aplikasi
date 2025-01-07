@@ -11,6 +11,7 @@ class Loans_item extends Model
     use HasFactory,Notifiable;
 
     protected $guarded = [];
+    
     public function validateStatusChange($newStatus)
     {
         $validStatuses = ['dipakai', 'di kembalikan']; // Status yang valid

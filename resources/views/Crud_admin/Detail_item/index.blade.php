@@ -23,6 +23,7 @@
                 <th>Kode Barang</th>
                 <th>Kondisi Barang</th>
                 <th>Created At</th>
+                <th>Aksi</th>
             </tr>
         </thead>
         <tbody>
@@ -32,12 +33,18 @@
                     <td>{{ $item->kode_barang }}</td>
                     <td>{{ $item->kondisi_barang }}</td>
                     <td>{{ $item->created_at }}</td>
+                    <td>
+                        <a href="{{ route('details.edit', ['kode_barang' => $item->kode_barang]) }}" class="btn btn-primary btn-sm">
+                            Edit 
+                        </a>
+                    </td>
                 </tr>
             @empty
                 <tr>
                     <td colspan="4" class="text-center">Tidak ada data detail barang.</td>
                 </tr>
             @endforelse
+           
         </tbody>
     </table>
 
