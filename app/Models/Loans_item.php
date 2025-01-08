@@ -26,6 +26,10 @@ class Loans_item extends Model
     {
         return $this->belongsTo(Item::class, 'item_id');
     }
+    public function details()
+    {
+        return $this->hasMany(LoanItemDetail::class, 'loan_item_id'); // Pastikan 'loan_item_id' adalah nama kolom relasi yang tepat
+    }
 
     public function tendik()
     {
@@ -36,5 +40,4 @@ class Loans_item extends Model
     {
         return $this->hasOne(Returns_item::class, 'peminjaman_id');
     }
-    
 }

@@ -17,50 +17,50 @@ class ItemController extends Controller
         $filterCategory = $request->input('category_id');
         $searchQuery = $request->input('search');
         $perPage = $request->input('per_page', 10); // Default 10 items per page
+        
         // Query item dengan relasi kategori
         $itemsQuery = Item::with('category');
-
+    
+        // Ambil filter kondisi barang
         $filterkondisi = $request->input('Kondisi_barang');
         if ($filterkondisi) {
             $itemsQuery->where('Kondisi_barang', $filterkondisi);
         }
-
-        $filterKondisi = $request->input('Kondisi_barang');
-
-        // Query Item
-        $query = Item::query();
-        if ($filterKondisi) {
-            $query->where('Kondisi_barang', $filterKondisi);
-        }
-
-        // Hitung total barang
-        $countNormal = Item::where('Kondisi_barang', 'normal')->count();
-        $countRusak = Item::where('Kondisi_barang', 'barang rusak')->count();
-
-        // Ambil hasil berdasarkan filter
-        $item = $query->paginate(10); // Count the items where Kondisi_barang is 'normal'  
-
+    
         // Filter berdasarkan kategori
         if ($filterCategory) {
             $itemsQuery->where('categories_id', $filterCategory);
         }
-
+    
         // Pencarian berdasarkan nama barang
         if ($searchQuery) {
             $itemsQuery->where('nama_barang', 'like', '%' . $searchQuery . '%');
         }
-
+    
         // Urutkan berdasarkan item yang terakhir kali dibuat (created_at descending)
         $itemsQuery->orderBy('created_at', 'desc');
-
+    
+        // Hitung total barang rusak dan normal
+        $countNormal = Item::where('Kondisi_barang', 'normal')->count();
+        $countRusak = Item::where('Kondisi_barang', 'barang rusak')->count();
+    
+        // Mengurangi stok barang rusak
+        $itemsQuery->get()->each(function ($item) {
+            if ($item->Kondisi_barang == 'barang rusak') {
+                $item->stock = max(0, $item->stock - 1); // Kurangi stok barang rusak, pastikan stok tidak negatif
+                $item->save();
+            }
+        });
+    
         // Pagination
         $items = $itemsQuery->paginate($perPage);
-
+    
         // Ambil semua kategori untuk dropdown filter
         $categories = Category::all();
-
-        return view('Crud_admin.Items.index', compact('items','countNormal','countRusak','item', 'categories', 'filterCategory', 'searchQuery', 'perPage'));
+    
+        return view('Crud_admin.Items.index', compact('items', 'countNormal', 'countRusak', 'categories', 'filterCategory', 'searchQuery', 'perPage'));
     }
+    
 
 
     public function create()

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 // use App\Notifications\OverdueLoanNotification;
 
 use App\Models\User;
+use App\Models\Detail_Item;
 use App\Models\Student; // Pastikan mengimpor model Student
 use App\Models\Teacher; // Pastikan mengimpor model Teacher
 
@@ -51,18 +52,31 @@ class LoansItemController extends Controller
     }
 
 
-
-    // Form untuk membuat loans_items baru
     public function create()
     {
+        // Daftar kategori yang diizinkan
         $allowedCategories = ['Kebersihan', 'Olah Raga', 'Elektronik'];
         $categoryIds = Category::whereIn('name', $allowedCategories)->pluck('id');
 
-        // Filter berdasarkan kategori, status_pinjaman, dan kondisi_barang
+        // Ambil barang berdasarkan kategori dan status pinjaman 'bisa di pinjam'
         $items = Item::whereIn('categories_id', $categoryIds)
             ->where('status_pinjaman', 'bisa di pinjam')
-            ->where('Kondisi_barang', 'normal')
             ->get();
+
+        // Hitung jumlah stok normal untuk setiap barang
+        foreach ($items as $item) {
+            // Ambil detail barang berdasarkan item_id dan kondisi_barang
+            $normalStock = Detail_item::where('item_id', $item->id)
+                ->where('kondisi_barang', 'Normal')
+                ->count();
+
+            $item->normal_stock = $normalStock;
+        }
+
+        // Filter barang yang memiliki stok normal lebih dari 0
+        $items = $items->filter(function ($item) {
+            return $item->normal_stock > 0;
+        });
 
         $borrowers = Borrower::all();
 
@@ -70,56 +84,76 @@ class LoansItemController extends Controller
     }
 
 
-    // Menyimpan data loans_items baru
     public function store(Request $request)
     {
+        // Validasi
         $request->validate([
-            'item_id' => 'required|exists:items,id',
+            'item_id' => 'required|array', // Pastikan ini array
+            'item_id.*' => 'exists:items,id', // Setiap item_id yang dipilih harus ada di database
             'borrower_id' => 'required|exists:borrowers,id',
             'tanggal_pinjam' => 'required|date',
             'tanggal_kembali' => 'required|date|after:tanggal_pinjam',
             'jumlah_pinjam' => 'required|integer|min:1',
             'tujuan_peminjaman' => 'required|string|max:255',
         ]);
-
-        $item = Item::findOrFail($request->item_id);
-
-        if ($item->status_pinjaman != 'bisa di pinjam' || $item->Kondisi_barang != 'normal') {
-            return redirect()->back()->withErrors(['error' => 'Barang tidak memenuhi syarat untuk dipinjam.']);
+    
+        // Mengambil data yang dikirim
+        $itemIds = $request->item_id; // Ini akan menjadi array
+    
+        foreach ($itemIds as $itemId) {
+            $item = Item::findOrFail($itemId);
+    
+            // Hitung jumlah barang normal
+            $normalStock = $item->details()->where('kondisi_barang', 'Normal')->count();
+    
+            // Validasi apakah stok normal cukup
+            if ($normalStock < $request->jumlah_pinjam) {
+                return redirect()->back()->withErrors(['error' => 'Jumlah barang normal tidak mencukupi untuk dipinjam.']);
+            }
+    
+            // Validasi status pinjaman dan kategori barang
+            if ($item->status_pinjaman != 'bisa di pinjam') {
+                return redirect()->back()->withErrors(['error' => 'Barang tidak memenuhi syarat untuk dipinjam.']);
+            }
+    
+            // Validasi kategori barang
+            $allowedCategories = ['Kebersihan', 'Olah Raga', 'Elektronik'];
+            if (!in_array($item->category->name, $allowedCategories)) {
+                return redirect()->back()->withErrors(['error' => 'Barang tidak termasuk dalam kategori yang diizinkan.']);
+            }
+    
+            // Validasi peminjam
+            $borrower = Borrower::with(['student', 'teacher'])->findOrFail($request->borrower_id);
+            if (!$borrower->student && !$borrower->teacher) {
+                return redirect()->back()->withErrors(['error' => 'Peminjam tidak valid.']);
+            }
+    
+            // Ambil detail barang dengan kondisi normal
+            $normalItems = $item->details()->where('kondisi_barang', 'Normal')->take($request->jumlah_pinjam)->get();
+    
+            // Kurangi stok barang normal di detail_items
+            foreach ($normalItems as $normalItem) {
+                $normalItem->delete(); // Menghapus detail item yang telah dipinjam
+            }
+    
+            // Kurangi stok barang pada tabel `items`
+            $item->decrement('stock', $request->jumlah_pinjam);
+    
+            // Simpan data peminjaman ke tabel `loans_items`
+            Loans_Item::create([
+                'item_id' => $item->id,
+                'borrower_id' => $request->borrower_id,
+                'tanggal_pinjam' => now(),
+                'tanggal_kembali' => $request->tanggal_kembali,
+                'jumlah_pinjam' => $request->jumlah_pinjam,
+                'tujuan_peminjaman' => $request->tujuan_peminjaman,
+                'status' => 'menunggu', // Status peminjaman masih menunggu konfirmasi
+            ]);
         }
-
-        // Validasi tambahan
-        $allowedCategories = ['Kebersihan', 'Olah Raga', 'Elektronik'];
-        if (!in_array($item->category->name, $allowedCategories)) {
-            return redirect()->back()->withErrors(['error' => 'Barang tidak termasuk dalam kategori yang diizinkan.']);
-        }
-
-        if ($item->stock < $request->jumlah_pinjam) {
-            return redirect()->back()->withErrors(['error' => 'Jumlah pinjaman melebihi stok yang tersedia.']);
-        }
-
-        $borrower = Borrower::with(['student', 'teacher'])->findOrFail($request->borrower_id);
-
-        // Validasi tambahan jika diperlukan untuk borrower
-        if (!$borrower->student && !$borrower->teacher) {
-            return redirect()->back()->withErrors(['error' => 'Peminjam tidak valid.']);
-        }
-
-        $item->decrement('stock', $request->jumlah_pinjam);
-
-        Loans_item::create([
-            'item_id' => $request->item_id,
-            'borrower_id' => $request->borrower_id,
-            'tanggal_pinjam' => now(),
-            'tanggal_kembali' => $request->tanggal_kembali,
-            'jumlah_pinjam' => $request->jumlah_pinjam,
-            'tujuan_peminjaman' => $request->tujuan_peminjaman,
-            'status' => 'menunggu',
-        ]);
-
+    
         return redirect()->route('loans_item.index')->with('success', 'Peminjaman berhasil dibuat dengan status menunggu.');
     }
-
+    
 
 
     // Form untuk mengedit data loans_items
@@ -174,7 +208,7 @@ class LoansItemController extends Controller
 
         $item = Item::findOrFail($request->item_id);
 
-        if ($item->status_pinjaman != 'bisa di pinjam' || $item->Kondisi_barang != 'normal') {
+        if ($item->details->kondisi_barang != 'bisa di pinjam' || $item->Kondisi_barang != 'normal') {
             return redirect()->back()->withErrors(['error' => 'Barang tidak memenuhi syarat untuk dipinjam.']);
         }
 
@@ -218,12 +252,11 @@ class LoansItemController extends Controller
     public function show($id)
     {
         // Ambil data Loans_items dengan relasi
-        $loanItem = Loans_Item::with([
-            'item',           // Relasi ke Item
-            'borrower.student', // Relasi Borrowers ke Students
-            'borrower.teacher'  // Relasi Borrowers ke Teachers
-        ])->findOrFail($id);
+        $loanItem = Loans_Item::with('details')->find($id); // Pastikan relasi 'details' dimuat dengan 'with'
 
+        if (!$loanItem) {
+            abort(404, 'Data not found');
+        }
         // Kirim ke view
         return view('Crud_admin.loans_item.detail', compact('loanItem'));
     }

@@ -173,8 +173,8 @@
                                         @endif
                                     </td>
                                     <td>{{ $loan->jumlah_pinjam }}</td>
-                                    <td>{{ $loan->tanggal_pinjam ? \Carbon\Carbon::parse($loan->tanggal_pinjam)->format('d M Y, H:i') : '-' }}</td>
-                                    <td>{{ $loan->tanggal_kembali ? \Carbon\Carbon::parse($loan->tanggal_kembali)->format('d M Y, H:i') : '-' }}</td>
+                                    <td>{{ $loan->tanggal_pinjam ? \Carbon\Carbon::parse($loan->tanggal_pinjam)->format('d M Y,') : '-' }}</td>
+                                    <td>{{ $loan->tanggal_kembali ? \Carbon\Carbon::parse($loan->tanggal_kembali)->format('d M Y,') : '-' }}</td>
                                     <td>
                                         <span class="badge 
                                             @switch($loan->status)
