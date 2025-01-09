@@ -16,4 +16,9 @@ class Detail_item extends Model
     {
         return $this->belongsTo(Item::class);
     }
+
+    public function detailPeminjaman()
+    {
+        return $this->hasOne(DetailPeminjaman::class, 'detail_item_id');
+    }
 }

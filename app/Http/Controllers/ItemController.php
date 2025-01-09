@@ -216,4 +216,10 @@ class ItemController extends Controller
             return back()->withErrors(['error' => 'Terjadi kesalahan saat menghapus data. Silakan coba lagi.']);
         }
     }
+    public function getDetails($itemId)
+{
+    $details = Detail_item::where('item_id', $itemId)->where('kondisi_barang', 'normal')->get();
+    return response()->json($details);
+}
+
 }

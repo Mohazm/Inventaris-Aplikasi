@@ -150,7 +150,6 @@
                                 <th>No</th>
                                 <th>Nama Barang</th>
                                 <th>Peminjam</th>
-                                <th>Jumlah</th>
                                 <th>Tanggal Pinjam</th>
                                 <th>Tanggal Kembali</th>
                                 <th>Status</th>
@@ -172,7 +171,6 @@
                                             Peminjam tidak ditemukan
                                         @endif
                                     </td>
-                                    <td>{{ $loan->jumlah_pinjam }}</td>
                                     <td>{{ $loan->tanggal_pinjam ? \Carbon\Carbon::parse($loan->tanggal_pinjam)->format('d M Y,') : '-' }}</td>
                                     <td>{{ $loan->tanggal_kembali ? \Carbon\Carbon::parse($loan->tanggal_kembali)->format('d M Y,') : '-' }}</td>
                                     <td>

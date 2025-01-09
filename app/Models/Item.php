@@ -39,14 +39,21 @@ class Item extends Model
         return $this->hasMany(Transactions_out::class, 'item_id');
     }
 
-    public function itemLoans()
+    public function loans()
     {
-        return $this->hasMany(Loans_item::class, 'item_id');
+        return $this->belongsToMany(Loan::class, 'loan_item')
+                    ->withPivot('detail_item_id', 'jumlah_pinjam')
+                    ->withTimestamps();
     }
 
     // Model Item
     public function details()
     {
         return $this->hasMany(Detail_Item::class);
+    }
+
+    public function detailPeminjaman()
+    {
+        return $this->hasMany(DetailPeminjaman::class, 'item_id');
     }
 }
