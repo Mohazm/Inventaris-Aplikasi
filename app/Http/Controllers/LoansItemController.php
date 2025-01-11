@@ -20,7 +20,7 @@ class LoansItemController extends Controller
     // Menampilkan semua loans_items
     public function index(Request $request)
     {
-        $query = Loans_item::with(['item.category', 'borrower.student', 'borrower.teacher']);
+        $query = Loans_item::with(['items.category', 'borrowers.student', 'borrowers.teacher']);
 
         $tanggal_pinjam_options = Loans_item::distinct()->pluck('tanggal_pinjam');
         $tanggal_kembali_options = Loans_item::distinct()->pluck('tanggal_kembali');
@@ -56,72 +56,46 @@ class LoansItemController extends Controller
 
         return view('Crud_admin.loans_item.create', compact('items', 'borrowers'));
     }
-
+    
     public function store(Request $request)
-    {
-        $request->validate([
-            'item_id' => 'required|array',
-            'item_id.*' => 'exists:items,id',
-            'borrower_id' => 'required|exists:borrowers,id',
-            'tanggal_pinjam' => 'required|date',
-            'tanggal_kembali' => 'required|date|after:tanggal_pinjam',
-            'tujuan_peminjaman' => 'required|string|max:255',
-            'detail_item_ids' => 'required|array',
-            'detail_item_ids.*' => 'exists:detail_items,id',
-            'jumlah_pinjam' => 'required|integer',
+{
+    // Validasi input
+    $request->validate([
+        'item_id' => 'required',
+        'item_id.*' => 'exists:items,id',
+        'detail_item_ids' => 'required|array',
+        'detail_item_ids.*' => 'exists:detail_items,id',
+        'borrower_id' => 'required|exists:borrowers,id',
+        'tanggal_pinjam' => 'required|date',
+        'tanggal_kembali' => 'required|date|after:tanggal_pinjam',
+        'tujuan_peminjaman' => 'required|string|max:255',
+        'jumlah_pinjam' => 'required|integer',
+    ]);
+    
+    
+    $detailItemIds = $request->detail_item_ids;
+    
+        $loan = Loans_item::create([
+            'item_id' => $request->item_id,
+            'borrower_id' => $request->borrower_id,
+            'tanggal_pinjam' => $request->tanggal_pinjam,
+            'tanggal_kembali' => $request->tanggal_kembali,
+            'jumlah_pinjam' => $request->jumlah_pinjam,
+            'tujuan_peminjaman' => $request->tujuan_peminjaman,
+            'status' => 'menunggu',
         ]);
     
-        $itemIds = $request->item_id;
-        $detailItemIds = $request->detail_item_ids;
-    
-        foreach ($itemIds as $itemId) {
-            $item = Item::findOrFail($itemId);
-    
-            // Validasi status barang
-            if ($item->status_pinjaman != 'bisa di pinjam') {
-                return redirect()->back()->withErrors(['error' => 'Barang tidak tersedia untuk dipinjam.']);
-            }
-    
-            // Validasi kategori barang
-            $allowedCategories = ['Kebersihan', 'Olah Raga', 'Elektronik'];
-            if (!in_array($item->category->name, $allowedCategories)) {
-                return redirect()->back()->withErrors(['error' => 'Kategori barang tidak diperbolehkan.']);
-            }
-    
-            // Simpan data peminjaman utama
-            $loan = LoansItem::create([
-                'item_id' => $item->id,
-                'borrower_id' => $request->borrower_id,
-                'tanggal_pinjam' => $request->tanggal_pinjam,
-                'tanggal_kembali' => $request->tanggal_kembali,
-                'jumlah_pinjam' => $request->jumlah_pinjam,
-                'tujuan_peminjaman' => $request->tujuan_peminjaman,
-                'status' => 'menunggu',
-            ]);
-    
-            // Masukkan data ke detail peminjaman
-            $selectedDetails = Detail_Item::whereIn('id', $detailItemIds)
-                ->where('item_id', $itemId)
-                ->where('kondisi_barang', 'Normal')
-                ->take($request->jumlah_pinjam)
-                ->get();
-    
-            foreach ($selectedDetails as $detail) {
-                // Simpan detail peminjaman
-                DetailPeminjaman::create([
-                    'loan_id' => $loan->id,
-                    'detail_item_id' => $detail->id,
-                    'kondisi_barang' => $detail->kondisi_barang,
-                ]);
-            }
-    
-            // Update stok item utama
-            $item->decrement('stock', $request->jumlah_pinjam);
+        // Masukkan data ke pivot table loans_item_detail_items
+        foreach ($detailItemIds as $detailItemId) {
+            $loan->detailItems()->attach($detailItemId);
         }
+        $itemIds->decrement('stock', $request->jumlah_pinjam);
     
-        return redirect()->route('loans_item.index')->with('success', 'Peminjaman berhasil ditambahkan.');
-    }
-    
+   
+
+    return redirect()->route('loans_item.index')->with('success', 'Peminjaman berhasil ditambahkan.');
+}
+
     public function accept($id)
     {
         $loans_items = Loans_item::findOrFail($id);
@@ -173,11 +147,11 @@ class LoansItemController extends Controller
 
         return redirect()->route('loans_item.index')->with('success', 'Peminjaman terlambat berhasil diperbarui.');
     }
+
     public function show($id)
-{
-    $loan = Loans_item::with(['item', 'borrower.student', 'borrower.teacher'])->findOrFail($id);
+    {
+        $loan = Loans_item::with(['items', 'borrowers.student', 'borrowers.teacher'])->findOrFail($id);
 
-    return view('loans_item.detail', compact('loan'));
-}
-
+        return view('loans_item.detail', compact('loan'));
+    }
 }

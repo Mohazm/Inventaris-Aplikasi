@@ -27,7 +27,7 @@
 <!-- Pilih Detail Barang -->
 <div class="mb-3">
     <label for="detail-dropdown">Pilih Detail Barang</label>
-    <select id="detail-dropdown" name="detail_id[]" class="form-control" multiple disabled>
+    <select id="detail-dropdown" name="detail_item_ids[]" class="form-control" multiple disabled>
         <option value="">-- Pilih Detail Barang --</option>
     </select>
 </div>

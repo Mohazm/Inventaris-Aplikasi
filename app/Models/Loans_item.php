@@ -39,4 +39,9 @@ class Loans_item extends Model
     {
         return $this->hasOne(Returns_item::class, 'peminjaman_id');
     }
+    public function detailItems()
+    {
+        return $this->belongsToMany(Detail_item::class, 'detail_item_loan', 'loans_item_id', 'detail_item_id')
+                    ->withTimestamps();
+    }
 }
