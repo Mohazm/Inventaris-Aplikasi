@@ -15,13 +15,14 @@ class Borrower extends Model
     }
    // In Borrower model:
    public function student()
-    {
-        return $this->belongsTo(Student::class,'borrower_id');
-    }
+{
+    return $this->hasOne(Student::class, 'id', 'borrower_id');
+}
 
-    public function teacher()
-    {
-        return $this->belongsTo(Teacher::class,'borrower_id');
-    }
+public function teacher()
+{
+    return $this->hasOne(Teacher::class, 'id', 'borrower_id');
+}
+
 
 }

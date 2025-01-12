@@ -17,33 +17,33 @@ class ItemController extends Controller
         $filterCategory = $request->input('category_id');
         $searchQuery = $request->input('search');
         $perPage = $request->input('per_page', 10); // Default 10 items per page
-        
+
         // Query item dengan relasi kategori
         $itemsQuery = Item::with('category');
-    
+
         // Ambil filter kondisi barang
         $filterkondisi = $request->input('Kondisi_barang');
         if ($filterkondisi) {
             $itemsQuery->where('Kondisi_barang', $filterkondisi);
         }
-    
+
         // Filter berdasarkan kategori
         if ($filterCategory) {
             $itemsQuery->where('categories_id', $filterCategory);
         }
-    
+
         // Pencarian berdasarkan nama barang
         if ($searchQuery) {
             $itemsQuery->where('nama_barang', 'like', '%' . $searchQuery . '%');
         }
-    
+
         // Urutkan berdasarkan item yang terakhir kali dibuat (created_at descending)
         $itemsQuery->orderBy('created_at', 'desc');
-    
+
         // Hitung total barang rusak dan normal
         $countNormal = Item::where('Kondisi_barang', 'normal')->count();
         $countRusak = Item::where('Kondisi_barang', 'barang rusak')->count();
-    
+
         // Mengurangi stok barang rusak
         $itemsQuery->get()->each(function ($item) {
             if ($item->Kondisi_barang == 'barang rusak') {
@@ -51,16 +51,16 @@ class ItemController extends Controller
                 $item->save();
             }
         });
-    
+
         // Pagination
         $items = $itemsQuery->paginate($perPage);
-    
+
         // Ambil semua kategori untuk dropdown filter
         $categories = Category::all();
-    
+
         return view('Crud_admin.Items.index', compact('items', 'countNormal', 'countRusak', 'categories', 'filterCategory', 'searchQuery', 'perPage'));
     }
-    
+
 
 
     public function create()
@@ -216,10 +216,13 @@ class ItemController extends Controller
             return back()->withErrors(['error' => 'Terjadi kesalahan saat menghapus data. Silakan coba lagi.']);
         }
     }
-    public function getDetails($itemId)
-{
-    $details = Detail_item::where('item_id', $itemId)->where('kondisi_barang', 'normal')->get();
-    return response()->json($details);
-}
-
+        public function getDetails($itemId)
+    {
+        $details = Detail_item::where('item_id', $itemId)->where('kondisi_barang', 'normal')->get();
+        return response()->json($details);
+    }
+    // public function getDetails(Item $item)
+    // {
+    //     return response()->json($item->details);
+    // }
 }

@@ -31,7 +31,7 @@ class LoansItemController extends Controller
                 ->whereDate('tanggal_kembali', '<', now());
         }
 
-        $loans_items = $query->get();
+        $loans_items = Loans_item::with('items')->get();
 
         return view('Crud_admin.loans_item.index', compact(
             'loans_items',
@@ -56,25 +56,22 @@ class LoansItemController extends Controller
 
         return view('Crud_admin.loans_item.create', compact('items', 'borrowers'));
     }
-    
+
     public function store(Request $request)
-{
-    // Validasi input
-    $request->validate([
-        'item_id' => 'required',
-        'item_id.*' => 'exists:items,id',
-        'detail_item_ids' => 'required|array',
-        'detail_item_ids.*' => 'exists:detail_items,id',
-        'borrower_id' => 'required|exists:borrowers,id',
-        'tanggal_pinjam' => 'required|date',
-        'tanggal_kembali' => 'required|date|after:tanggal_pinjam',
-        'tujuan_peminjaman' => 'required|string|max:255',
-        'jumlah_pinjam' => 'required|integer',
-    ]);
-    
-    
-    $detailItemIds = $request->detail_item_ids;
-    
+    {
+        // Validasi input
+        $request->validate([
+            'item_id' => 'required|exists:items,id',
+            'detail_item_ids' => 'required|array',
+            'detail_item_ids.*' => 'exists:detail_items,id',
+            'borrower_id' => 'required|exists:borrowers,id',
+            'tanggal_pinjam' => 'required|date',
+            'tanggal_kembali' => 'required|date|after:tanggal_pinjam',
+            'tujuan_peminjaman' => 'required|string|max:255',
+            'jumlah_pinjam' => 'required|integer|min:1',
+        ]);
+
+        // Buat Loans_item baru
         $loan = Loans_item::create([
             'item_id' => $request->item_id,
             'borrower_id' => $request->borrower_id,
@@ -84,17 +81,17 @@ class LoansItemController extends Controller
             'tujuan_peminjaman' => $request->tujuan_peminjaman,
             'status' => 'menunggu',
         ]);
-    
-        // Masukkan data ke pivot table loans_item_detail_items
-        foreach ($detailItemIds as $detailItemId) {
-            $loan->detailItems()->attach($detailItemId);
-        }
-        $itemIds->decrement('stock', $request->jumlah_pinjam);
-    
-   
 
-    return redirect()->route('loans_item.index')->with('success', 'Peminjaman berhasil ditambahkan.');
-}
+        // Sinkronisasi data pivot table
+        $loan->detailItems()->sync($request->detail_item_ids);
+
+        // Update stok item
+        $item = Item::findOrFail($request->item_id);
+        $item->decrement('stock', $request->jumlah_pinjam);
+
+        return redirect()->route('loans_item.index')->with('success', 'Peminjaman berhasil ditambahkan.');
+    }
+
 
     public function accept($id)
     {
@@ -148,10 +145,38 @@ class LoansItemController extends Controller
         return redirect()->route('loans_item.index')->with('success', 'Peminjaman terlambat berhasil diperbarui.');
     }
 
+
+    public function destroy($id)
+    {
+        // Cari data loans_item berdasarkan ID
+        $loanItem = Loans_item::with('items')->find($id);
+
+        // Jika data tidak ditemukan, kembalikan pesan error
+        if (!$loanItem) {
+            return redirect()->route('loans_item.index')
+                ->with('error', 'Data peminjaman tidak ditemukan.');
+        }
+
+        // Mengembalikan stok barang
+        if ($loanItem->items) {
+            $loanItem->items->stock += $loanItem->jumlah_pinjam; // Tambahkan stok
+            $loanItem->items->save(); // Simpan perubahan stok
+        }
+
+        // Hapus data peminjaman
+        $loanItem->delete();
+
+        // Redirect dengan pesan sukses
+        return redirect()->route('loans_item.index')
+            ->with('success', 'Data peminjaman berhasil dihapus, stok barang dikembalikan.');
+    }
     public function show($id)
     {
-        $loan = Loans_item::with(['items', 'borrowers.student', 'borrowers.teacher'])->findOrFail($id);
-
-        return view('loans_item.detail', compact('loan'));
+        $loanItem = Loans_item::with(['items', 'borrowers.student', 'borrowers.teacher', 'detailItems'])->findOrFail($id);
+        // dd($loanItem->detailItems); // Cek apakah data sudah dimuat
+        // dd($loanItem->detailItems->toArray()); // Lihat data terkait detailItems
+        return view('Crud_admin.loans_item.detail', compact('loanItem'));
     }
+    
+    
 }

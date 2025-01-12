@@ -45,7 +45,10 @@ class Item extends Model
                     ->withPivot('detail_item_id', 'jumlah_pinjam')
                     ->withTimestamps();
     }
-
+    public function loansItems()
+    {
+        return $this->hasMany(Loans_item::class, 'item_id');
+    }
     // Model Item
     public function details()
     {

@@ -161,16 +161,16 @@
                             @forelse ($loans_items as $loan)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $loan->item->nama_barang ?? 'Barang tidak ditemukan' }}</td>
+                                    <td>{{ $loan->items->nama_barang ?? 'Barang tidak ditemukan' }}</td>
                                     <td>
-                                        @if ($loan->borrower->student)
-                                            {{ $loan->borrower->student->name ?? 'Peminjam siswa tidak ditemukan' }}
-                                        @elseif ($loan->borrower->teacher)
-                                            {{ $loan->borrower->teacher->name ?? 'Peminjam guru tidak ditemukan' }}
-                                        @else
-                                            Peminjam tidak ditemukan
-                                        @endif
-                                    </td>
+                                        @if ($loan->borrowers['borrower_type'] === 'student' && $loan->borrowers['student'])
+                                        {{ $loan->borrowers['student']['name']  }} (students)
+                                    @elseif ($loan->borrowers['borrower_type'] === 'teacher' && $loan->borrowers['teacher'])
+                                        {{ $loan->borrowers['teacher']['name'] }} (Teacher)
+                                    @else
+                                        -
+                                    @endif
+                                    </td>                                    
                                     <td>{{ $loan->tanggal_pinjam ? \Carbon\Carbon::parse($loan->tanggal_pinjam)->format('d M Y,') : '-' }}</td>
                                     <td>{{ $loan->tanggal_kembali ? \Carbon\Carbon::parse($loan->tanggal_kembali)->format('d M Y,') : '-' }}</td>
                                     <td>

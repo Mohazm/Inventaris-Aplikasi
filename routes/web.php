@@ -92,7 +92,7 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
     Route::delete('loans_item/{id}', [LoansItemController::class, 'destroy'])->name('loans_item.destroy');
     Route::patch('/loans_item/accept/{id}', [LoansItemController::class, 'accept'])->name('loans_item.accept');
     Route::patch('/loans_item/cancel/{id}', [LoansItemController::class, 'cancel'])->name('loans_item.cancel');
-    Route::get('loans-item/{loan}/detail', [LoanItemController::class, 'show'])->name('loans_item.detail');
+    Route::get('loans-item/{loan}/detail', [LoansItemController::class, 'show'])->name('loans_item.detail');
 
     // routes/web.php 
     Route::post('/loans_item/checkOverdue', [LoansItemController::class, 'checkOverdueLoans'])->name('loans_item.checkOverdue');
