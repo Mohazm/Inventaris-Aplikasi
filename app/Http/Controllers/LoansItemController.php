@@ -114,19 +114,60 @@ class LoansItemController extends Controller
 
     public function cancel($id)
     {
-        $loans_items = Loans_item::findOrFail($id);
-
+        // Cari data loans_item berdasarkan ID
+        $loans_items = Loans_item::with('detailItems')->findOrFail($id);
+    
+        // Cek jika peminjaman sudah dibatalkan
         if ($loans_items->status === 'ditolak') {
             return redirect()->back()->withErrors(['error' => 'Peminjaman sudah dibatalkan.']);
         }
-
+    
+        // Mengembalikan stok barang
         $item = Item::findOrFail($loans_items->item_id);
         $item->increment('stock', $loans_items->jumlah_pinjam);
-
+    
+        // Mengembalikan status detail item ke default (belum di pinjam)
+        foreach ($loans_items->detailItems as $detailItem) {
+            $detailItem->update(['status_pinjaman' => 'belum di pinjam']);
+        }
+    
+        // Update status peminjaman menjadi 'ditolak'
         $loans_items->update(['status' => 'ditolak']);
-
-        return redirect()->route('loans_item.index')->with('success', 'Peminjaman berhasil dibatalkan.');
+    
+        // Redirect dengan pesan sukses
+        return redirect()->route('loans_item.index')->with('success', 'Peminjaman berhasil dibatalkan, stok barang dan status detail item dikembalikan.');
     }
+    
+    public function destroy($id)
+    {
+        // Cari data loans_item berdasarkan ID
+        $loanItem = Loans_item::with('items', 'detailItems')->find($id);
+
+        // Jika data tidak ditemukan, kembalikan pesan error
+        if (!$loanItem) {
+            return redirect()->route('loans_item.index')
+                ->with('error', 'Data peminjaman tidak ditemukan.');
+        }
+
+        // Mengembalikan stok barang
+        if ($loanItem->items) {
+            $loanItem->items->stock += $loanItem->jumlah_pinjam; // Tambahkan stok
+            $loanItem->items->save(); // Simpan perubahan stok
+        }
+
+        // Mengembalikan status detail item ke default (belum di pinjam)
+        foreach ($loanItem->detailItems as $detailItem) {
+            $detailItem->update(['status_pinjaman' => 'belum di pinjam']);
+        }
+
+        // Hapus data peminjaman
+        $loanItem->delete();
+
+        // Redirect dengan pesan sukses
+        return redirect()->route('loans_item.index')
+            ->with('success', 'Data peminjaman berhasil dihapus, stok barang dan status detail item dikembalikan.');
+    }
+
 
     public function checkOverdueLoans()
     {
@@ -152,30 +193,8 @@ class LoansItemController extends Controller
     }
 
 
-    public function destroy($id)
-    {
-        // Cari data loans_item berdasarkan ID
-        $loanItem = Loans_item::with('items')->find($id);
 
-        // Jika data tidak ditemukan, kembalikan pesan error
-        if (!$loanItem) {
-            return redirect()->route('loans_item.index')
-                ->with('error', 'Data peminjaman tidak ditemukan.');
-        }
 
-        // Mengembalikan stok barang
-        if ($loanItem->items) {
-            $loanItem->items->stock += $loanItem->jumlah_pinjam; // Tambahkan stok
-            $loanItem->items->save(); // Simpan perubahan stok
-        }
-
-        // Hapus data peminjaman
-        $loanItem->delete();
-
-        // Redirect dengan pesan sukses
-        return redirect()->route('loans_item.index')
-            ->with('success', 'Data peminjaman berhasil dihapus, stok barang dikembalikan.');
-    }
     public function show($id)
     {
         $loanItem = Loans_item::with(['items', 'borrowers.student', 'borrowers.teacher', 'detailItems'])->findOrFail($id);
@@ -183,6 +202,4 @@ class LoansItemController extends Controller
         // dd($loanItem->detailItems->toArray()); // Lihat data terkait detailItems
         return view('Crud_admin.loans_item.detail', compact('loanItem'));
     }
-
-
 }
