@@ -8,13 +8,14 @@
 
         <div class="card shadow-sm border-light">
             <div class="card-body">
-                <form action="{{ route('loans_item.store') }}" method="POST" id="loan-form">
+                <form action="{{ route('loans_item.store') }}" method="POST" id="loan-form statusPinjamForm">
                     @csrf
 
                     <!-- Pilih Barang -->
+                    <!-- Pilih Barang -->
                     <div class="mb-3">
                         <label for="item-dropdown">Pilih Barang</label>
-                        <select id="item-dropdown" name="item_id" class="form-control" value="{{ old('item_id') }}">
+                        <select id="item-dropdown" name="item_id" class="form-control">
                             <option value="">-- Pilih Barang --</option>
                             @foreach ($items as $item)
                                 <option value="{{ $item->id }}">{{ $item->nama_barang }}</option>
@@ -33,50 +34,89 @@
                     <!-- Jumlah Pinjam -->
                     <div class="mb-3">
                         <label for="jumlah_pinjam" class="form-label">Jumlah Pinjam</label>
-                        <input type="number" class="form-control @error('jumlah_pinjam') is-invalid @enderror"
-                            id="jumlah_pinjam" name="jumlah_pinjam" min="1" value="{{ old('jumlah_pinjam') }}"
+                        <input type="number" class="form-control" id="jumlah_pinjam" name="jumlah_pinjam" min="1"
                             readonly>
-                        @error('jumlah_pinjam')
-                            <div class="text-danger mt-1">{{ $message }}</div>
-                        @enderror
                     </div>
 
+
                     <script>
-                        const itemDropdown = document.getElementById('item-dropdown');
-                        const detailDropdown = document.getElementById('detail-dropdown');
-                        const jumlahPinjamInput = document.getElementById('jumlah_pinjam');
+                        document.addEventListener('DOMContentLoaded', function() {
+                            const itemDropdown = document.getElementById('item-dropdown');
+                            const detailDropdown = document.getElementById('detail-dropdown');
+                            const jumlahPinjamInput = document.getElementById('jumlah_pinjam');
 
-                        // Event listener untuk item-dropdown
-                        itemDropdown.addEventListener('change', function() {
-                            const itemId = this.value;
+                            itemDropdown.addEventListener('change', function() {
+                                const itemId = this.value;
 
-                            // Reset detail-dropdown
-                            detailDropdown.innerHTML = '<option value="">-- Pilih Detail Barang --</option>';
-                            detailDropdown.disabled = true;
-                            jumlahPinjamInput.value = 0; // Reset jumlah pinjam
+                                detailDropdown.innerHTML = '<option value="">-- Pilih Detail Barang --</option>';
+                                detailDropdown.disabled = true;
+                                jumlahPinjamInput.value = 0;
 
-                            if (itemId) {
-                                // Fetch detail items
-                                fetch(`/items/${itemId}/details`)
-                                    .then(response => response.json())
-                                    .then(data => {
-                                        data.forEach(detail => {
-                                            const option = document.createElement('option');
-                                            option.value = detail.id;
-                                            option.textContent = `${detail.kode_barang} (${detail.nama_barang})`;
-                                            detailDropdown.appendChild(option);
-                                        });
-                                        detailDropdown.disabled = false;
+                                if (itemId) {
+                                    fetch(`/items/${itemId}/details`)
+                                        .then(response => response.json())
+                                        .then(data => {
+                                            // Filter data untuk hanya mengambil yang statusnya 'Sedang dipinjam'
+                                            const filteredData = data.filter(detail => detail.status_pinjaman ===
+                                                'belum di pinjam');
+
+                                            filteredData.forEach(detail => {
+                                                const option = document.createElement('option');
+                                                option.value = detail.id;
+                                                option.textContent =
+                                                    `${detail.kode_barang} (${detail.nama_barang})`;
+                                                detailDropdown.appendChild(option);
+                                            });
+
+                                            // Enable dropdown setelah data diisi
+                                            detailDropdown.disabled = false;
+                                        })
+                                        .catch(error => console.error('Error fetching details:', error));
+                                }
+
+                            });
+
+                            detailDropdown.addEventListener('change', function() {
+                                const selectedOptions = Array.from(detailDropdown.selectedOptions);
+                                jumlahPinjamInput.value = selectedOptions.length;
+                            });
+
+                            document.addEventListener('DOMContentLoaded', function() {
+                                const form = document.getElementById('statusPinjamForm');
+                                if (form) {
+                                    form.addEventListener('submit', function(e) {
+                                        e.preventDefault();
+                                        const formData = new FormData(form);
+
+                                        fetch('/update-status', {
+                                                method: 'POST',
+                                                body: formData,
+                                            })
+                                            .then(response => response.json())
+                                            .then(data => {
+                                                if (data.success) {
+                                                    alert(data.message);
+                                                    Array.from(detailDropdown.selectedOptions).forEach(
+                                                        option => {
+                                                            option.textContent =
+                                                                `${option.textContent} - Status: Sedang dipinjam`;
+                                                        });
+                                                } else {
+                                                    alert(data.message || 'Gagal memperbarui status pinjaman.');
+                                                }
+                                            })
+                                            .catch(error => {
+                                                console.error('Error:', error);
+                                                alert('Terjadi kesalahan.');
+                                            });
                                     });
-                            }
-                        });
-
-                        // Event listener untuk detail-dropdown
-                        detailDropdown.addEventListener('change', function() {
-                            const selectedOptions = Array.from(detailDropdown.selectedOptions);
-                            jumlahPinjamInput.value = selectedOptions.length; // Jumlah item yang dipilih
+                                } else {
+                                    console.error('Form dengan ID "statusPinjamForm" tidak ditemukan.');
+                                }
+                            });
                         });
                     </script>
+
 
                     <!-- Pilih atau Tambah Peminjam -->
                     <select class="form-select" id="borrower_id" name="borrower_id" required>

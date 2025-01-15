@@ -42,11 +42,11 @@ class ItemController extends Controller
 
         // Hitung total barang rusak dan normal
         $countNormal = Item::where('Kondisi_barang', 'normal')->count();
-        $countRusak = Item::where('Kondisi_barang', 'barang rusak')->count();
+        $countRusak = Item::where('Kondisi_barang', 'rusak')->count();
 
         // Mengurangi stok barang rusak
         $itemsQuery->get()->each(function ($item) {
-            if ($item->Kondisi_barang == 'barang rusak') {
+            if ($item->Kondisi_barang == 'rusak') {
                 $item->stock = max(0, $item->stock - 1); // Kurangi stok barang rusak, pastikan stok tidak negatif
                 $item->save();
             }
@@ -216,11 +216,35 @@ class ItemController extends Controller
             return back()->withErrors(['error' => 'Terjadi kesalahan saat menghapus data. Silakan coba lagi.']);
         }
     }
-        public function getDetails($itemId)
+
+    public function getDetails($detailId)
     {
-        $details = Detail_item::where('item_id', $itemId)->where('kondisi_barang', 'normal')->get();
+        // Mengambil detail item berdasarkan item_id
+        $details = Detail_item::where('item_id', $detailId)->get()->toArray();
+
+        // Mengembalikan data dalam format JSON
         return response()->json($details);
     }
+
+
+    public function getDetailss($itemId)
+    {
+        // Mengambil data detail berdasarkan item_id
+        $details = Detail_item::where('item_id', $itemId)->get();
+
+        // Mengembalikan view dengan data details yang telah diambil
+        return view('Crud_admin.Detail_item.index', compact('details'));
+    }
+
+   
+
+
+    //     public function getDetailss($itemId)
+    // {
+    //     $details = Detail_item::where('item_id', $itemId)->get();
+    //     // return response()->json($details);
+    //     return view('Crud_admin.Detail_item.index', compact('details'));
+    // }
     // public function getDetails(Item $item)
     // {
     //     return response()->json($item->details);

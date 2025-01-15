@@ -49,7 +49,7 @@ class LoansItemController extends Controller
             ->where('status_pinjaman', 'bisa di pinjam')
             ->get()
             ->filter(function ($item) {
-                return $item->details()->where('kondisi_barang', 'Normal')->count() > 0;
+                return $item->details()->where('kondisi_barang', 'normal')->count() > 0;
             });
 
         $borrowers = Borrower::all();
@@ -89,8 +89,14 @@ class LoansItemController extends Controller
         $item = Item::findOrFail($request->item_id);
         $item->decrement('stock', $request->jumlah_pinjam);
 
+        // Update status pada detail items yang dipilih
+        foreach ($request->detail_item_ids as $detailItemId) {
+            Detail_Item::where('id', $detailItemId)->update(['status_pinjaman' => 'sedang dipinjam']);
+        }
+
         return redirect()->route('loans_item.index')->with('success', 'Peminjaman berhasil ditambahkan.');
     }
+
 
 
     public function accept($id)
@@ -177,6 +183,6 @@ class LoansItemController extends Controller
         // dd($loanItem->detailItems->toArray()); // Lihat data terkait detailItems
         return view('Crud_admin.loans_item.detail', compact('loanItem'));
     }
-    
-    
+
+
 }

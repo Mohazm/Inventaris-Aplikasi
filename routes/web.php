@@ -55,6 +55,7 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
     Route::resource('/Items', ItemController::class);
     Route::resource('/suppliers', SupplierController::class);
     Route::get('/items/{id}/details', [ItemController::class, 'getDetails']);
+    Route::get('/details/{itemId}', [ItemController::class, 'getDetailss'])->name('details.index');
 
     Route::get('borrowers', [BorrowerController::class, 'index'])->name('borrowers.index');
     Route::get('borrowers/create', [BorrowerController::class, 'create'])->name('borrowers.create');
@@ -63,8 +64,11 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
     Route::put('borrowers/{id}', [BorrowerController::class, 'update'])->name('borrowers.update');
     Route::delete('/borrowers/{borrowerType}/{borrowerId}', [BorrowerController::class, 'destroy'])->name('borrowers.destroy');
 
+
+    
+    Route::post('/update-status', [DetailItemController::class, 'updateStatusPinjam'])->name('update.status');
     Route::post('/loans_item/return/{id}', [ReturnsItemController::class, 'returnItem'])->name('loans_item.return');
-    Route::get('items/{itemId}/details', [DetailItemController::class, 'index'])->name('details.index');
+    // Route::get('items/{itemId}/details', [DetailItemController::class, 'index'])->name('details.index');
     Route::get('details/{kode_barang}/edit', [DetailItemController::class, 'edit'])->name('details.edit');
     Route::put('details/{kode_barang}', [DetailItemController::class, 'update'])->name('details.update');
     Route::delete('details/{kode_barang}', [DetailItemController::class, 'destroy'])->name('details.destroy');
@@ -94,7 +98,7 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
     Route::patch('/loans_item/cancel/{id}', [LoansItemController::class, 'cancel'])->name('loans_item.cancel');
     Route::get('loans-item/{loan}/detail', [LoansItemController::class, 'show'])->name('loans_item.detail');
 
-    // routes/web.php 
+    // routes/web.php
     Route::post('/loans_item/checkOverdue', [LoansItemController::class, 'checkOverdueLoans'])->name('loans_item.checkOverdue');
 
 

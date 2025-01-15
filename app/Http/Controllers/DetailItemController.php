@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Detail_item;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+
 class DetailItemController extends Controller
 {
     /**
@@ -26,12 +27,37 @@ class DetailItemController extends Controller
         } catch (\Exception $e) {
             // Log error untuk keperluan debugging
             Log::error('Kesalahan saat mengambil data detail barang: ' . $e->getMessage());
-            
+
             // Redirect dengan pesan kesalahan
             return redirect()->route('Items.index')
                 ->withErrors(['error' => 'Terjadi kesalahan saat mengambil data.']);
         }
     }
+    // public function updateStatusPinjam(Request $request)
+    // {
+    //     Log::info('Request Data:', $request->all());
+
+    //     $detailItem = Detail_item::where('kode_barang', $request->kode_barang)->first();
+
+    //     if (!$detailItem) {
+    //         Log::error('Detail item tidak ditemukan.');
+    //         return response()->json(['success' => false, 'message' => 'Barang tidak ditemukan.'], 404);
+    //     }
+
+    //     Log::info('Status Sebelum Update:', ['status_pinjaman' => $detailItem->status_pinjaman]);
+
+    //     if (trim(strtolower($detailItem->status_pinjaman)) === 'belum di pinjam') {
+    //         $detailItem->status_pinjaman = 'Sedang dipinjam';
+    //         $detailItem->save();
+
+    //         Log::info('Status Setelah Update:', ['status_pinjaman' => $detailItem->status_pinjaman]);
+
+    //         return response()->json(['success' => true, 'message' => 'Status pinjaman berhasil diperbarui.']);
+    //     }
+
+    //     return response()->json(['success' => false, 'message' => 'Barang sudah dipinjam'], 400);
+    // }
+
 
 
     /**

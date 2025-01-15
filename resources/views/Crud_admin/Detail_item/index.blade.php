@@ -1,56 +1,58 @@
-@extends('kerangka.master')
+    @extends('kerangka.master')
 
-@section('content')
-<div class="container">
-    <h3>Detail Barang</h3>
+    @section('content')
+    <div class="container">
+        <h3>Detail Barang</h3>
 
-    @if (session('warning'))
-        <div class="alert alert-warning">
-            {{ session('warning') }}
-        </div>
-    @endif
+        @if (session('warning'))
+            <div class="alert alert-warning">
+                {{ session('warning') }}
+            </div>
+        @endif
 
-    @if ($errors->any())
-        <div class="alert alert-danger">
-            {{ $errors->first('error') }}
-        </div>
-    @endif
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                {{ $errors->first('error') }}
+            </div>
+        @endif
 
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>No</th>
-                <th>Kode Barang</th>
-                <th>Kondisi Barang</th>
-                <th>Created At</th>
-                <th>Aksi</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse ($detail_items as $key => $item)
+        <table class="table table-striped">
+            <thead>
                 <tr>
-                    <td>{{ $key + $detail_items->firstItem() }}</td>
-                    <td>{{ $item->kode_barang }}</td>
-                    <td>{{ $item->kondisi_barang }}</td>
-                    <td>{{ $item->created_at }}</td>
-                    <td>
-                        <a href="{{ route('details.edit', ['kode_barang' => $item->kode_barang]) }}" class="btn btn-primary btn-sm">
-                            Edit 
-                        </a>
-                    </td>
+                    <th>No</th>
+                    <th>Kode Barang</th>
+                    <th>Kondisi Barang</th>
+                    <th>Status_di_gunakan</th>
+                    <th>Created At</th>
+                    <th>Aksi</th>
                 </tr>
-            @empty
-                <tr>
-                    <td colspan="4" class="text-center">Tidak ada data detail barang.</td>
-                </tr>
-            @endforelse
-           
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @forelse ($details  as $key => $item)
+                    <tr>
+                        <td>{{ $loop->iteration }}</td>
+                        <td>{{ $item->kode_barang }}</td>
+                        <td>{{ $item->kondisi_barang }}</td>
+                        <td>{{ $item->status_pinjaman }}</td>
+                        <td>{{ $item->created_at }}</td>
+                        <td>
+                            <a href="{{ route('details.edit', ['kode_barang' => $item->kode_barang]) }}" class="btn btn-primary btn-sm">
+                                Edit
+                            </a>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="4" class="text-center">Tidak ada data detail barang.</td>
+                    </tr>
+                @endforelse
 
-    <!-- Pagination -->
-    <div class="d-flex justify-content-center">
-        {{ $detail_items->links() }}
+            </tbody>
+        </table>
+
+        <!-- Pagination -->
+        {{-- <div class="d-flex justify-content-center">
+            {{ $details->links() }}
+        </div> --}}
     </div>
-</div>
-@endsection
+    @endsection

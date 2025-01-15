@@ -106,7 +106,7 @@
                 </ul>
             </div>
         </div>
-        
+
 
         <div class="card shadow-sm border-light">
             <div class="card-body">
@@ -117,7 +117,6 @@
                             <th>Nama Produk</th>
                             <th>Kategori</th>
                             <th>Status Peminjaman</th>
-                            <th>Kondisi_barang</th>
                             <th>Stok</th>
                             <th>Gambar</th>
                             <th>Aksi</th>
@@ -131,27 +130,18 @@
                                 <td>{{ $item->category->name ?? 'Tidak Ada' }}</td>
                                 <td>
                                     <span
-                                        class="badge 
-                                        @if ($item->status_pinjaman === 'Belum di Atur') bg-warning 
-                                        @elseif($item->status_pinjaman === 'bisa di pinjam') 
-                                            bg-success 
-                                        @elseif($item->status_pinjaman === 'tidak bisa di pinjam') 
-                                            bg-danger 
-                                        @elseif($item->status_pinjaman === null || $item->status_pinjaman === '') 
+                                        class="badge
+                                        @if ($item->status_pinjaman === 'Belum di Atur') bg-warning
+                                        @elseif($item->status_pinjaman === 'bisa di pinjam')
+                                            bg-success
+                                        @elseif($item->status_pinjaman === 'tidak bisa di pinjam')
+                                            bg-danger
+                                        @elseif($item->status_pinjaman === null || $item->status_pinjaman === '')
                                             bg-secondary @endif">
                                         {{ ucfirst($item->status_pinjaman ?? 'Belum di Atur') }}
                                     </span>
                                 </td>
-                                <td>
-                                    <span
-                                        class="badge 
-                                        @if ($item->Kondisi_barang === 'barang rusak') bg-warning
-                                        @elseif($item->Kondisi_barang === 'normal')
-                                            bg-primary @endif
-                                    ">
-                                        {{ $item->Kondisi_barang }}
-                                    </span>
-                                </td>
+
 
                                 <td>{{ $item->stock }}</td>
                                 <td>
@@ -172,8 +162,7 @@
                                                 <i class="bx bx-trash"></i> Hapus
                                             </button>
                                         </form>
-                                        <a href="{{ route('details.index', ['itemId' => $item->id]) }}"
-                                            class="btn btn-outline-info btn-sm btn-action">
+                                        <a href="{{ route('details.index', ['itemId' => $item->id]) }}" class="btn btn-outline-info btn-sm btn-action">
                                             <i class="bx bx-show"></i> Detail
                                         </a>
                                     </div>

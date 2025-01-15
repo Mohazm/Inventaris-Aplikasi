@@ -18,7 +18,7 @@ return new class extends Migration
             $table->date('tanggal_pinjam');
             $table->date('tanggal_kembali');
             $table->integer('jumlah_pinjam');
-            $table->string('tujuan_peminjaman'); 
+            $table->string('tujuan_peminjaman');
             $table->enum('status', ['menunggu', 'dipakai', 'selesai', 'ditolak', 'terlambat','di kembalikan']);
 
             $table->timestamps();
