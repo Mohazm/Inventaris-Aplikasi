@@ -36,8 +36,8 @@
                                     <img src="{{ asset('/assets/img/icons/unicons/chart-success.png') }}"
                                         alt="chart success" class="rounded" />
                                 </div>
-                                <span class="fw-semibold d-block mb-1">Data User</span>
-                                <h3 class="card-title mb-2">10,000</h3>
+                                <span class="fw-semibold d-block mb-1">Data Karyawan</span>
+                                <h3 class="card-title mb-2">{{ $users }}</h3>
                                 <small class="text-success fw-semibold">
                                     <i class="bx bx-up-arrow-alt"></i> Data
                                 </small>
@@ -158,6 +158,7 @@
                     </div>
                 </div>
             </div>
+
             <!-- Kalender -->
             <div class="col-lg-5 mb-4 order-2">
                 <div class="card">
@@ -294,53 +295,44 @@
         renderTable(dataBarangKeluar, currentMonthKeluar, "dataBodyKeluar", "monthLabelKeluar");
     </script>
     <!-- Scripts -->
+
+
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Kalender
-            const today = new Date();
-            const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
-            const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September",
-                "Oktober", "November", "Desember"
-            ];
+    document.addEventListener('DOMContentLoaded', function() {
+        const ctx = document.getElementById('totalRevenueChart').getContext('2d');
 
-            document.querySelector('.day').textContent = days[today.getDay()];
-            document.querySelector('.month').textContent = months[today.getMonth()];
-            document.querySelector('.date').textContent = today.getDate();
-            document.querySelector('.year').textContent = today.getFullYear();
-
-            // Chart.js setup
-            const ctx = document.getElementById('totalRevenueChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli'],
-                    datasets: [{
-                        label: 'Pendapatan',
-                        data: [10, 20, 30, 40, 50, 60, 70],
-                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                        },
-                        title: {
-                            display: true,
-                            text: 'Total Revenue'
-                        }
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli'],
+                datasets: [{
+                    label: 'Pendapatan',
+                    data: [{{ $revenueIn }}, {{ $revenueOut }}, 0, 0, 0, 0, 0],  // Gunakan data yang dikirim dari controller
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
                     },
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
+                    title: {
+                        display: true,
+                        text: 'Total Revenue'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
                     }
                 }
-            });
+            }
         });
+    });
     </script>
 @endsection

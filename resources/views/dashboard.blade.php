@@ -39,7 +39,7 @@
                                     </div>
                                 </div>
                                 <span class="fw-semibold d-block mb-1 text-center">Data User</span>
-                                <h3 class="card-title mb-2 text-center">10,000</h3>
+                                <h3 class="card-title mb-2 text-center">{{ $users }}</h3>
                                 <small class="text-success fw-semibold d-flex justify-content-center">
                                     <i class="bx bx-up-arrow-alt"></i> Data
                                 </small>

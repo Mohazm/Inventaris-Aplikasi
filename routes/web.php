@@ -25,6 +25,7 @@ use App\Http\Controllers\{
     TeacherController,
     UserController,
     StudentController,
+    RevenueController,
 };
 
 /*
@@ -65,7 +66,7 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
     Route::delete('/borrowers/{borrowerType}/{borrowerId}', [BorrowerController::class, 'destroy'])->name('borrowers.destroy');
 
 
-    
+
     Route::post('/update-status', [DetailItemController::class, 'updateStatusPinjam'])->name('update.status');
     Route::post('/loans_item/return/{id}', [ReturnsItemController::class, 'returnItem'])->name('loans_item.return');
     // Route::get('items/{itemId}/details', [DetailItemController::class, 'index'])->name('details.index');
@@ -184,3 +185,4 @@ Route::get('/transactions/export/{month}', function ($month) {
 Route::get('/transactions/export/{month}', function ($month) {
     return Excel::download(new TransactionsIntExport($month), "transactions_ins_month_{$month}.xlsx");
 })->name('transactions.export');
+Route::get('/get-revenue', [RevenueController::class, 'getRevenueData']);
