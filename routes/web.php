@@ -26,6 +26,7 @@ use App\Http\Controllers\{
     UserController,
     StudentController,
     RevenueController,
+    TabunganSiswaController
 };
 
 /*
@@ -106,7 +107,9 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
     Route::get('/adminactivities', [AdminActivityController::class, 'index'])->name('admin.activities.index');
     Route::delete('/adminactivities/{id}', [AdminActivityController::class, 'destroy'])->name('admin.activities.destroy');
 });
-
+Route::middleware(['auth', 'is_admin','is_staff'])->group(function(){
+    Route::resource('Tabungan/Siswa', TabunganSiswaController::class);
+});
 // Rute khusus staff
 Route::middleware(['auth', 'is_staff'])->group(function () {
     Route::get('/staff/dashboard', [StafItemController::class, 'index'])->name('staff.index');
