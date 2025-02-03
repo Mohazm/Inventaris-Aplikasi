@@ -35,7 +35,11 @@
                             <td class="px-4 py-2">{{ $tabungan->kelas }}</td>
                             <td class="px-4 py-2">Rp{{ number_format($tabungan->jumlah_tabungan, 0, ',', '.') }}</td>
                             <td>{{ $tabungan->uang_masuk ?? '-' }}</td>
-                            <td>{{ $tabungan->uang_keluar ?? '-' }}</td>
+                            @if ($tabungan->uang_keluar)
+                                <td>Rp{{ number_format($tabungan->uang_keluar) }}</td>
+                            @else
+                            <td>-</td>
+                            @endif
                             <td class="px-4 py-2 flex space-x-2">
                                 <a href="{{ route('tabungan.tarik.form', $tabungan->id) }}"
                                     class="bg-yellow-500 text-white px-3 py-1 rounded-lg shadow-md hover:bg-yellow-600">Tarik
