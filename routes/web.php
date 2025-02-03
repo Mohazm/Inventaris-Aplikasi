@@ -107,9 +107,7 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
     Route::get('/adminactivities', [AdminActivityController::class, 'index'])->name('admin.activities.index');
     Route::delete('/adminactivities/{id}', [AdminActivityController::class, 'destroy'])->name('admin.activities.destroy');
 });
-Route::middleware(['auth', 'is_admin','is_staff'])->group(function(){
-    Route::resource('Tabungan/Siswa', TabunganSiswaController::class);
-});
+
 // Rute khusus staff
 Route::middleware(['auth', 'is_staff'])->group(function () {
     Route::get('/staff/dashboard', [StafItemController::class, 'index'])->name('staff.index');
@@ -189,3 +187,16 @@ Route::get('/transactions/export/{month}', function ($month) {
     return Excel::download(new TransactionsIntExport($month), "transactions_ins_month_{$month}.xlsx");
 })->name('transactions.export');
 Route::get('/get-revenue', [RevenueController::class, 'getRevenueData']);
+
+    Route::resource('/tabungan/siswa', TabunganSiswaController::class)->names([
+        'index' => 'tabungan.siswa.index',
+        'create' => 'tabungan.siswa.create',
+        'store' => 'tabungan.siswa.store',
+        'show' => 'tabungan.siswa.show',
+        'edit' => 'tabungan.siswa.edit',
+        'update' => 'tabungan.siswa.update',
+        'destroy' => 'tabungan.siswa.destroy',
+    ]);
+
+    Route::get('/tabungan/{id}/tarik', [TabunganSiswaController::class, 'formTarik'])->name('tabungan.tarik.form');
+    Route::post('/tabungan/{id}/tarik', [TabunganSiswaController::class, 'tarik'])->name('tabungan.tarik');

@@ -109,7 +109,7 @@
                     <div>Log Aktivitas</div>
                 </a>
             </li>
-            
+
             <li class="menu-header small text-uppercase">
                 <span class="menu-header-text">Pengelola Transaksi</span>
             </li>
@@ -129,6 +129,12 @@
                 <a href="{{ route('loans_item.index') }}" class="menu-link">
                     <i class="menu-icon tf-icons bx bx-transfer-alt"></i>
                     <div>Monitor Peminjaman</div>
+                </a>
+            </li>
+            <li class="menu-item {{ Route::is('tabungan.siswa.index') ? 'active' : '' }}">
+                <a href="{{ route('tabungan.siswa.index') }}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-transfer-alt"></i>
+                    <div>Tabungan</div>
                 </a>
             </li>
         </ul>
