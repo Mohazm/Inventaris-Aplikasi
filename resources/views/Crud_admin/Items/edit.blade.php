@@ -73,8 +73,8 @@
                 </div> --}}
                 <select name="status_pinjaman" id="status_pinjaman" class="form-control">
                     <option value="" {{ old('status_pinjaman', $item->status_pinjaman ?? '') == '' ? 'selected' : '' }}>-- Pilih Status --</option>
-                    <option value="bisa di pinjam" {{ old('status_pinjaman', $item->status_pinjaman ?? '') == 'bisa di pinjam' ? 'selected' : '' }}>Bisa Di Pinjam</option>
-                    <option value="tidak bisa di pinjam" {{ old('status_pinjaman', $item->status_pinjaman ?? '') == 'tidak bisa di pinjam' ? 'selected' : '' }}>Tidak Bisa Di Pinjam</option>
+                    <option value="bisa di pinjam" {{ old('status_pinjaman', $item->status_pinjaman ?? '') == 'tersedia' ? 'selected' : '' }}>Tersedia</option>
+                    <option value="tidak bisa di pinjam" {{ old('status_pinjaman', $item->status_pinjaman ?? '') == 'tidak tersedia' ? 'selected' : '' }}>Tidak Tersedia</option>
                 </select>
                 <select name="Kondisi_barang" id="Kondisi_barang" class="form-control">
                     <option value="" {{ old('Kondisi_barang', $item->Kondisi_barang ?? '') == '' ? 'selected' : '' }}>-- Pilih Status --</option>

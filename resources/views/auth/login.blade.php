@@ -179,6 +179,10 @@
                             Sign in
                         </button>
                     </form>
+                    <h5 class="mb-2">admin: 'admin@gmail.com'</h5>
+                    <h5 class="mb-2">pass: password</h5>
+                    <h5 class="mb-2">staff: 'staff@gmail.com'</h5>
+                    <h5 class="mb-2">pass: password</h5>
 
 
                     {{-- <p class="text-center">

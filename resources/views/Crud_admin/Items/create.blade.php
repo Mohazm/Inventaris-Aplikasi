@@ -36,8 +36,8 @@
                         <label for="status_pinjaman" class="form-label">Status Pinjaman</label>
                         <select name="status_pinjaman" id="status_pinjaman" class="form-control">
                             <option value="" selected>-- Pilih Status --</option>
-                            <option value="bisa di pinjam">Bisa Di Pinjam</option>
-                            <option value="tidak bisa di pinjam">Tidak Bisa Di Pinjam</option>
+                            <option value="tersedia">Tersedia</option>
+                            <option value="tidak tersedia">Tidak Tersedia</option>
                         </select>
                     </div>
                     <div class="mb-3">

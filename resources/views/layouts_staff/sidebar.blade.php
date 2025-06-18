@@ -81,12 +81,6 @@
             </a>
         </li>
         <li class="menu-item">
-            <a href="{{route('staff.borrower.index')}}" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-cube-alt"></i>
-                <div>Daftar Pemimjam</div>
-            </a>
-        </li>
-        <li class="menu-item">
             <a href="{{route('StafTransactions_in.index')}}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-cube-alt"></i>
                 <div>Kelola Transactions Masuk</div>
@@ -108,12 +102,6 @@
             <a href="{{route('activities.index')}}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-user-circle"></i>
                 <div>Aktifitas Pengguna</div>
-            </a>
-        </li>
-        <li class="menu-item">
-            <a href="{{route('loans.index')}}" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-user-circle"></i>
-                <div>Monitor Peminjaman</div>
             </a>
         </li>
     </ul>

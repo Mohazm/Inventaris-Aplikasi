@@ -22,7 +22,7 @@
                     <th>No</th>
                     <th>Kode Barang</th>
                     <th>Kondisi Barang</th>
-                    <th>Status_di_gunakan</th>
+                    <th>Status</th>
                     <th>Created At</th>
                     <th>Aksi</th>
                 </tr>

@@ -7,7 +7,7 @@
           document.write(new Date().getFullYear());
         </script>
         , made with ❤️ by
-        <a href="https://themeselection.com" target="_blank" class="footer-link fw-bolder">MyBarista</a>
+        <a href="https://themeselection.com" target="_blank" class="footer-link fw-bolder">Black Clover Team Project Cloud Computing</a>
       </div>
       </div>
     </div>

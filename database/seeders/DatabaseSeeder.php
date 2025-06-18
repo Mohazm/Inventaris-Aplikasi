@@ -16,7 +16,7 @@ class DatabaseSeeder extends Seeder
     {
         // Menambahkan user admin
         User::create([
-            'name' => 'Putri',
+            'name' => 'alyssa',
             'email' => 'admin@gmail.com',
             'password' => Hash::make('password'),  // Gantilah dengan password yang aman
             'role' => 'admin',
@@ -24,7 +24,7 @@ class DatabaseSeeder extends Seeder
 
         // Menambahkan user staff
         User::create([
-            'name' => 'Cahya',
+            'name' => 'Helmi Firdaus',
             'email' => 'staff@gmail.com',
             'password' => Hash::make('password'),  // Gantilah dengan password yang aman
             'role' => 'staff',
@@ -32,10 +32,10 @@ class DatabaseSeeder extends Seeder
 
         // Menambahkan kategori
         Category::create([  // Pastikan menggunakan nama model yang benar
-            'name' => 'Kebersihan',
+            'name' => 'Makanan',
         ]);
         Category::create([  // Pastikan menggunakan nama model yang benar
-            'name' => 'Olah Raga',
+            'name' => 'Perlengkapan',
         ]);
         Category::create([  // Pastikan menggunakan nama model yang benar
             'name' => 'Elektronik',

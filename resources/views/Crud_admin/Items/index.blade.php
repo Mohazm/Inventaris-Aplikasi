@@ -132,9 +132,9 @@
                                     <span
                                         class="badge
                                         @if ($item->status_pinjaman === 'Belum di Atur') bg-warning
-                                        @elseif($item->status_pinjaman === 'bisa di pinjam')
+                                        @elseif($item->status_pinjaman === 'tersedia')
                                             bg-success
-                                        @elseif($item->status_pinjaman === 'tidak bisa di pinjam')
+                                        @elseif($item->status_pinjaman === 'tidak tersedia')
                                             bg-danger
                                         @elseif($item->status_pinjaman === null || $item->status_pinjaman === '')
                                             bg-secondary @endif">

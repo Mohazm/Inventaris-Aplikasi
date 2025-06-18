@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('item_id')->constrained()->onDelete('cascade'); // Relasi ke tabel items
             $table->string('kode_barang')->unique(); // Kode barang unik
-            $table->enum('status_pinjaman', ['Sedang dipinjam','belum di pinjam'])->default('belum di pinjam'); // Status pinjaman, default belum di pinjam
+            $table->enum('status_pinjaman', ['Tersedia','Tidak Tersedia'])->default('Tersedia'); // Status pinjaman, default belum di pinjam
             $table->enum('kondisi_barang', ['Normal', 'Rusak'])->default('Normal'); // Kondisi barang, default Normal
             $table->text('deskripsi')->nullable(); // Deskripsi barang (opsional)
             $table->timestamps();

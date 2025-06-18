@@ -91,12 +91,6 @@
                     <div>Kategori</div>
                 </a>
             </li>
-            <li class="menu-item {{ Route::is('borrowers.index') ? 'active' : '' }}">
-                <a href="{{ route('borrowers.index') }}" class="menu-link">
-                    <i class="menu-icon tf-icons bx bx-category"></i>
-                    <div>Pemimjam</div>
-                </a>
-            </li>
             <li class="menu-item {{ Route::is('suppliers.index') ? 'active' : '' }}">
                 <a href="{{ route('suppliers.index') }}" class="menu-link">
                     <i class="menu-icon tf-icons bx bx-store-alt"></i>
@@ -123,18 +117,6 @@
                 <a href="{{ route('Transactions_out.index') }}" class="menu-link">
                     <i class="menu-icon tf-icons bx bx-transfer-alt"></i>
                     <div> Barang Keluar</div>
-                </a>
-            </li>
-            <li class="menu-item {{ Route::is('loans_item.index') ? 'active' : '' }}">
-                <a href="{{ route('loans_item.index') }}" class="menu-link">
-                    <i class="menu-icon tf-icons bx bx-transfer-alt"></i>
-                    <div>Monitor Peminjaman</div>
-                </a>
-            </li>
-            <li class="menu-item {{ Route::is('tabungan.siswa.index') ? 'active' : '' }}">
-                <a href="{{ route('tabungan.siswa.index') }}" class="menu-link">
-                    <i class="menu-icon tf-icons bx bx-transfer-alt"></i>
-                    <div>Tabungan</div>
                 </a>
             </li>
         </ul>
