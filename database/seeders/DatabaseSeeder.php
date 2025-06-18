@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\User;
-use App\Models\Category;  // Pastikan ini sesuai dengan nama model Anda
+use App\Models\Category;
 use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
@@ -15,30 +15,28 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // Menambahkan user admin
-        User::create([
-            'name' => 'alyssa',
-            'email' => 'admin@gmail.com',
-            'password' => Hash::make('password'),  // Gantilah dengan password yang aman
-            'role' => 'admin',
-        ]);
+        User::firstOrCreate(
+            ['email' => 'admin@gmail.com'],
+            [
+                'name' => 'alyssa',
+                'password' => Hash::make('password'),
+                'role' => 'admin',
+            ]
+        );
 
         // Menambahkan user staff
-        User::create([
-            'name' => 'Helmi Firdaus',
-            'email' => 'staff@gmail.com',
-            'password' => Hash::make('password'),  // Gantilah dengan password yang aman
-            'role' => 'staff',
-        ]);
+        User::firstOrCreate(
+            ['email' => 'staff@gmail.com'],
+            [
+                'name' => 'Helmi Firdaus',
+                'password' => Hash::make('password'),
+                'role' => 'staff',
+            ]
+        );
 
         // Menambahkan kategori
-        Category::create([  // Pastikan menggunakan nama model yang benar
-            'name' => 'Makanan',
-        ]);
-        Category::create([  // Pastikan menggunakan nama model yang benar
-            'name' => 'Perlengkapan',
-        ]);
-        Category::create([  // Pastikan menggunakan nama model yang benar
-            'name' => 'Elektronik',
-        ]);
+        Category::firstOrCreate(['name' => 'Makanan']);
+        Category::firstOrCreate(['name' => 'Perlengkapan']);
+        Category::firstOrCreate(['name' => 'Elektronik']);
     }
 }
